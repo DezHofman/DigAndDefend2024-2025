@@ -25,5 +25,6 @@ public class TestScript : MonoBehaviour
         {
             animator.SetBool("WD", false);
         }
+        
     }
 }
