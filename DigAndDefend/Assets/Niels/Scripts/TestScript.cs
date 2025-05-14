@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class TestScript : MonoBehaviour
 {
 
-    public Animator animator;
+    [SerializeField] public Animator animator;
   
     void Update()
     {
