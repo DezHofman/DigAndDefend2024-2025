@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Enemy
+  - Tower
+  - Barricade
   layers:
   - Default
   - TransparentFX
@@ -61,6 +64,9 @@ TagManager:
     locked: 0
   - name: Decoration
     uniqueID: 3693837971
+    locked: 0
+  - name: Enemies
+    uniqueID: 2633478063
     locked: 0
   m_RenderingLayers:
   - Default

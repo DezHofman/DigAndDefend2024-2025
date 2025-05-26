@@ -8,13 +8,13 @@ public class Healthbar : MonoBehaviour
     [SerializeField] private float damagePerPress = 10f;
 
     [Header("Position Settings")]
-    [SerializeField] private float worldOffset = 1.0f; // Distance above GameObject in world units
-    [SerializeField] private float screenOffset = 5f;  // Pixel offset in screen space
+    [SerializeField] private float worldOffset = 1.0f;
+    [SerializeField] private float screenOffset = 5f;
 
     [Header("Color Settings")]
-    [SerializeField] private Color healthColor = new Color(0.2f, 0.8f, 0.2f); // Vibrant green
-    [SerializeField] private Color damageColor = new Color(0.8f, 0.2f, 0.2f); // Vibrant red
-    [SerializeField] private Color outlineColor = new Color(0, 0, 0);         // Black
+    [SerializeField] private Color healthColor = new Color(0.2f, 0.8f, 0.2f);
+    [SerializeField] private Color damageColor = new Color(0.8f, 0.2f, 0.2f);
+    [SerializeField] private Color outlineColor = new Color(0, 0, 0);
 
     [Header("Size Settings")]
     [SerializeField] private float healthbarWidth = 100f;
@@ -26,20 +26,18 @@ public class Healthbar : MonoBehaviour
 
     private void Start()
     {
-        mainCamera = Camera.main; // Cache main camera
-        health = initialHealth;   // Set initial health
+        mainCamera = Camera.main;
+        health = initialHealth;
     }
 
     private void Update()
     {
-        // Decrease health when 'F' is pressed
         if (Input.GetKeyDown(KeyCode.F) && health > 0)
         {
             health = Mathf.Max(0, health - damagePerPress);
-            showHealthbar = true; // Show healthbar on damage
+            showHealthbar = true;
         }
 
-        // Hide healthbar if dead
         if (health <= 0)
         {
             showHealthbar = false;
@@ -50,7 +48,6 @@ public class Healthbar : MonoBehaviour
     {
         if (!showHealthbar) return;
 
-        // Create textures for colors
         Texture2D damageTexture = new Texture2D(1, 1);
         damageTexture.SetPixel(0, 0, damageColor);
         damageTexture.Apply();
@@ -63,27 +60,22 @@ public class Healthbar : MonoBehaviour
         outlineTexture.SetPixel(0, 0, outlineColor);
         outlineTexture.Apply();
 
-        // Calculate position above the GameObject
         Vector3 worldPosition = transform.position + Vector3.up * worldOffset;
         Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition);
         float healthbarX = screenPosition.x - healthbarWidth / 2;
         float healthbarY = Screen.height - screenPosition.y - healthbarHeight - screenOffset;
 
-        // Draw thicker outline (4 pixels thick)
         GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY - 4, healthbarWidth + 8, healthbarHeight + 8), outlineTexture);
-        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY - 4, healthbarWidth + 8, 4), outlineTexture); // Top
-        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY + healthbarHeight, healthbarWidth + 8, 4), outlineTexture); // Bottom
-        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY - 4, 4, healthbarHeight + 8), outlineTexture); // Left
-        GUI.DrawTexture(new Rect(healthbarX + healthbarWidth, healthbarY - 4, 4, healthbarHeight + 8), outlineTexture); // Right
+        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY - 4, healthbarWidth + 8, 4), outlineTexture);
+        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY + healthbarHeight, healthbarWidth + 8, 4), outlineTexture);
+        GUI.DrawTexture(new Rect(healthbarX - 4, healthbarY - 4, 4, healthbarHeight + 8), outlineTexture);
+        GUI.DrawTexture(new Rect(healthbarX + healthbarWidth, healthbarY - 4, 4, healthbarHeight + 8), outlineTexture);
 
-        // Draw damage background
         GUI.DrawTexture(new Rect(healthbarX, healthbarY, healthbarWidth, healthbarHeight), damageTexture);
 
-        // Draw health
         float currentWidth = (health / maxHealth) * healthbarWidth;
         GUI.DrawTexture(new Rect(healthbarX, healthbarY, currentWidth, healthbarHeight), healthTexture);
 
-        // Clean up textures
         Destroy(damageTexture);
         Destroy(healthTexture);
         Destroy(outlineTexture);
