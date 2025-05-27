@@ -81,7 +81,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1661489233
   m_SortingLayer: 4
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 6143221684603395509, guid: 57a393a39a32ea54fbdd74d180df6e6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
   health: 100
-  damageToVillage: 10
+  damageToVillage: 5
   damageToBarricade: 5
   canFly: 0
 --- !u!61 &3841671394626096645

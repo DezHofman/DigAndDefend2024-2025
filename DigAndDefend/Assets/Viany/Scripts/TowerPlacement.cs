@@ -3,7 +3,7 @@ using UnityEngine.Tilemaps;
 
 public class TowerPlacement : MonoBehaviour
 {
-    public GameObject[] towerPrefabs;
+    public GameObject[] towerPrefabs; // Order: Archer, Bomb, Slow, Fire/Poison, Barricade
     public int[] copperCosts = { 20, 20, 20, 20, 15 };
     public int[] ironCosts = { 10, 10, 10, 10, 5 };
     [SerializeField] private Tilemap pathTilemap;
@@ -24,17 +24,6 @@ public class TowerPlacement : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            selectedTowerIndex = -1;
-            Debug.Log("Deselected tower/barricade");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1)) { SetSelectedTowerIndex(0); Debug.Log("Selected Archer Tower"); }
-        if (Input.GetKeyDown(KeyCode.Alpha2)) { SetSelectedTowerIndex(1); Debug.Log("Selected Bomb Tower"); }
-        if (Input.GetKeyDown(KeyCode.Alpha3)) { SetSelectedTowerIndex(2); Debug.Log("Selected Slow Tower"); }
-        if (Input.GetKeyDown(KeyCode.Alpha4)) { SetSelectedTowerIndex(3); Debug.Log("Selected Fire/Poison Tower"); }
-        if (Input.GetKeyDown(KeyCode.Alpha5)) { SetSelectedTowerIndex(4); Debug.Log("Selected Barricade"); }
-
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = pathTilemap.WorldToCell(mousePos);
         Vector3 placementPosition = pathTilemap.CellToWorld(cellPosition);
@@ -101,7 +90,10 @@ public class TowerPlacement : MonoBehaviour
             {
                 if (ResourceManager.Instance.SpendResources(copperCosts[selectedTowerIndex], ironCosts[selectedTowerIndex]))
                 {
-                    Instantiate(towerPrefabs[selectedTowerIndex], placementPosition, Quaternion.identity);
+                    Debug.Log("Instantiating tower at position: " + placementPosition);
+                    GameObject tower = Instantiate(towerPrefabs[selectedTowerIndex], placementPosition, Quaternion.identity, null);
+                    Debug.Log("Tower position after instantiation: " + tower.transform.position);
+                    Debug.Log("Tower parent: " + (tower.transform.parent != null ? tower.transform.parent.name : "None"));
                     Debug.Log("Placed at: " + placementPosition);
                     selectedTowerIndex = -1;
                 }

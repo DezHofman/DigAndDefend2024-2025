@@ -6,17 +6,30 @@ public abstract class Tower : MonoBehaviour
     public float attackRange;
     public float attackSpeed;
     public float attackDamage;
-    public float rangeDisplayDuration = 2f;
+    public float rangeDisplayDuration;
     public GameObject rangeIndicatorPrefab;
-    protected float timeSinceLastAttack = 0f;
+    protected float timeSinceLastAttack;
     protected CircleCollider2D attackCollider;
     private GameObject rangeIndicator;
     private static Tower activeTower;
-    private float rangeVisibleTime = 0f;
+    private float rangeVisibleTime;
     private bool isRangeVisible = false;
+    private SpriteRenderer spriteRenderer;
+    private Vector3 initialPosition;
 
     protected virtual void Start()
     {
+        // Store the initial position set by TowerPlacement.cs
+        initialPosition = transform.position;
+        Debug.Log($"{gameObject.name} - Initial position set: {initialPosition}");
+
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("No SpriteRenderer found on " + gameObject.name + " or its children.");
+            return;
+        }
+
         attackCollider = GetComponent<CircleCollider2D>();
         if (attackCollider != null)
         {
@@ -25,9 +38,23 @@ public abstract class Tower : MonoBehaviour
         }
         gameObject.tag = "Tower";
 
+        // Log positions for debugging
+        Debug.Log($"{gameObject.name} - Tower position after setup: {transform.position}, " +
+                  $"Sprite local position: {spriteRenderer.transform.localPosition}, " +
+                  $"Sprite world position: {spriteRenderer.transform.position}");
+
+        // Instantiate range indicator without offset
         rangeIndicator = Instantiate(rangeIndicatorPrefab, transform.position, Quaternion.identity, transform);
+        rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
         rangeIndicator.SetActive(false);
         rangeIndicator.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+        // Force the position to the initial position to prevent reset
+        if (transform.position != initialPosition)
+        {
+            Debug.LogWarning($"{gameObject.name} - Position reset detected, restoring to: {initialPosition}");
+            transform.position = initialPosition;
+        }
 
         StartCoroutine(LateStart());
     }
@@ -37,6 +64,14 @@ public abstract class Tower : MonoBehaviour
         yield return null;
         attackCollider.radius = attackRange;
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
+        Debug.Log($"{gameObject.name} - Tower position in LateStart: {transform.position}");
+
+        // Check position again after a frame
+        if (transform.position != initialPosition)
+        {
+            Debug.LogWarning($"{gameObject.name} - Position reset detected in LateStart, restoring to: {initialPosition}");
+            transform.position = initialPosition;
+        }
     }
 
     protected virtual void Update()
@@ -59,6 +94,17 @@ public abstract class Tower : MonoBehaviour
                 {
                     activeTower = null;
                 }
+            }
+        }
+
+        // Log position in Update to check for changes
+        if (Time.frameCount % 60 == 0) // Log every second
+        {
+            Debug.Log($"{gameObject.name} - Tower position in Update: {transform.position}");
+            if (transform.position != initialPosition)
+            {
+                Debug.LogWarning($"{gameObject.name} - Position reset detected in Update, restoring to: {initialPosition}");
+                transform.position = initialPosition;
             }
         }
     }

@@ -79,7 +79,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1661489233
   m_SortingLayer: 4
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.41719976, g: 0.4528302, b: 0.3780705, a: 1}
   m_FlipX: 0
@@ -103,8 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialHealth: 200
-  maxHealth: 200
+  initialHealth: 1000
+  maxHealth: 1000
   worldOffset: 1
   screenOffset: 5
   healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
@@ -124,9 +124,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e991adc64e348ae47886b37c4189a90c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
-  health: 200
-  damageToVillage: 10
+  speed: 0.75
+  health: 1000
+  damageToVillage: 15
   damageToBarricade: 10
   canFly: 0
 --- !u!61 &7715664031866646253

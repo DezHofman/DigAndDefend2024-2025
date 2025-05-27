@@ -76,7 +76,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -90,7 +90,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -114,7 +114,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -143,9 +143,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 191
-        width: 320
-        height: 127
+        y: 128
+        width: 64
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -164,10 +164,10 @@ TextureImporter:
       name: fire towerV3_1
       rect:
         serializedVersion: 2
-        x: 23
-        y: 0
-        width: 18
-        height: 51
+        x: 64
+        y: 128
+        width: 64
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -186,10 +186,10 @@ TextureImporter:
       name: fire towerV3_2
       rect:
         serializedVersion: 2
-        x: 77
-        y: 43
-        width: 9
-        height: 11
+        x: 128
+        y: 128
+        width: 64
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -208,10 +208,10 @@ TextureImporter:
       name: fire towerV3_3
       rect:
         serializedVersion: 2
-        x: 108
-        y: 34
-        width: 15
-        height: 13
+        x: 192
+        y: 128
+        width: 64
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -230,10 +230,10 @@ TextureImporter:
       name: fire towerV3_4
       rect:
         serializedVersion: 2
-        x: 127
-        y: 0
-        width: 65
-        height: 65
+        x: 256
+        y: 128
+        width: 64
+        height: 192
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -252,19 +252,19 @@ TextureImporter:
       name: fire towerV3_5
       rect:
         serializedVersion: 2
-        x: 7
-        y: 21
-        width: 14
-        height: 14
+        x: 0
+        y: 0
+        width: 19
+        height: 5
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: e03b1f61c572ded20800000000000000
+      spriteID: 63e1b59f9ec800f48adce1d3a7264eb7
       internalID: 3309344577662595854
       vertices: []
       indices: 
@@ -274,163 +274,9 @@ TextureImporter:
       name: fire towerV3_6
       rect:
         serializedVersion: 2
-        x: 12
-        y: 29
-        width: 9
-        height: 11
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 38424040941ad28e0800000000000000
-      internalID: -1716538547986226045
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_7
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 31
-        width: 12
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d86df38f2d30682f0800000000000000
-      internalID: -971084465008814451
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_8
-      rect:
-        serializedVersion: 2
-        x: 44
-        y: 13
-        width: 15
-        height: 21
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: a07a16a2169e0b3f0800000000000000
-      internalID: -886952523059845366
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_9
-      rect:
-        serializedVersion: 2
-        x: 71
-        y: 21
-        width: 14
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b5b3f019df04ba460800000000000000
-      internalID: 7253963082614913883
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_10
-      rect:
-        serializedVersion: 2
-        x: 7
-        y: 11
-        width: 15
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e0ee890684ec4d4b0800000000000000
-      internalID: -5416477641566261746
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_11
-      rect:
-        serializedVersion: 2
-        x: 77
-        y: 1
-        width: 15
-        height: 14
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: fe6c8daa98ee507f0800000000000000
-      internalID: -646848696413534481
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_12
-      rect:
-        serializedVersion: 2
-        x: 114
-        y: 15
-        width: 12
-        height: 10
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 76523a4b89d7f5980800000000000000
-      internalID: -8547975472906820249
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: fire towerV3_13
-      rect:
-        serializedVersion: 2
-        x: 98
+        x: 0
         y: 0
-        width: 14
+        width: 320
         height: 11
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -438,10 +284,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 49ecaf81f54d84e80800000000000000
-      internalID: -8194066017094545772
+      spriteID: 17e5056bd8767184bbee7832125b3dd2
+      internalID: -1716538547986226045
       vertices: []
       indices: 
       edges: []
@@ -450,7 +296,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3d5b4127673c3414db87787374fff75f
     internalID: 0
     vertices: []
     indices: 
@@ -459,7 +305,14 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      fire towerV3_0: -3270862586372701357
+      fire towerV3_1: 4496026301977538552
+      fire towerV3_2: -2293666378286533330
+      fire towerV3_3: 2654740431784767625
+      fire towerV3_4: 8277961686558203568
+      fire towerV3_5: 3309344577662595854
+      fire towerV3_6: -1716538547986226045
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

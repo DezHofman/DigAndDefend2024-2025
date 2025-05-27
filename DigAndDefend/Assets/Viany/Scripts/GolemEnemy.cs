@@ -5,8 +5,8 @@ public class GolemEnemy : BaseEnemy
     private void Start()
     {
         canFly = false;
-        health = 200;
-        speed = 2f;
-        damageToVillage = 10;
+        health = 1000;
+        speed = 0.75f;
+        damageToVillage = 15;
     }
 }
