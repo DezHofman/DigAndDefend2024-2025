@@ -10,7 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5837823838450875965}
   - component: {fileID: 6859422837178369985}
-  m_Layer: 0
+  - component: {fileID: 8186495963467559514}
+  - component: {fileID: -2842889348504391949}
+  m_Layer: 7
   m_Name: FirePoisonTowerSprite
   m_TagString: Tower
   m_Icon: {fileID: 0}
@@ -73,9 +75,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -601129325
-  m_SortingLayer: 7
-  m_SortingOrder: 5
+  m_SortingLayerID: -1291122021
+  m_SortingLayer: 3
+  m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.735849, g: 0.30059674, b: 0.24644002, a: 1}
   m_FlipX: 0
@@ -87,3 +89,58 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8186495963467559514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8241227136110691345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bab34da4387ac642b8a8d0573f71bcd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 2.5
+  attackSpeed: 1
+  attackDamage: 10
+  rangeDisplayDuration: 5
+  rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
+  dotDamagePerSecond: 5
+  dotDuration: 3
+--- !u!58 &-2842889348504391949
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8241227136110691345}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 3

@@ -5,13 +5,25 @@ public abstract class BaseEnemy : MonoBehaviour
     public float speed = 2f;
     public int health = 50;
     public int damageToVillage = 10;
+    public float damageToBarricade = 10f;
     public bool canFly = false;
+    private float originalSpeed;
     private Transform[] waypoints;
     private int currentWaypoint = 0;
+    private Healthbar healthbar;
+    private bool isAttackingBarricade = false;
+    private EnemySpriteController spriteController;
 
     private void Awake()
     {
         gameObject.tag = "Enemy";
+        originalSpeed = speed;
+        healthbar = GetComponent<Healthbar>();
+        spriteController = GetComponent<EnemySpriteController>();
+        if (healthbar != null)
+        {
+            healthbar.SetInitialHealth(health);
+        }
     }
 
     public void SetWaypoints(Transform[] pathWaypoints)
@@ -35,23 +47,41 @@ public abstract class BaseEnemy : MonoBehaviour
     {
         Vector2 targetPosition = waypoints[currentWaypoint].position;
         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-        transform.position += (Vector3)direction * speed * Time.deltaTime;
+        Vector2 movement = direction * speed * Time.deltaTime;
+        transform.position += (Vector3)movement;
+
+        if (spriteController != null)
+        {
+            Debug.Log("Direction passed: " + direction);
+            spriteController.UpdateSpriteDirection(direction);
+        }
 
         if (Vector2.Distance(transform.position, targetPosition) < 0.1f)
         {
             currentWaypoint++;
         }
 
-        if (!canFly)
+        if (!canFly && !isAttackingBarricade)
         {
-            Collider2D barricade = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Barricades"));
-            if (barricade != null)
+            Collider2D[] barricadeColliders = Physics2D.OverlapCircleAll(transform.position, 0.5f, LayerMask.GetMask("Barricades"));
+            if (barricadeColliders.Length > 0)
             {
-                health -= 10;
-                Destroy(barricade.gameObject);
-                if (health <= 0) OnDeath();
+                Barricade barricade = barricadeColliders[0].GetComponent<Barricade>();
+                if (barricade != null)
+                {
+                    isAttackingBarricade = true;
+                    barricade.TakeDamage(damageToBarricade);
+                    speed = 0f;
+                    Invoke("ResumeMovement", 0.5f);
+                }
             }
         }
+    }
+
+    void ResumeMovement()
+    {
+        speed = originalSpeed;
+        isAttackingBarricade = false;
     }
 
     void AttackVillage()
@@ -62,7 +92,12 @@ public abstract class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(float amount)
     {
+        Debug.Log("Taking damage: " + amount + ", Current health: " + health);
         health -= (int)amount;
+        if (healthbar != null)
+        {
+            healthbar.UpdateHealth(health);
+        }
         if (health <= 0)
         {
             OnDeath();
@@ -77,6 +112,12 @@ public abstract class BaseEnemy : MonoBehaviour
     public virtual void ApplySlow(float slowFactor)
     {
         speed *= (1 - slowFactor);
+        Invoke("ResetSpeed", 2f);
+    }
+
+    void ResetSpeed()
+    {
+        speed = originalSpeed;
     }
 
     public virtual void ApplyDoT(float damagePerSecond, float duration)

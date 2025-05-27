@@ -10,10 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4367370256664430534}
   - component: {fileID: 2962281087769460476}
+  - component: {fileID: 6233564157888803260}
   - component: {fileID: 5016590106605713402}
   - component: {fileID: 3841671394626096645}
   - component: {fileID: 6518300584332342313}
-  m_Layer: 0
+  - component: {fileID: 1921232867185997594}
+  - component: {fileID: 8592278222314498032}
+  m_Layer: 6
   m_Name: MushroomEnemySprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -76,12 +79,12 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -601129325
-  m_SortingLayer: 7
-  m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.9716981, g: 0.2979263, b: 0.2979263, a: 1}
-  m_FlipX: 0
+  m_SortingLayerID: -1661489233
+  m_SortingLayer: 4
+  m_SortingOrder: 0
+  m_Sprite: {fileID: 6143221684603395509, guid: 57a393a39a32ea54fbdd74d180df6e6c, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -90,6 +93,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6233564157888803260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6927905278994613765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialHealth: 100
+  maxHealth: 100
+  worldOffset: 1
+  screenOffset: 5
+  healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
+  damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  healthbarWidth: 100
+  healthbarHeight: 10
 --- !u!114 &5016590106605713402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,11 +127,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  health: 50
+  health: 100
   damageToVillage: 10
+  damageToBarricade: 5
   canFly: 0
-  buffRange: 2
-  speedBuff: 0.2
 --- !u!61 &3841671394626096645
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -146,7 +169,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1, y: 1.5}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -181,3 +204,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &1921232867185997594
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6927905278994613765}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d80d3d73e8478e143a7b375e69f50e93, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8592278222314498032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6927905278994613765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7321340e3b2494e43b0405ff8af5030d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1921232867185997594}
+  spriteRenderer: {fileID: 2962281087769460476}

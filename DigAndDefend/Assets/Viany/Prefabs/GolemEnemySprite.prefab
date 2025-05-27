@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 5000944583434108955}
   - component: {fileID: 1290504270197900053}
+  - component: {fileID: -2583669042174817352}
   - component: {fileID: 7991308747363749666}
   - component: {fileID: 7715664031866646253}
   - component: {fileID: -5531179619215096276}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: GolemEnemySprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -30,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -76,9 +77,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -601129325
-  m_SortingLayer: 7
-  m_SortingOrder: 2
+  m_SortingLayerID: -1661489233
+  m_SortingLayer: 4
+  m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.41719976, g: 0.4528302, b: 0.3780705, a: 1}
   m_FlipX: 0
@@ -90,6 +91,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-2583669042174817352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911435512181864714}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialHealth: 200
+  maxHealth: 200
+  worldOffset: 1
+  screenOffset: 5
+  healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
+  damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  healthbarWidth: 100
+  healthbarHeight: 10
 --- !u!114 &7991308747363749666
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,8 +125,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  health: 50
+  health: 200
   damageToVillage: 10
+  damageToBarricade: 10
   canFly: 0
 --- !u!61 &7715664031866646253
 BoxCollider2D:

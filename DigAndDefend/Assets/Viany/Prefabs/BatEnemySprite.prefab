@@ -10,10 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 4449562930824124597}
   - component: {fileID: 2543674450535902968}
+  - component: {fileID: 8046451181018792035}
   - component: {fileID: -8093803367680705066}
   - component: {fileID: 5626067731632144468}
   - component: {fileID: 6294392102713326305}
-  m_Layer: 0
+  - component: {fileID: 4315421809242088600}
+  - component: {fileID: -3264126704837021354}
+  m_Layer: 6
   m_Name: BatEnemySprite
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -76,12 +79,12 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -601129325
-  m_SortingLayer: 7
-  m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.3490566, g: 0.26407096, b: 0.18934675, a: 1}
-  m_FlipX: 0
+  m_SortingLayerID: -1661489233
+  m_SortingLayer: 4
+  m_SortingOrder: 0
+  m_Sprite: {fileID: -5615083056166418387, guid: 571a5319ea2306d4689f001411b58018, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
@@ -90,6 +93,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8046451181018792035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649929867844725364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialHealth: 50
+  maxHealth: 50
+  worldOffset: 1
+  screenOffset: 5
+  healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
+  damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  healthbarWidth: 100
+  healthbarHeight: 10
 --- !u!114 &-8093803367680705066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,6 +129,7 @@ MonoBehaviour:
   speed: 2
   health: 50
   damageToVillage: 10
+  damageToBarricade: 3
   canFly: 0
 --- !u!61 &5626067731632144468
 BoxCollider2D:
@@ -179,3 +204,39 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &4315421809242088600
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649929867844725364}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2540d47286f2ca34f87da0eea2e23ee6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-3264126704837021354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5649929867844725364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7321340e3b2494e43b0405ff8af5030d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 4315421809242088600}
+  spriteRenderer: {fileID: 2543674450535902968}

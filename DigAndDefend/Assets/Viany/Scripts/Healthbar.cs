@@ -2,24 +2,15 @@ using UnityEngine;
 
 public class Healthbar : MonoBehaviour
 {
-    [Header("Health Settings")]
     [SerializeField] private float initialHealth = 100f;
     [SerializeField] private float maxHealth = 100f;
-    [SerializeField] private float damagePerPress = 10f;
-
-    [Header("Position Settings")]
     [SerializeField] private float worldOffset = 1.0f;
     [SerializeField] private float screenOffset = 5f;
-
-    [Header("Color Settings")]
     [SerializeField] private Color healthColor = new Color(0.2f, 0.8f, 0.2f);
     [SerializeField] private Color damageColor = new Color(0.8f, 0.2f, 0.2f);
     [SerializeField] private Color outlineColor = new Color(0, 0, 0);
-
-    [Header("Size Settings")]
     [SerializeField] private float healthbarWidth = 100f;
     [SerializeField] private float healthbarHeight = 10f;
-
     private float health;
     private bool showHealthbar = false;
     private Camera mainCamera;
@@ -32,15 +23,21 @@ public class Healthbar : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F) && health > 0)
-        {
-            health = Mathf.Max(0, health - damagePerPress);
-            showHealthbar = true;
-        }
+    }
 
-        if (health <= 0)
+    public void SetInitialHealth(float newMaxHealth)
+    {
+        maxHealth = newMaxHealth;
+        health = newMaxHealth;
+    }
+
+    public void UpdateHealth(float newHealth)
+    {
+        Debug.Log("Updating health to: " + newHealth + ", Max: " + maxHealth);
+        health = Mathf.Clamp(newHealth, 0, maxHealth);
+        if (newHealth < initialHealth)
         {
-            showHealthbar = false;
+            showHealthbar = true;
         }
     }
 
