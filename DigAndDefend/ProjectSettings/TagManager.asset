@@ -50,11 +50,11 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
-  - name: Towers
-    uniqueID: 3003845275
-    locked: 0
   - name: Enemies
     uniqueID: 2633478063
+    locked: 0
+  - name: Towers
+    uniqueID: 3003845275
     locked: 0
   - name: UI
     uniqueID: 350214841
