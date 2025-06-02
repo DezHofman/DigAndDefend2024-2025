@@ -2,10 +2,10 @@ using UnityEngine;
 
 public abstract class BaseEnemy : MonoBehaviour
 {
-    public float speed = 2f;
-    public int health = 50;
-    public int damageToVillage = 10;
-    public float damageToBarricade = 10f;
+    public float speed;
+    public int health;
+    public int damageToVillage;
+    public float damageToBarricade;
     public bool canFly = false;
     private float originalSpeed;
     private Transform[] waypoints;
@@ -24,6 +24,19 @@ public abstract class BaseEnemy : MonoBehaviour
         {
             healthbar.SetInitialHealth(health);
         }
+
+        string enemyType = GetEnemyType();
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.sortingLayerName = enemyType;
+        }
+        EnemySortingManager.AssignSortingOrder(gameObject, enemyType, Vector2.zero);
+    }
+
+    protected virtual string GetEnemyType()
+    {
+        return "Unknown";
     }
 
     public void SetWaypoints(Transform[] pathWaypoints)
@@ -52,7 +65,6 @@ public abstract class BaseEnemy : MonoBehaviour
 
         if (spriteController != null)
         {
-            Debug.Log("Direction passed: " + direction);
             spriteController.UpdateSpriteDirection(direction);
         }
 
@@ -76,6 +88,9 @@ public abstract class BaseEnemy : MonoBehaviour
                 }
             }
         }
+
+        string enemyType = GetEnemyType();
+        EnemySortingManager.ReassignOrders(enemyType, direction);
     }
 
     void ResumeMovement()
@@ -106,6 +121,8 @@ public abstract class BaseEnemy : MonoBehaviour
 
     protected virtual void OnDeath()
     {
+        string enemyType = GetEnemyType();
+        EnemySortingManager.ReleaseSortingOrder(gameObject, enemyType);
         Destroy(gameObject);
     }
 

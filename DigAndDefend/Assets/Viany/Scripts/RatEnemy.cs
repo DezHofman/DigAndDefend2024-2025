@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class RatEnemy : BaseEnemy
 {
-    private void Start()
+    protected override string GetEnemyType()
     {
-        speed = 3f;
-        health = 50;
+        return "Rat";
     }
 }

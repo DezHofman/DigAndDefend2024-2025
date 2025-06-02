@@ -50,7 +50,16 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
-  - name: Enemies
+  - name: Golem
+    uniqueID: 3333086415
+    locked: 0
+  - name: Rat
+    uniqueID: 240652385
+    locked: 0
+  - name: Mushroom
+    uniqueID: 919227991
+    locked: 0
+  - name: Bat
     uniqueID: 2633478063
     locked: 0
   - name: Towers

@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class BatEnemy : BaseEnemy
 {
-    private void Start()
+    protected override string GetEnemyType()
     {
-        canFly = true;
-        health = 50;
+        return "Bat";
     }
 }

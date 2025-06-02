@@ -2,11 +2,8 @@ using UnityEngine;
 
 public class MushroomEnemy : BaseEnemy
 {
-    private void Start()
+    protected override string GetEnemyType()
     {
-        canFly = false;
-        health = 100;
-        speed = 2f;
-        damageToVillage = 10;
+        return "Mushroom";
     }
 }

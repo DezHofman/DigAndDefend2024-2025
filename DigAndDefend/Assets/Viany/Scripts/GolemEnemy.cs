@@ -2,11 +2,8 @@ using UnityEngine;
 
 public class GolemEnemy : BaseEnemy
 {
-    private void Start()
+    protected override string GetEnemyType()
     {
-        canFly = false;
-        health = 1000;
-        speed = 0.75f;
-        damageToVillage = 15;
+        return "Golem";
     }
 }
