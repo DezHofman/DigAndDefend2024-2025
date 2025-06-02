@@ -50,17 +50,41 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
-  - name: Golem
-    uniqueID: 3333086415
+  - name: Rat_Up
+    uniqueID: 1308860815
+    locked: 0
+  - name: Rat_Down
+    uniqueID: 30435835
     locked: 0
   - name: Rat
     uniqueID: 240652385
     locked: 0
+  - name: Mushroom_Up
+    uniqueID: 2413524021
+    locked: 0
+  - name: Mushroom_Down
+    uniqueID: 719682479
+    locked: 0
   - name: Mushroom
     uniqueID: 919227991
     locked: 0
+  - name: Bat_Up
+    uniqueID: 1500941499
+    locked: 0
+  - name: Bat_Down
+    uniqueID: 2553024283
+    locked: 0
   - name: Bat
     uniqueID: 2633478063
+    locked: 0
+  - name: Golem_Up
+    uniqueID: 312036705
+    locked: 0
+  - name: Golem_Down
+    uniqueID: 3600790507
+    locked: 0
+  - name: Golem
+    uniqueID: 3333086415
     locked: 0
   - name: Towers
     uniqueID: 3003845275

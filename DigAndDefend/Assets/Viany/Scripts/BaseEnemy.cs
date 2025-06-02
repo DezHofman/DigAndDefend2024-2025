@@ -6,13 +6,14 @@ public abstract class BaseEnemy : MonoBehaviour
     public int health;
     public int damageToVillage;
     public float damageToBarricade;
-    public bool canFly = false;
+    public bool canFly;
     private float originalSpeed;
     private Transform[] waypoints;
     private int currentWaypoint = 0;
     private Healthbar healthbar;
     private bool isAttackingBarricade = false;
     private EnemySpriteController spriteController;
+    private SpriteRenderer spriteRenderer;
 
     private void Awake()
     {
@@ -20,18 +21,18 @@ public abstract class BaseEnemy : MonoBehaviour
         originalSpeed = speed;
         healthbar = GetComponent<Healthbar>();
         spriteController = GetComponent<EnemySpriteController>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (healthbar != null)
         {
             healthbar.SetInitialHealth(health);
         }
 
-        string enemyType = GetEnemyType();
-        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
-        if (sr != null)
+        if (spriteRenderer != null)
         {
-            sr.sortingLayerName = enemyType;
+            string enemyType = GetEnemyType();
+            SetSortingLayer(enemyType, "");
+            EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
         }
-        EnemySortingManager.AssignSortingOrder(gameObject, enemyType, Vector2.zero);
     }
 
     protected virtual string GetEnemyType()
@@ -89,8 +90,95 @@ public abstract class BaseEnemy : MonoBehaviour
             }
         }
 
-        string enemyType = GetEnemyType();
-        EnemySortingManager.ReassignOrders(enemyType, direction);
+        if (spriteRenderer != null)
+        {
+            string enemyType = GetEnemyType();
+            UpdateSortingLayer(enemyType, direction);
+        }
+    }
+
+    void UpdateSortingLayer(string enemyType, Vector2 direction)
+    {
+        string layerSuffix;
+        if (direction.y > 0.7f) // Moving up
+        {
+            layerSuffix = "Up";
+        }
+        else if (direction.y < -0.7f) // Moving down
+        {
+            layerSuffix = "Down";
+        }
+        else // Moving left or right
+        {
+            layerSuffix = ""; // No suffix for left/right
+        }
+
+        SetSortingLayer(enemyType, layerSuffix);
+    }
+
+    void SetSortingLayer(string enemyType, string suffix)
+    {
+        string layerName = string.IsNullOrEmpty(suffix) ? enemyType : $"{enemyType}_{suffix}";
+        spriteRenderer.sortingLayerName = layerName;
+
+        var enemies = EnemySortingManager.GetActiveEnemies(enemyType);
+        if (enemies == null) return;
+        int enemyCount = enemies.Count;
+        int myIndex = enemies.IndexOf(gameObject);
+        if (myIndex < 0) myIndex = enemyCount; // Assign last if not found
+
+        // Base and max order for each direction
+        int baseOrder, maxOrder;
+        bool reverseOrder = false; // Flag to reverse order for down and left/right
+        switch (suffix)
+        {
+            case "Up":
+                baseOrder = 500;
+                maxOrder = 999;
+                reverseOrder = false; // First enemy behind, last in front
+                break;
+            case "":
+                baseOrder = 0;
+                maxOrder = 499;
+                reverseOrder = true; // First enemy in front, last behind
+                break;
+            case "Down":
+                baseOrder = 1000;
+                maxOrder = 1500;
+                reverseOrder = true; // First enemy in front, last behind
+                break;
+            default:
+                baseOrder = 0;
+                maxOrder = 499;
+                reverseOrder = true;
+                break;
+        }
+
+        // Calculate order
+        int order;
+        if (enemyCount > 1)
+        {
+            int orderRange = maxOrder - baseOrder;
+            if (reverseOrder)
+            {
+                // Reverse: first enemy gets maxOrder, last gets baseOrder
+                order = maxOrder - (myIndex * (orderRange / (enemyCount - 1)));
+            }
+            else
+            {
+                // Normal: first enemy gets baseOrder, last gets maxOrder
+                order = baseOrder + (myIndex * (orderRange / (enemyCount - 1)));
+            }
+        }
+        else
+        {
+            order = reverseOrder ? maxOrder : baseOrder; // Single enemy
+        }
+
+        // Ensure order stays within range
+        spriteRenderer.sortingOrder = Mathf.Clamp(order, baseOrder, maxOrder);
+
+        Debug.Log($"Set {gameObject.name} to layer: {layerName}, order: {spriteRenderer.sortingOrder}, index: {myIndex}, count: {enemyCount}, direction: {Vector2.up}, frame: {Time.frameCount}");
     }
 
     void ResumeMovement()
