@@ -609,6 +609,7 @@ GameObject:
   - component: {fileID: 2134722578}
   - component: {fileID: 2134722577}
   - component: {fileID: 2134722576}
+  - component: {fileID: 2134722579}
   m_Layer: 0
   m_Name: Golem Sprite + Animation1_0
   m_TagString: Untagged
@@ -682,7 +683,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4347263676452765611, guid: 8f318a885344a87429aebe427d4dc6fd, type: 3}
+  m_Sprite: {fileID: 7442011638144306443, guid: f9cb3566efd9e9e4e82de735aea9d402, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -708,6 +709,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2134722579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2134722575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d75b8fd56592c74cbc0e6b5214b4853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2134722576}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,31 +1,31 @@
 fileFormatVersion: 2
-guid: 9be31fa3af377314f9a1573ff472a670
+guid: f9cb3566efd9e9e4e82de735aea9d402
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6471618215883147405
-    second: Golem Sprite + Animation2 1_0
+      213: 7442011638144306443
+    second: Golem Sprite + Animation1 1_0
   - first:
-      213: 2050312953856244248
-    second: Golem Sprite + Animation2 1_1
+      213: 232824499813128457
+    second: Golem Sprite + Animation1 1_1
   - first:
-      213: 4375493994499308953
-    second: Golem Sprite + Animation2 1_2
+      213: 8004980374677515489
+    second: Golem Sprite + Animation1 1_2
   - first:
-      213: -4051631303395460080
-    second: Golem Sprite + Animation2 1_3
+      213: 520558810871329457
+    second: Golem Sprite + Animation1 1_3
   - first:
-      213: 740819058031084899
-    second: Golem Sprite + Animation2 1_4
+      213: 7690820255980490876
+    second: Golem Sprite + Animation1 1_4
   - first:
-      213: -4502325991974164581
-    second: Golem Sprite + Animation2 1_5
+      213: -9008392736560798000
+    second: Golem Sprite + Animation1 1_5
   - first:
-      213: 3727390348541796982
-    second: Golem Sprite + Animation2 1_6
+      213: -7316049058981806130
+    second: Golem Sprite + Animation1 1_6
   - first:
-      213: -3197607433486380436
-    second: Golem Sprite + Animation2 1_7
+      213: 1521720376047258771
+    second: Golem Sprite + Animation1 1_7
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -121,7 +121,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_0
+      name: Golem Sprite + Animation1 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -136,14 +136,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d8889afaa7ecfc950800000000000000
-      internalID: 6471618215883147405
+      spriteID: b0d0ae9c726574760800000000000000
+      internalID: 7442011638144306443
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_1
+      name: Golem Sprite + Animation1 1_1
       rect:
         serializedVersion: 2
         x: 48
@@ -158,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 81abbfcb4cc247c10800000000000000
-      internalID: 2050312953856244248
+      spriteID: 9099e5626a82b3300800000000000000
+      internalID: 232824499813128457
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_2
+      name: Golem Sprite + Animation1 1_2
       rect:
         serializedVersion: 2
         x: 96
@@ -180,14 +180,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 99d7cfa0b90e8bc30800000000000000
-      internalID: 4375493994499308953
+      spriteID: 1ec60a21d37671f60800000000000000
+      internalID: 8004980374677515489
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_3
+      name: Golem Sprite + Animation1 1_3
       rect:
         serializedVersion: 2
         x: 144
@@ -202,14 +202,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 01cb248cbc6b5c7c0800000000000000
-      internalID: -4051631303395460080
+      spriteID: 1b27faefa75693700800000000000000
+      internalID: 520558810871329457
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_4
+      name: Golem Sprite + Animation1 1_4
       rect:
         serializedVersion: 2
         x: 192
@@ -224,14 +224,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 36548cc120be74a00800000000000000
-      internalID: 740819058031084899
+      spriteID: c70981d66484bba60800000000000000
+      internalID: 7690820255980490876
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_5
+      name: Golem Sprite + Animation1 1_5
       rect:
         serializedVersion: 2
         x: 240
@@ -246,14 +246,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b972f595d568481c0800000000000000
-      internalID: -4502325991974164581
+      spriteID: 0d6a51cd882cbf280800000000000000
+      internalID: -9008392736560798000
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_6
+      name: Golem Sprite + Animation1 1_6
       rect:
         serializedVersion: 2
         x: 288
@@ -268,14 +268,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 672ad0006c95ab330800000000000000
-      internalID: 3727390348541796982
+      spriteID: ecffe08942c287a90800000000000000
+      internalID: -7316049058981806130
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Golem Sprite + Animation2 1_7
+      name: Golem Sprite + Animation1 1_7
       rect:
         serializedVersion: 2
         x: 336
@@ -290,8 +290,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c6255eb1bf0df93d0800000000000000
-      internalID: -3197607433486380436
+      spriteID: 39c45cd9e9c3e1510800000000000000
+      internalID: 1521720376047258771
       vertices: []
       indices: 
       edges: []
@@ -300,7 +300,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 70ac8574495f94f4095279d27c9ec09c
+    spriteID: 811750d93b922294bb91bf15482a037e
     internalID: 0
     vertices: []
     indices: 
@@ -310,14 +310,14 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Golem Sprite + Animation2 1_0: 6471618215883147405
-      Golem Sprite + Animation2 1_1: 2050312953856244248
-      Golem Sprite + Animation2 1_2: 4375493994499308953
-      Golem Sprite + Animation2 1_3: -4051631303395460080
-      Golem Sprite + Animation2 1_4: 740819058031084899
-      Golem Sprite + Animation2 1_5: -4502325991974164581
-      Golem Sprite + Animation2 1_6: 3727390348541796982
-      Golem Sprite + Animation2 1_7: -3197607433486380436
+      Golem Sprite + Animation1 1_0: 7442011638144306443
+      Golem Sprite + Animation1 1_1: 232824499813128457
+      Golem Sprite + Animation1 1_2: 8004980374677515489
+      Golem Sprite + Animation1 1_3: 520558810871329457
+      Golem Sprite + Animation1 1_4: 7690820255980490876
+      Golem Sprite + Animation1 1_5: -9008392736560798000
+      Golem Sprite + Animation1 1_6: -7316049058981806130
+      Golem Sprite + Animation1 1_7: 1521720376047258771
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
