@@ -19,7 +19,6 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void Start()
     {
-        // Store the initial position set by TowerPlacement.cs
         initialPosition = transform.position;
         Debug.Log($"{gameObject.name} - Initial position set: {initialPosition}");
 
@@ -38,18 +37,15 @@ public abstract class Tower : MonoBehaviour
         }
         gameObject.tag = "Tower";
 
-        // Log positions for debugging
         Debug.Log($"{gameObject.name} - Tower position after setup: {transform.position}, " +
                   $"Sprite local position: {spriteRenderer.transform.localPosition}, " +
                   $"Sprite world position: {spriteRenderer.transform.position}");
 
-        // Instantiate range indicator without offset
         rangeIndicator = Instantiate(rangeIndicatorPrefab, transform.position, Quaternion.identity, transform);
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
         rangeIndicator.SetActive(false);
         rangeIndicator.layer = LayerMask.NameToLayer("Ignore Raycast");
 
-        // Force the position to the initial position to prevent reset
         if (transform.position != initialPosition)
         {
             Debug.LogWarning($"{gameObject.name} - Position reset detected, restoring to: {initialPosition}");
@@ -66,7 +62,6 @@ public abstract class Tower : MonoBehaviour
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
         Debug.Log($"{gameObject.name} - Tower position in LateStart: {transform.position}");
 
-        // Check position again after a frame
         if (transform.position != initialPosition)
         {
             Debug.LogWarning($"{gameObject.name} - Position reset detected in LateStart, restoring to: {initialPosition}");
@@ -97,8 +92,7 @@ public abstract class Tower : MonoBehaviour
             }
         }
 
-        // Log position in Update to check for changes
-        if (Time.frameCount % 60 == 0) // Log every second
+        if (Time.frameCount % 60 == 0)
         {
             Debug.Log($"{gameObject.name} - Tower position in Update: {transform.position}");
             if (transform.position != initialPosition)

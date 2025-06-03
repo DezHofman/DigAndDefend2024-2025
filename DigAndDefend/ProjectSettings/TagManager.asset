@@ -50,6 +50,9 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
+  - name: Tower_Layer
+    uniqueID: 2698517123
+    locked: 0
   - name: Golem_Up
     uniqueID: 312036705
     locked: 0

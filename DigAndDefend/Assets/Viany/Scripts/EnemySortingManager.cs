@@ -13,6 +13,7 @@ public class EnemySortingManager : MonoBehaviour
 
     private void Awake()
     {
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
     }
 

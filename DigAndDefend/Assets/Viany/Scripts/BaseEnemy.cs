@@ -100,17 +100,17 @@ public abstract class BaseEnemy : MonoBehaviour
     void UpdateSortingLayer(string enemyType, Vector2 direction)
     {
         string layerSuffix;
-        if (direction.y > 0.7f) // Moving up
+        if (direction.y > 0.7f)
         {
             layerSuffix = "Up";
         }
-        else if (direction.y < -0.7f) // Moving down
+        else if (direction.y < -0.7f)
         {
             layerSuffix = "Down";
         }
-        else // Moving left or right
+        else
         {
-            layerSuffix = ""; // No suffix for left/right
+            layerSuffix = "";
         }
 
         SetSortingLayer(enemyType, layerSuffix);
@@ -125,27 +125,26 @@ public abstract class BaseEnemy : MonoBehaviour
         if (enemies == null) return;
         int enemyCount = enemies.Count;
         int myIndex = enemies.IndexOf(gameObject);
-        if (myIndex < 0) myIndex = enemyCount; // Assign last if not found
+        if (myIndex < 0) myIndex = enemyCount;
 
-        // Base and max order for each direction
         int baseOrder, maxOrder;
-        bool reverseOrder = false; // Flag to reverse order for down and left/right
+        bool reverseOrder = false;
         switch (suffix)
         {
             case "Up":
                 baseOrder = 500;
                 maxOrder = 999;
-                reverseOrder = false; // First enemy behind, last in front
+                reverseOrder = false;
                 break;
             case "":
                 baseOrder = 0;
                 maxOrder = 499;
-                reverseOrder = true; // First enemy in front, last behind
+                reverseOrder = true;
                 break;
             case "Down":
                 baseOrder = 1000;
                 maxOrder = 1500;
-                reverseOrder = true; // First enemy in front, last behind
+                reverseOrder = true;
                 break;
             default:
                 baseOrder = 0;
@@ -154,28 +153,24 @@ public abstract class BaseEnemy : MonoBehaviour
                 break;
         }
 
-        // Calculate order
         int order;
         if (enemyCount > 1)
         {
             int orderRange = maxOrder - baseOrder;
             if (reverseOrder)
             {
-                // Reverse: first enemy gets maxOrder, last gets baseOrder
                 order = maxOrder - (myIndex * (orderRange / (enemyCount - 1)));
             }
             else
             {
-                // Normal: first enemy gets baseOrder, last gets maxOrder
                 order = baseOrder + (myIndex * (orderRange / (enemyCount - 1)));
             }
         }
         else
         {
-            order = reverseOrder ? maxOrder : baseOrder; // Single enemy
+            order = reverseOrder ? maxOrder : baseOrder;
         }
 
-        // Ensure order stays within range
         spriteRenderer.sortingOrder = Mathf.Clamp(order, baseOrder, maxOrder);
 
         Debug.Log($"Set {gameObject.name} to layer: {layerName}, order: {spriteRenderer.sortingOrder}, index: {myIndex}, count: {enemyCount}, direction: {Vector2.up}, frame: {Time.frameCount}");
