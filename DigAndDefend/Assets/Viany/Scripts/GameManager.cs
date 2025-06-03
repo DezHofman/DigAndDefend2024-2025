@@ -100,4 +100,20 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+
+    public void EnableStartButton()
+    {
+        if (startWaveButton != null && !isGameOver && currentWave < totalWaves)
+        {
+            startWaveButton.interactable = true;
+            if (buttonImage != null && normalSprite != null)
+            {
+                buttonImage.sprite = normalSprite;
+            }
+            else
+            {
+                Debug.LogWarning("Failed to revert sprite: buttonImage or normalSprite is null.");
+            }
+        }
+    }
 }
