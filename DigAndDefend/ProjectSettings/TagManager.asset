@@ -50,6 +50,15 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
+  - name: Golem_Up
+    uniqueID: 312036705
+    locked: 0
+  - name: Golem_Down
+    uniqueID: 3600790507
+    locked: 0
+  - name: Golem
+    uniqueID: 3333086415
+    locked: 0
   - name: Rat_Up
     uniqueID: 1308860815
     locked: 0
@@ -76,15 +85,6 @@ TagManager:
     locked: 0
   - name: Bat
     uniqueID: 2633478063
-    locked: 0
-  - name: Golem_Up
-    uniqueID: 312036705
-    locked: 0
-  - name: Golem_Down
-    uniqueID: 3600790507
-    locked: 0
-  - name: Golem
-    uniqueID: 3333086415
     locked: 0
   - name: Towers
     uniqueID: 3003845275
