@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 970cdb36b9af33143a9bafb9b721ffb2, type: 3}
   m_Name: Wave4
   m_EditorClassIdentifier: 
-  enemySpawnOrder: 01000000020000000300000000000000010000000300000002000000
+  enemySpawnOrder: 0300000003000000030000000300000003000000
