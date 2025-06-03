@@ -29,6 +29,7 @@ public class WaveManager : MonoBehaviour
             { EnemyType.Bat, batPrefab },
             { EnemyType.Rat, ratPrefab }
         };
+        Debug.Log("WaveManager initialized with prefabs: " + string.Join(", ", enemyTypeToPrefab.Keys));
     }
 
     private void Start()
@@ -38,9 +39,11 @@ public class WaveManager : MonoBehaviour
 
     public void StartWave()
     {
+        Debug.Log("Starting wave: " + (currentWaveIndex + 1));
         currentWaveIndex++;
         if (currentWaveIndex >= waves.Length || GameManager.Instance.isGameOver)
         {
+            Debug.Log("Wave start aborted: index " + currentWaveIndex + " or game over.");
             return;
         }
 
@@ -53,6 +56,7 @@ public class WaveManager : MonoBehaviour
 
     void SpawnEnemy()
     {
+        Debug.Log("Attempting to spawn enemy, count: " + currentEnemyCount + "/" + currentSpawnOrder.Count);
         if (currentEnemyCount < currentSpawnOrder.Count)
         {
             EnemyType type = currentSpawnOrder[currentEnemyCount];
@@ -60,8 +64,28 @@ public class WaveManager : MonoBehaviour
             if (enemyTypeToPrefab.TryGetValue(type, out GameObject prefab) && prefab != null)
             {
                 GameObject enemyObj = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
-                BaseEnemy enemy = enemyObj.GetComponent<BaseEnemy>();
-                enemy.SetWaypoints(pathWaypoints);
+                if (enemyObj != null)
+                {
+                    BaseEnemy enemy = enemyObj.GetComponent<BaseEnemy>();
+                    if (enemy != null)
+                    {
+                        enemy.SetWaypoints(pathWaypoints);
+                        enemyObj.tag = "Enemy"; // Ensure tag is set
+                        Debug.Log("Spawned " + type + " at " + spawnPoint.position);
+                    }
+                    else
+                    {
+                        Debug.LogError("No BaseEnemy component on " + prefab.name);
+                    }
+                }
+                else
+                {
+                    Debug.LogError("Failed to instantiate " + type);
+                }
+            }
+            else
+            {
+                Debug.LogError("Prefab not found or null for " + type);
             }
 
             currentEnemyCount++;
@@ -69,15 +93,31 @@ public class WaveManager : MonoBehaviour
         else
         {
             CancelInvoke("SpawnEnemy");
+            Debug.Log("All enemies scheduled, checking completion in " + (timeBetweenSpawns + 1f) + "s");
             Invoke("CheckWaveComplete", timeBetweenSpawns + 1f);
         }
     }
 
     void CheckWaveComplete()
     {
-        if (GameObject.FindGameObjectsWithTag("Enemy").Length == 0)
+        int enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
+        Debug.Log("Checking wave complete, enemies remaining: " + enemyCount);
+        if (enemyCount == 0)
         {
-            GameManager.Instance.StartNextWave();
+            if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave <= GameManager.Instance.totalWaves)
+            {
+                Debug.Log("Wave complete, enabling start button.");
+                GameManager.Instance.EnableStartButton();
+            }
+            else
+            {
+                Debug.Log("Wave complete but game over or no more waves.");
+            }
+        }
+        else
+        {
+            Debug.Log("Wave not complete, rescheduling check.");
+            Invoke("CheckWaveComplete", timeBetweenSpawns + 1f);
         }
     }
 
