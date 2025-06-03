@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -11,11 +12,17 @@ public class GameManager : MonoBehaviour
     public TMP_Text healthText;
     public WaveManager waveManager;
 
+    [SerializeField] private Button startWaveButton; // Assign the button in Inspector
+    [SerializeField] private Sprite normalSprite;   // Assign the default sprite
+    [SerializeField] private Sprite startedSprite;  // Assign the "wave started" sprite
+    private Image buttonImage;                      // Reference to the button's Image
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -26,6 +33,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         UpdateHealthUI();
+        if (startWaveButton != null)
+        {
+            buttonImage = startWaveButton.GetComponent<Image>();
+            if (buttonImage != null)
+            {
+                buttonImage.sprite = normalSprite; // Set initial sprite
+            }
+            else
+            {
+                Debug.LogError("Image component not found on startWaveButton.");
+            }
+        }
+        else
+        {
+            Debug.LogError("startWaveButton not assigned in Inspector.");
+        }
     }
 
     public void TakeDamage(int damage)
@@ -52,15 +75,29 @@ public class GameManager : MonoBehaviour
 
     public void StartNextWave()
     {
-        currentWave++;
-        if (currentWave > totalWaves)
+        if (startWaveButton != null && startWaveButton.interactable)
         {
-            Debug.Log("All waves completed! You win!");
-            isGameOver = true;
-        }
-        else
-        {
-            waveManager.StartWave();
+            currentWave++;
+            if (currentWave > totalWaves)
+            {
+                Debug.Log("All waves completed! You win!");
+                isGameOver = true;
+            }
+            else
+            {
+                waveManager.StartWave();
+            }
+
+            // Disable the button and change sprite
+            startWaveButton.interactable = false;
+            if (buttonImage != null && startedSprite != null)
+            {
+                buttonImage.sprite = startedSprite;
+            }
+            else
+            {
+                Debug.LogWarning("Failed to change sprite: buttonImage or startedSprite is null.");
+            }
         }
     }
 }

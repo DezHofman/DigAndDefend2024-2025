@@ -35,12 +35,14 @@ public class ShopManager : MonoBehaviour
         UpdateDisplay();
         openedShop.SetActive(true);
         closedShop.SetActive(false);
+        openButton.gameObject.SetActive(false); // Hide the open button
     }
 
     private void CloseShop()
     {
         openedShop.SetActive(false);
         closedShop.SetActive(true);
+        openButton.gameObject.SetActive(true); // Show the open button
     }
 
     private void NextItem()
