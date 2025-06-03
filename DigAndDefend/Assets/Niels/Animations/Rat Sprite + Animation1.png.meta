@@ -1,19 +1,19 @@
 fileFormatVersion: 2
-guid: 6cc10aff105108b488ab50343bb49ac0
+guid: cfce682dae4f04f48b541bb709533463
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7171252454481573434
-    second: Rat Sprite + Animation_0
+      213: 3713595503836188120
+    second: Rat Sprite + Animation1_0
   - first:
-      213: 4585985695864617336
-    second: Rat Sprite + Animation_1
+      213: 5878624677193197848
+    second: Rat Sprite + Animation1_1
   - first:
-      213: -3682306245247631399
-    second: Rat Sprite + Animation_2
+      213: 692556240895146717
+    second: Rat Sprite + Animation1_2
   - first:
-      213: 994951363069999022
-    second: Rat Sprite + Animation_3
+      213: -2684199495485862345
+    second: Rat Sprite + Animation1_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,13 +109,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Rat Sprite + Animation_0
+      name: Rat Sprite + Animation1_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 48
-        height: 32
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -124,20 +124,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6c94af733e79a7c90800000000000000
-      internalID: -7171252454481573434
+      spriteID: 8ddc4ad6f67598330800000000000000
+      internalID: 3713595503836188120
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Rat Sprite + Animation_1
+      name: Rat Sprite + Animation1_1
       rect:
         serializedVersion: 2
         x: 48
         y: 0
         width: 48
-        height: 32
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -146,20 +146,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 879780b51b1b4af30800000000000000
-      internalID: 4585985695864617336
+      spriteID: 81922f36ff1159150800000000000000
+      internalID: 5878624677193197848
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Rat Sprite + Animation_2
+      name: Rat Sprite + Animation1_2
       rect:
         serializedVersion: 2
         x: 96
         y: 0
         width: 48
-        height: 32
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,20 +168,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9dfffc9caf1d5ecc0800000000000000
-      internalID: -3682306245247631399
+      spriteID: ddaf8855b347c9900800000000000000
+      internalID: 692556240895146717
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Rat Sprite + Animation_3
+      name: Rat Sprite + Animation1_3
       rect:
         serializedVersion: 2
         x: 144
         y: 0
         width: 48
-        height: 32
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -190,8 +190,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ea7f3944ef6cecd00800000000000000
-      internalID: 994951363069999022
+      spriteID: 73e4845c7cecfbad0800000000000000
+      internalID: -2684199495485862345
       vertices: []
       indices: 
       edges: []
@@ -200,7 +200,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: a3cc6e261419f0c4cb6df956ca4c46aa
+    spriteID: 5067a9abadfa4824d924e480f01223a1
     internalID: 0
     vertices: []
     indices: 
@@ -210,10 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Rat Sprite + Animation_0: -7171252454481573434
-      Rat Sprite + Animation_1: 4585985695864617336
-      Rat Sprite + Animation_2: -3682306245247631399
-      Rat Sprite + Animation_3: 994951363069999022
+      Rat Sprite + Animation1_0: 3713595503836188120
+      Rat Sprite + Animation1_1: 5878624677193197848
+      Rat Sprite + Animation1_2: 692556240895146717
+      Rat Sprite + Animation1_3: -2684199495485862345
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
