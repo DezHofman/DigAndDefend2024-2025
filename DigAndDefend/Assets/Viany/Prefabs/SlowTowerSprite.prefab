@@ -106,8 +106,7 @@ MonoBehaviour:
   attackDamage: 5
   rangeDisplayDuration: 5
   rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
-  slowFactor: 0.3
-  slowDuration: 3
+  projectilePrefab: {fileID: 944500335357975579, guid: b27ebe56f91e9a64ab8cc72a936ef35c, type: 3}
 --- !u!58 &4332321452353683295
 CircleCollider2D:
   m_ObjectHideFlags: 0

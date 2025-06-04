@@ -8,6 +8,7 @@ public abstract class Tower : MonoBehaviour
     public float attackDamage;
     public float rangeDisplayDuration;
     public GameObject rangeIndicatorPrefab;
+    [SerializeField] protected GameObject projectilePrefab;
     protected float timeSinceLastAttack;
     protected CircleCollider2D attackCollider;
     private GameObject rangeIndicator;
@@ -130,6 +131,32 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
+            ApplyDamageToEnemies(enemies);
+        }
+    }
+
+    protected void SpawnProjectile(Transform target, Vector3 position)
+    {
+        if (projectilePrefab != null)
+        {
+            GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+            Projectile proj = projectile.GetComponent<Projectile>();
+            if (proj != null)
+            {
+                proj.Initialize(this, target, position, 1f / attackSpeed);
+            }
+        }
+    }
+
+    protected virtual void ApplyDamageToEnemies(Collider2D[] enemies)
+    {
+        foreach (Collider2D enemyCollider in enemies)
+        {
+            BaseEnemy enemy = enemyCollider.GetComponent<BaseEnemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(attackDamage);
+            }
         }
     }
 

@@ -14,6 +14,7 @@ public abstract class BaseEnemy : MonoBehaviour
     private bool isAttackingBarricade = false;
     private EnemySpriteController spriteController;
     private SpriteRenderer spriteRenderer;
+    private float slowDuration;
 
     private void Awake()
     {
@@ -45,8 +46,22 @@ public abstract class BaseEnemy : MonoBehaviour
         waypoints = pathWaypoints;
     }
 
+    public Transform[] GetWaypoints()
+    {
+        return waypoints;
+    }
+
     void Update()
     {
+        if (slowDuration > 0)
+        {
+            slowDuration -= Time.deltaTime;
+            if (slowDuration <= 0)
+            {
+                ResetSpeed();
+            }
+        }
+
         if (currentWaypoint < waypoints.Length)
         {
             MoveTowardsWaypoint();
@@ -209,15 +224,17 @@ public abstract class BaseEnemy : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public virtual void ApplySlow(float slowFactor)
+    public virtual void ApplySlow(float slowFactor, float duration)
     {
-        speed *= (1 - slowFactor);
-        Invoke("ResetSpeed", 2f);
+        slowFactor = Mathf.Clamp01(slowFactor);
+        speed = originalSpeed * (1f - slowFactor);
+        slowDuration = duration;
     }
 
     void ResetSpeed()
     {
         speed = originalSpeed;
+        slowDuration = 0f;
     }
 
     public virtual void ApplyDoT(float damagePerSecond, float duration)

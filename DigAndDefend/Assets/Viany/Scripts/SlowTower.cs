@@ -2,24 +2,23 @@ using UnityEngine;
 
 public class SlowTower : Tower
 {
-    public float slowFactor = 0.3f;
-    public float slowDuration = 3f;
-
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     protected override void HandleAttack(Collider2D[] enemies)
     {
-        foreach (Collider2D enemyCollider in enemies)
+        Collider2D closestEnemy = null;
+        float closestDistance = float.MaxValue;
+        foreach (Collider2D enemy in enemies)
         {
-            BaseEnemy enemy = enemyCollider.GetComponent<BaseEnemy>();
-            if (enemy != null)
+            float distance = Vector2.Distance(transform.position, enemy.transform.position);
+            if (distance < closestDistance)
             {
-                enemy.TakeDamage(attackDamage);
-                enemy.ApplySlow(slowFactor);
+                closestDistance = distance;
+                closestEnemy = enemy;
             }
+        }
+
+        if (closestEnemy != null)
+        {
+            SpawnProjectile(closestEnemy.transform, closestEnemy.transform.position);
         }
     }
 }
