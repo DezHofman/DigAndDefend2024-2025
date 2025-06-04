@@ -9,8 +9,8 @@ public class TowerPlacement : MonoBehaviour
     [SerializeField] private Tilemap pathTilemap;
     [SerializeField] private Tilemap bigRocksTilemap;
     [SerializeField] private GameObject placementPreviewPrefab;
-    [SerializeField] private float canPlaceOpacity = 0.5f;
-    [SerializeField] private float cannotPlaceOpacity = 0.5f;
+    [SerializeField] private float canPlaceOpacity;
+    [SerializeField] private float cannotPlaceOpacity;
     private int selectedTowerIndex = -1;
     private GameObject placementPreview;
     private SpriteRenderer previewRenderer;
@@ -34,11 +34,23 @@ public class TowerPlacement : MonoBehaviour
             placementPreview.SetActive(true);
             placementPreview.transform.position = placementPosition;
 
+            // Update the preview sprite to match the selected tower
+            Sprite towerSprite = GetTowerSprite(selectedTowerIndex);
+            if (towerSprite != null)
+            {
+                previewRenderer.sprite = towerSprite;
+                Debug.Log($"TowerPlacement: Preview sprite updated for tower index {selectedTowerIndex}");
+            }
+            else
+            {
+                Debug.LogWarning($"TowerPlacement: Could not retrieve sprite for tower index {selectedTowerIndex}");
+            }
+
             bool isOnPath = pathTilemap.HasTile(cellPosition);
             bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
             bool canPlace = false;
 
-            if (selectedTowerIndex == 4)
+            if (selectedTowerIndex == 4) // Barricade
             {
                 if (isOnPath && !isOnBigRocks)
                 {
@@ -112,6 +124,24 @@ public class TowerPlacement : MonoBehaviour
     public void SetSelectedTowerIndex(int index)
     {
         selectedTowerIndex = index;
+        Debug.Log($"TowerPlacement: Selected tower index set to {index}");
+    }
+
+    private Sprite GetTowerSprite(int towerIndex)
+    {
+        if (towerIndex < 0 || towerIndex >= towerPrefabs.Length)
+        {
+            return null;
+        }
+
+        GameObject towerPrefab = towerPrefabs[towerIndex];
+        SpriteRenderer spriteRenderer = towerPrefab.GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            return spriteRenderer.sprite;
+        }
+
+        return null;
     }
 
     private void OnDestroy()

@@ -82,7 +82,7 @@ SpriteRenderer:
   m_SortingLayerID: -961880881
   m_SortingLayer: 6
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7442011638144306443, guid: f9cb3566efd9e9e4e82de735aea9d402, type: 3}
+  m_Sprite: {fileID: 4347263676452765611, guid: 599d511c1bad5e44b9cf76d0d92345ce, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   initialHealth: 1000
   maxHealth: 1000
   worldOffset: 1
-  screenOffset: -70
+  screenOffset: 0
   healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -175,7 +175,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3971276, y: 1.9591532}
+  m_Size: {x: 0.5, y: 0.5}
   m_EdgeRadius: 0
 --- !u!50 &-5531179619215096276
 Rigidbody2D:

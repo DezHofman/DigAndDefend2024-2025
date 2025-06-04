@@ -29,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: -1291122021
   m_SortingLayer: 16
   m_SortingOrder: 1
-  m_Sprite: {fileID: -3270862586372701357, guid: 408acdf0a678fd446b4787d797ab2eeb, type: 3}
+  m_Sprite: {fileID: -1368815685109885960, guid: 4f1c574e285d6d34bbfb1bf5cdd0acd9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -105,6 +105,7 @@ MonoBehaviour:
   attackSpeed: 1
   attackDamage: 10
   rangeDisplayDuration: 5
+  projectilePrefab: {fileID: 7235168694598194115, guid: 6ef8c3bbaa438c645a2c2f6d097a03a5, type: 3}
   rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
   dotDamagePerSecond: 5
   dotDuration: 3

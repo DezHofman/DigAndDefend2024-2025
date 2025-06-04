@@ -1,76 +1,49 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public class ArrowProjectile : Projectile
 {
-    private BoxCollider2D targetCollider;
-    private Vector3 velocity;
     private bool hasHitGround = false;
-    private Tilemap pathTilemap;
-    private Vector3 fixedShotDirection;
+    private bool hasHitEnemy = false;
 
-    public void SetLastShotDirection(Vector3 direction)
+    public new void Initialize(Tower tower, Transform newTarget) // Add 'new' to hide base method
     {
-        fixedShotDirection = direction.normalized;
-        Debug.Log($"ArrowProjectile: Fixed shot direction set to {fixedShotDirection}");
-    }
-
-    protected override void Start()
-    {
-        base.Start();
-        GameObject pathObject = GameObject.Find("PATH");
-        if (pathObject != null)
+        base.Initialize(tower, newTarget);
+        if (newTarget != null)
         {
-            pathTilemap = pathObject.GetComponent<Tilemap>();
-            if (pathTilemap == null)
+            BaseEnemy targetEnemy = newTarget.GetComponent<BaseEnemy>();
+            if (targetEnemy != null)
             {
-                Debug.LogWarning("ArrowProjectile: Tilemap component not found on GameObject 'PATH'!");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("ArrowProjectile: Could not find GameObject named 'PATH' in the scene!");
-        }
+                // Predict where the enemy will be based on its velocity and arrow speed
+                Vector3 enemyPosition = newTarget.position;
+                Vector3 enemyVelocity = targetEnemy.GetCurrentVelocity();
+                float timeToHit = Vector3.Distance(transform.position, enemyPosition) / speed;
+                Vector3 predictedPosition = enemyPosition + (enemyVelocity * timeToHit);
+                Debug.Log($"ArrowProjectile: Predicted enemy position at {predictedPosition}, time to hit: {timeToHit}");
 
-        if (target != null)
-        {
-            targetCollider = target.GetComponent<BoxCollider2D>();
-            if (targetCollider != null)
-            {
-                Vector3 direction = (target.position - transform.position).normalized;
-                float distanceToEdge = Vector3.Distance(transform.position, targetCollider.ClosestPoint(transform.position));
-                velocity = direction * speed;
+                // Set velocity in the base class
+                velocity = (predictedPosition - transform.position).normalized * speed;
+                Debug.Log($"ArrowProjectile: Initial velocity: {velocity}");
             }
             else
             {
-                velocity = (targetPosition - transform.position).normalized * speed;
+                velocity = (newTarget.position - transform.position).normalized * speed;
+                Debug.Log($"ArrowProjectile: Default velocity: {velocity}");
             }
-            Debug.Log($"ArrowProjectile Start: Target exists, initial velocity: {velocity}, speed: {speed}");
         }
         else
         {
-            Debug.LogWarning("ArrowProjectile Start: No target assigned!");
+            Debug.LogWarning("ArrowProjectile: No target assigned!");
             Destroy(gameObject);
         }
     }
 
     protected override void Update()
     {
-        if (hasHitGround || target == null)
+        if (hasHitGround || hasHitEnemy || target == null)
         {
+            Debug.Log("ArrowProjectile: Destroying arrow due to hit or lost target");
             Destroy(gameObject);
             return;
-        }
-
-        if (target != null && target.gameObject.activeInHierarchy)
-        {
-            targetCollider = target.GetComponent<BoxCollider2D>();
-            if (targetCollider != null)
-            {
-                targetPosition = targetCollider.ClosestPoint(transform.position);
-            }
-            velocity = (targetPosition - transform.position).normalized * speed;
-            Debug.Log($"ArrowProjectile Update: Target active, targetPosition: {targetPosition}, velocity: {velocity}");
         }
 
         Move();
@@ -78,36 +51,56 @@ public class ArrowProjectile : Projectile
 
     protected override void Move()
     {
-        if (hasHitGround) return;
+        if (hasHitGround || hasHitEnemy) return;
 
         transform.position += velocity * Time.deltaTime;
-        transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(fixedShotDirection.y, fixedShotDirection.x) * Mathf.Rad2Deg - 90f);
-        Debug.Log($"ArrowProjectile Move: Position: {transform.position}, velocity: {velocity}");
+
+        // Dynamically rotate the arrow to point toward the target
+        if (target != null)
+        {
+            Vector3 directionToTarget = (target.position - transform.position).normalized;
+            float angle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg - 90f; // -90 to align arrow tip
+            transform.rotation = Quaternion.Euler(0, 0, angle);
+            Debug.Log($"ArrowProjectile: Rotating to face target at angle {angle}");
+        }
+
+        Debug.Log($"ArrowProjectile: Position: {transform.position}, velocity: {velocity}");
     }
 
     protected override void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy") && other is BoxCollider2D)
+        if (hasHitEnemy) return;
+
+        if (other.CompareTag("Enemy"))
         {
-            Debug.Log("ArrowProjectile: Hit enemy at " + transform.position);
-            OnHit();
-            Destroy(gameObject); // Immediate destruction on enemy hit
+            BaseEnemy enemy = other.GetComponent<BaseEnemy>();
+            if (enemy != null)
+            {
+                hasHitEnemy = true;
+                OnHitEnemy(enemy);
+                Debug.Log($"ArrowProjectile: Hit enemy {enemy.name} at {transform.position}");
+                Destroy(gameObject, 0f);
+            }
         }
         else if (other.CompareTag("Ground"))
         {
             hasHitGround = true;
+            Debug.Log($"ArrowProjectile: Hit ground at {transform.position}");
+            Destroy(gameObject, 0f);
         }
     }
 
-    protected override void OnHit()
+    protected override void OnHitEnemy(BaseEnemy enemy)
     {
-        if (target != null)
+        if (parentTower != null)
         {
-            BaseEnemy enemy = target.GetComponent<BaseEnemy>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(parentTower.attackDamage);
-            }
+            enemy.TakeDamage(parentTower.attackDamage);
+            Debug.Log($"ArrowProjectile: Dealt {parentTower.attackDamage} damage to enemy {enemy.name}");
+        }
+        else
+        {
+            Debug.LogWarning("ArrowProjectile: Parent tower not set, using default damage");
+            enemy.TakeDamage(10f); // Fallback damage
         }
     }
 }

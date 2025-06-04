@@ -108,7 +108,7 @@ MonoBehaviour:
   initialHealth: 50
   maxHealth: 50
   worldOffset: 1
-  screenOffset: -70
+  screenOffset: -50
   healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -175,7 +175,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.4918588, y: 0.50814116}
+  m_Size: {x: 0.3, y: 0.2}
   m_EdgeRadius: 0
 --- !u!50 &-1705660589996471708
 Rigidbody2D:

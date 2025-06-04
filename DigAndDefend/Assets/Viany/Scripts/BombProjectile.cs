@@ -1,84 +1,66 @@
 using UnityEngine;
 
-public class BombProjectile : Projectile
+public class BombProjectile : MonoBehaviour
 {
-    [SerializeField] private GameObject explosionPrefab;
-    [SerializeField] private float explosionRadius = 1f;
-    private float explosionDelay;
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
-    private bool hasFlashed = false;
+    [SerializeField] private GameObject explosionPrefab; // Assign in Inspector
+    private float explosionRadius;
+    private Vector3 targetPosition;
+    private float speed = 5f; // Speed at which the bomb moves to the target
+    private float explosionDelay = 1f; // 1 second delay before explosion
+    private bool hasReachedTarget = false;
 
-    protected override void Start()
+    public void SetTargetPosition(Vector3 position)
     {
-        base.Start();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            originalColor = spriteRenderer.color;
-            Debug.Log($"BombProjectile: SpriteRenderer found, original color: {originalColor}");
-        }
-        else
-        {
-            Debug.LogWarning("BombProjectile: No SpriteRenderer found on bomb!");
-        }
-        explosionDelay = lifetime * 0.5f;
-        speed = Vector3.Distance(parentTower.transform.position, targetPosition) / (lifetime * 0.5f);
+        targetPosition = position;
+        Debug.Log($"BombProjectile: Target position set to {targetPosition}");
     }
 
-    protected override void Update()
+    public void SetExplosionRadius(float radius)
     {
-        base.Update();
-        if (hasFlashed || spriteRenderer == null) return;
+        explosionRadius = radius;
+    }
 
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+    private void Start()
+    {
+        if (explosionPrefab == null)
         {
-            float timeSinceReached = Time.time - (lifetime * 0.5f);
-            if (timeSinceReached >= explosionDelay - 0.2f)
+            Debug.LogWarning("BombProjectile: Explosion prefab not assigned!");
+        }
+    }
+
+    private void Update()
+    {
+        if (!hasReachedTarget)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+            if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
             {
-                spriteRenderer.color = Color.white;
-                hasFlashed = true;
-                Debug.Log("BombProjectile: Flashing white!");
+                hasReachedTarget = true;
+                Invoke("Explode", explosionDelay);
+                Debug.Log($"BombProjectile: Reached target at {targetPosition}, exploding in {explosionDelay} seconds");
             }
         }
     }
 
-    protected override void Move()
+    private void Explode()
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
-        {
-            Invoke("Explode", explosionDelay);
-            speed = 0;
-        }
-    }
-
-    void Explode()
-    {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = originalColor; // Reset color before destroying
-        }
         if (explosionPrefab != null)
         {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            Debug.Log("BombProjectile: Explosion prefab instantiated");
         }
 
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, explosionRadius);
-        foreach (Collider2D collider in hitColliders)
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, explosionRadius, LayerMask.GetMask("Enemies"));
+        foreach (Collider2D enemy in hitEnemies)
         {
-            BaseEnemy enemy = collider.GetComponent<BaseEnemy>();
-            if (enemy != null)
+            BaseEnemy baseEnemy = enemy.GetComponent<BaseEnemy>();
+            if (baseEnemy != null)
             {
-                enemy.TakeDamage(parentTower.attackDamage);
+                baseEnemy.TakeDamage(20f); // Example damage
+                Debug.Log($"BombProjectile: Damaged enemy {enemy.name} for 20 damage");
             }
         }
-        Destroy(gameObject);
-    }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(targetPosition, explosionRadius);
+        Destroy(gameObject);
     }
 }

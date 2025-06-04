@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public abstract class BaseEnemy : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public abstract class BaseEnemy : MonoBehaviour
     private EnemySpriteController spriteController;
     private SpriteRenderer spriteRenderer;
     private float slowDuration;
+    private bool isSlowed = false;
+    private Vector3 currentVelocity; // Track velocity
 
     private void Awake()
     {
@@ -53,7 +56,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
     void Update()
     {
-        if (slowDuration > 0)
+        if (isSlowed)
         {
             slowDuration -= Time.deltaTime;
             if (slowDuration <= 0)
@@ -76,7 +79,8 @@ public abstract class BaseEnemy : MonoBehaviour
     {
         Vector2 targetPosition = waypoints[currentWaypoint].position;
         Vector2 direction = (targetPosition - (Vector2)transform.position).normalized;
-        Vector2 movement = direction * speed * Time.deltaTime;
+        currentVelocity = direction * speed; // Update velocity
+        Vector2 movement = currentVelocity * Time.deltaTime;
         transform.position += (Vector3)movement;
 
         if (spriteController != null)
@@ -227,14 +231,26 @@ public abstract class BaseEnemy : MonoBehaviour
     public virtual void ApplySlow(float slowFactor, float duration)
     {
         slowFactor = Mathf.Clamp01(slowFactor);
-        speed = originalSpeed * (1f - slowFactor);
-        slowDuration = duration;
+        if (isSlowed)
+        {
+            slowDuration = Mathf.Max(slowDuration, duration);
+        }
+        else
+        {
+            originalSpeed = speed;
+            speed *= (1f - slowFactor);
+            slowDuration = duration;
+            isSlowed = true;
+            Debug.Log($"{gameObject.name} is slowed by {slowFactor} for {duration} seconds.");
+        }
     }
 
     void ResetSpeed()
     {
         speed = originalSpeed;
+        isSlowed = false;
         slowDuration = 0f;
+        Debug.Log($"{gameObject.name} speed reset to {speed}.");
     }
 
     public virtual void ApplyDoT(float damagePerSecond, float duration)
@@ -251,5 +267,10 @@ public abstract class BaseEnemy : MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+    }
+
+    public Vector3 GetCurrentVelocity()
+    {
+        return currentVelocity;
     }
 }

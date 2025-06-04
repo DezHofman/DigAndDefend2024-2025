@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public abstract class Tower : MonoBehaviour
 {
@@ -7,8 +6,8 @@ public abstract class Tower : MonoBehaviour
     public float attackSpeed;
     public float attackDamage;
     public float rangeDisplayDuration;
+    public GameObject projectilePrefab;
     public GameObject rangeIndicatorPrefab;
-    [SerializeField] protected GameObject projectilePrefab;
     protected float timeSinceLastAttack;
     protected CircleCollider2D attackCollider;
     private GameObject rangeIndicator;
@@ -21,15 +20,7 @@ public abstract class Tower : MonoBehaviour
     protected virtual void Start()
     {
         initialPosition = transform.position;
-        Debug.Log($"{gameObject.name} - Initial position set: {initialPosition}");
-
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        if (spriteRenderer == null)
-        {
-            Debug.LogError("No SpriteRenderer found on " + gameObject.name + " or its children.");
-            return;
-        }
-
         attackCollider = GetComponent<CircleCollider2D>();
         if (attackCollider != null)
         {
@@ -38,36 +29,10 @@ public abstract class Tower : MonoBehaviour
         }
         gameObject.tag = "Tower";
 
-        Debug.Log($"{gameObject.name} - Tower position after setup: {transform.position}, " +
-                  $"Sprite local position: {spriteRenderer.transform.localPosition}, " +
-                  $"Sprite world position: {spriteRenderer.transform.position}");
-
         rangeIndicator = Instantiate(rangeIndicatorPrefab, transform.position, Quaternion.identity, transform);
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
         rangeIndicator.SetActive(false);
         rangeIndicator.layer = LayerMask.NameToLayer("Ignore Raycast");
-
-        if (transform.position != initialPosition)
-        {
-            Debug.LogWarning($"{gameObject.name} - Position reset detected, restoring to: {initialPosition}");
-            transform.position = initialPosition;
-        }
-
-        StartCoroutine(LateStart());
-    }
-
-    private IEnumerator LateStart()
-    {
-        yield return null;
-        attackCollider.radius = attackRange;
-        rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
-        Debug.Log($"{gameObject.name} - Tower position in LateStart: {transform.position}");
-
-        if (transform.position != initialPosition)
-        {
-            Debug.LogWarning($"{gameObject.name} - Position reset detected in LateStart, restoring to: {initialPosition}");
-            transform.position = initialPosition;
-        }
     }
 
     protected virtual void Update()
@@ -90,16 +55,6 @@ public abstract class Tower : MonoBehaviour
                 {
                     activeTower = null;
                 }
-            }
-        }
-
-        if (Time.frameCount % 60 == 0)
-        {
-            Debug.Log($"{gameObject.name} - Tower position in Update: {transform.position}");
-            if (transform.position != initialPosition)
-            {
-                Debug.LogWarning($"{gameObject.name} - Position reset detected in Update, restoring to: {initialPosition}");
-                transform.position = initialPosition;
             }
         }
     }
@@ -131,33 +86,6 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            ApplyDamageToEnemies(enemies);
-        }
-    }
-
-    protected void SpawnProjectile(Transform target, Vector3 position)
-    {
-        if (projectilePrefab != null)
-        {
-            Vector3 spawnPosition = transform.position + new Vector3(0f, 1f, 0f); // Offset by 1 unit on Y-axis
-            GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
-            Projectile proj = projectile.GetComponent<Projectile>();
-            if (proj != null)
-            {
-                proj.Initialize(this, target, position, 1f / attackSpeed);
-            }
-        }
-    }
-
-    protected virtual void ApplyDamageToEnemies(Collider2D[] enemies)
-    {
-        foreach (Collider2D enemyCollider in enemies)
-        {
-            BaseEnemy enemy = enemyCollider.GetComponent<BaseEnemy>();
-            if (enemy != null)
-            {
-                enemy.TakeDamage(attackDamage);
-            }
         }
     }
 
