@@ -1,16 +1,43 @@
 fileFormatVersion: 2
-guid: fe7cd46cb66d03f49b18119dff1b9ada
+guid: 5f4c7338be6444b408bae72e1de1c79e
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1252243683051303324
-    second: Projectiles_0
+      213: 1986671514047437730
+    second: Fire Effect_0
   - first:
-      213: 6781167332700664777
-    second: Projectiles_1
+      213: 3482316077322855281
+    second: Fire Effect_1
   - first:
-      213: -3548031942192175384
-    second: Projectiles_2
+      213: -1858971658307864416
+    second: Fire Effect_2
+  - first:
+      213: -71287027338840432
+    second: Fire Effect_3
+  - first:
+      213: -7907423696056792040
+    second: Fire Effect_4
+  - first:
+      213: 8876160535486979322
+    second: Fire Effect_5
+  - first:
+      213: -1522720698308783066
+    second: Fire Effect_6
+  - first:
+      213: -5124226533519459315
+    second: Fire Effect_7
+  - first:
+      213: 7131469333479969960
+    second: Fire Effect_8
+  - first:
+      213: -1726869119785478657
+    second: Fire Effect_9
+  - first:
+      213: -7950634571312188235
+    second: Fire Effect_10
+  - first:
+      213: 4256948728793092739
+    second: Fire Effect_11
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -43,7 +70,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -57,7 +84,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -81,7 +108,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -106,57 +133,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Projectiles_0
+      name: Fire Effect_0
       rect:
         serializedVersion: 2
-        x: 10
-        y: 31
-        width: 11
-        height: 33
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c91ff7cbefcd06110800000000000000
-      internalID: 1252243683051303324
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Projectiles_1
-      rect:
-        serializedVersion: 2
-        x: 40
-        y: 36
-        width: 17
-        height: 27
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9c33b1cc2cb8b1e50800000000000000
-      internalID: 6781167332700664777
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Projectiles_2
-      rect:
-        serializedVersion: 2
-        x: 4
+        x: 0
         y: 0
-        width: 24
-        height: 32
+        width: 32
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -165,8 +148,118 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e665e13fbbd2cec0800000000000000
-      internalID: -3548031942192175384
+      spriteID: 2ab5f285733129b10800000000000000
+      internalID: 1986671514047437730
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Effect_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 173e570b50ca35030800000000000000
+      internalID: 3482316077322855281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Effect_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0a87a03402b9336e0800000000000000
+      internalID: -1858971658307864416
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Effect_3
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 096ff5a83dcb20ff0800000000000000
+      internalID: -71287027338840432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Effect_4
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81c47043b00334290800000000000000
+      internalID: -7907423696056792040
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Fire Effect_5
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 0
+        width: 32
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afcda07aaf47e2b70800000000000000
+      internalID: 8876160535486979322
       vertices: []
       indices: 
       edges: []
@@ -175,7 +268,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 09cd181fc2fb3ad46bb0f1ba88fc53d3
     internalID: 0
     vertices: []
     indices: 
@@ -184,7 +277,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Fire Effect_0: 1986671514047437730
+      Fire Effect_1: 3482316077322855281
+      Fire Effect_2: -1858971658307864416
+      Fire Effect_3: -71287027338840432
+      Fire Effect_4: -7907423696056792040
+      Fire Effect_5: 8876160535486979322
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
