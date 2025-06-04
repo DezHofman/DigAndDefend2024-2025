@@ -80,7 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -961880881
-  m_SortingLayer: 14
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_Sprite: {fileID: 7442011638144306443, guid: f9cb3566efd9e9e4e82de735aea9d402, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -108,7 +108,7 @@ MonoBehaviour:
   initialHealth: 1000
   maxHealth: 1000
   worldOffset: 1
-  screenOffset: 5
+  screenOffset: -70
   healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
   damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -165,7 +165,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.035884857, y: 0.032383442}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -175,7 +175,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.3971276, y: 1.9591532}
   m_EdgeRadius: 0
 --- !u!50 &-5531179619215096276
 Rigidbody2D:
