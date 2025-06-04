@@ -139,7 +139,8 @@ public abstract class Tower : MonoBehaviour
     {
         if (projectilePrefab != null)
         {
-            GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+            Vector3 spawnPosition = transform.position + new Vector3(0f, 1f, 0f); // Offset by 1 unit on Y-axis
+            GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
             Projectile proj = projectile.GetComponent<Projectile>();
             if (proj != null)
             {

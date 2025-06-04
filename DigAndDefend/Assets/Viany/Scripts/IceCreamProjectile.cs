@@ -46,8 +46,8 @@ public class IceCreamProjectile : Projectile
             BaseEnemy enemy = target.GetComponent<BaseEnemy>();
             if (enemy != null)
             {
-                Debug.Log($"Applying slow to {enemy.gameObject.name}: 0.5f for 2f");
-                enemy.ApplySlow(0.5f, 2f);
+                Debug.Log($"Applying slow to {enemy.gameObject.name}: 2f for 5f");
+                enemy.ApplySlow(2f, 5f);
             }
         }
     }
