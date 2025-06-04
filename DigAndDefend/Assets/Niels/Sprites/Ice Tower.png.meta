@@ -1,19 +1,10 @@
 fileFormatVersion: 2
-guid: fe7cd46cb66d03f49b18119dff1b9ada
+guid: 0f099b96dc5f63540aedc1fb8cb1ddf2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 1252243683051303324
-    second: Projectiles_0
-  - first:
-      213: 6781167332700664777
-    second: Projectiles_1
-  - first:
-      213: -3548031942192175384
-    second: Projectiles_2
-  - first:
-      213: 4206860055589038045
-    second: Projectiles_3
+      213: -3502894008944053514
+    second: Ice Tower_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -109,57 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Projectiles_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: c91ff7cbefcd06110800000000000000
-      internalID: 1252243683051303324
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Projectiles_1
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 32
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9c33b1cc2cb8b1e50800000000000000
-      internalID: 6781167332700664777
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Projectiles_2
+      name: Ice Tower_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 32
-        height: 32
+        width: 48
+        height: 136
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -168,30 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 8e665e13fbbd2cec0800000000000000
-      internalID: -3548031942192175384
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Projectiles_3
-      rect:
-        serializedVersion: 2
-        x: 32
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: dd72a218ee4c16a30800000000000000
-      internalID: 4206860055589038045
+      spriteID: 6f2bb0f3578336fc0800000000000000
+      internalID: -3502894008944053514
       vertices: []
       indices: 
       edges: []
@@ -200,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: e5280b17a473b164493e62852d166dd3
+    spriteID: d1c3bf31a37a746448b43f076b64320a
     internalID: 0
     vertices: []
     indices: 
@@ -210,10 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Projectiles_0: 1252243683051303324
-      Projectiles_1: 6781167332700664777
-      Projectiles_2: -3548031942192175384
-      Projectiles_3: 4206860055589038045
+      Ice Tower_0: -3502894008944053514
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
