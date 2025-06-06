@@ -7,12 +7,12 @@ public class TowerPlacement : MonoBehaviour
     public GameObject[] towerPrefabs;
     public int[] copperCosts = { 25, 25, 20, 20, 15 };
     public int[] ironCosts = { 10, 15, 10, 10, 5 };
-    [SerializeField] private Tilemap pathTilemap;
-    [SerializeField] private Tilemap bigRocksTilemap;
+    [SerializeField] private Tilemap pathTilemap; // Update to your new path tilemap name
+    [SerializeField] private Tilemap bigRocksTilemap; // Update to your new big rocks tilemap name
     [SerializeField] private GameObject placementPreviewPrefab;
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
-    [SerializeField] private TileBase[] minesTiles;
+    [SerializeField] private TileBase[] minesTiles; // Update if this is still relevant
     [SerializeField] private Sprite barricadeSprite;
     [SerializeField] private Sprite shopSprite;
     [SerializeField] private ShopManager shopManager;
@@ -38,14 +38,30 @@ public class TowerPlacement : MonoBehaviour
             placementPreview.SetActive(false);
             // Removed DontDestroyOnLoad(placementPreview)
         }
-        pathTilemap = GameObject.Find("HOME PATH")?.GetComponent<Tilemap>();
-        bigRocksTilemap = GameObject.Find("HOME BIG ROCKS")?.GetComponent<Tilemap>();
+        // Fallback to GameObject.Find if SerializeField is not set
+        if (pathTilemap == null) pathTilemap = GameObject.Find("HOME PATH")?.GetComponent<Tilemap>(); // Replace "HOME PATH" with your new name
+        if (bigRocksTilemap == null) bigRocksTilemap = GameObject.Find("HOME BIG ROCKS")?.GetComponent<Tilemap>(); // Replace "HOME BIG ROCKS" with your new name
+        if (pathTilemap == null || bigRocksTilemap == null)
+        {
+            Debug.LogError("TowerPlacement: Path or Big Rocks tilemap not found!");
+        }
         RestoreTowers();
     }
 
     void Update()
     {
-        if (shopManager == null || shopManager.IsInCaveArea()) // Changed from IsInCave to IsInCaveArea
+        if (shopManager == null)
+        {
+            Debug.LogError("TowerPlacement: ShopManager reference is null!");
+            if (placementPreview != null)
+            {
+                placementPreview.SetActive(false);
+            }
+            return;
+        }
+
+        Debug.Log($"IsInCaveArea: {shopManager.IsInCaveArea()}"); // Debug to check cave state
+        if (shopManager.IsInCaveArea())
         {
             if (placementPreview != null)
             {
@@ -56,6 +72,7 @@ public class TowerPlacement : MonoBehaviour
 
         if (pathTilemap == null || bigRocksTilemap == null)
         {
+            Debug.LogWarning("TowerPlacement: Tilemap is null, skipping Update.");
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
@@ -103,10 +120,11 @@ public class TowerPlacement : MonoBehaviour
 
                 if (canPlace)
                 {
-                    canPlace = ResourceManager.Instance.SpendResources(0, 0);
+                    canPlace = ResourceManager.Instance.SpendResources(0, 0); // Check if resources are sufficient
                 }
 
                 spriteRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
+                Debug.Log($"Can place: {canPlace}, IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}, HasMinimumDistance: {hasMinimumDistance}");
             }
         }
         else
@@ -153,6 +171,7 @@ public class TowerPlacement : MonoBehaviour
                     selectedTowerIndex = -1;
                     lastCopperCost = 0;
                     lastIronCost = 0;
+                    Debug.Log($"Tower placed at {position} with index {selectedTowerIndex}");
                 }
             }
             else
@@ -181,6 +200,7 @@ public class TowerPlacement : MonoBehaviour
             }
             lastCopperCost = 0;
             lastIronCost = 0;
+            Debug.Log("Placement cancelled");
         }
     }
 
@@ -207,6 +227,7 @@ public class TowerPlacement : MonoBehaviour
             lastCopperCost = copperCosts[index];
             lastIronCost = ironCosts[index];
         }
+        Debug.Log($"Selected tower index: {selectedTowerIndex}, Costs: {lastCopperCost} Copper, {lastIronCost} Iron");
     }
 
     private Sprite GetTowerSprite(int towerIndex, Vector3Int cellPosition)
