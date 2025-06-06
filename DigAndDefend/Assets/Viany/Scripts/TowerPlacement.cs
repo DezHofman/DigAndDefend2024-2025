@@ -12,7 +12,7 @@ public class TowerPlacement : MonoBehaviour
     [SerializeField] private GameObject placementPreviewPrefab;
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
-    [SerializeField] private TileBase[] minesTiles; // Update if this is still relevant
+    [SerializeField] private TileBase[] pathTiles; // Tiles for path matching
     [SerializeField] private Sprite barricadeSprite;
     [SerializeField] private Sprite shopSprite;
     [SerializeField] private ShopManager shopManager;
@@ -36,14 +36,17 @@ public class TowerPlacement : MonoBehaviour
             placementPreview = Instantiate(placementPreviewPrefab);
             spriteRenderer = placementPreview.GetComponent<SpriteRenderer>();
             placementPreview.SetActive(false);
-            // Removed DontDestroyOnLoad(placementPreview)
         }
         // Fallback to GameObject.Find if SerializeField is not set
-        if (pathTilemap == null) pathTilemap = GameObject.Find("HOME PATH")?.GetComponent<Tilemap>(); // Replace "HOME PATH" with your new name
-        if (bigRocksTilemap == null) bigRocksTilemap = GameObject.Find("HOME BIG ROCKS")?.GetComponent<Tilemap>(); // Replace "HOME BIG ROCKS" with your new name
+        if (pathTilemap == null) pathTilemap = GameObject.Find("PATHWAY")?.GetComponent<Tilemap>(); // Replace "PATHWAY" with your new name
+        if (bigRocksTilemap == null) bigRocksTilemap = GameObject.Find("ROCK_BLOCKS")?.GetComponent<Tilemap>(); // Replace "ROCK_BLOCKS" with your new name
         if (pathTilemap == null || bigRocksTilemap == null)
         {
             Debug.LogError("TowerPlacement: Path or Big Rocks tilemap not found!");
+        }
+        else
+        {
+            Debug.Log("TowerPlacement: Tilemaps successfully initialized.");
         }
         RestoreTowers();
     }
@@ -60,9 +63,10 @@ public class TowerPlacement : MonoBehaviour
             return;
         }
 
-        Debug.Log($"IsInCaveArea: {shopManager.IsInCaveArea()}"); // Debug to check cave state
+        Debug.Log($"IsInCaveArea: {shopManager.IsInCaveArea()}");
         if (shopManager.IsInCaveArea())
         {
+            Debug.Log("TowerPlacement: In cave area, disabling placement.");
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
@@ -97,6 +101,10 @@ public class TowerPlacement : MonoBehaviour
                 {
                     spriteRenderer.sprite = towerSprite;
                 }
+                else
+                {
+                    Debug.LogWarning($"Tower sprite for index {selectedTowerIndex} is null at position {cellPosition}");
+                }
 
                 bool isOnPath = pathTilemap.HasTile(cellPosition);
                 bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
@@ -108,6 +116,11 @@ public class TowerPlacement : MonoBehaviour
                     if (isOnPath && !isOnBigRocks)
                     {
                         canPlace = true;
+                        Debug.Log("Barricade: Valid placement spot on path.");
+                    }
+                    else
+                    {
+                        Debug.Log($"Barricade: Invalid placement. IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}");
                     }
                 }
                 else // Towers
@@ -115,6 +128,7 @@ public class TowerPlacement : MonoBehaviour
                     if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
                     {
                         canPlace = true;
+                        Debug.Log("Tower: Valid placement spot off path.");
                     }
                 }
 
@@ -147,6 +161,7 @@ public class TowerPlacement : MonoBehaviour
                 if (isOnPath && !isOnBigRocks)
                 {
                     canPlace = true;
+                    Debug.Log("Barricade: Placement confirmed.");
                 }
             }
             else // Towers
@@ -154,6 +169,7 @@ public class TowerPlacement : MonoBehaviour
                 if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
                 {
                     canPlace = true;
+                    Debug.Log("Tower: Placement confirmed.");
                 }
             }
 
@@ -166,12 +182,20 @@ public class TowerPlacement : MonoBehaviour
                     if (selectedTowerIndex == 4)
                     {
                         ApplyBarricadeRotation(tower, cellPosition);
+                        Debug.Log($"Instantiated barricade at {position}");
+                    }
+                    else
+                    {
+                        Debug.Log($"Instantiated tower at {position}");
                     }
                     GameManager.Instance.AddTower(position, selectedTowerIndex);
                     selectedTowerIndex = -1;
                     lastCopperCost = 0;
                     lastIronCost = 0;
-                    Debug.Log($"Tower placed at {position} with index {selectedTowerIndex}");
+                }
+                else
+                {
+                    Debug.Log("Not enough resources to place.");
                 }
             }
             else
@@ -234,6 +258,7 @@ public class TowerPlacement : MonoBehaviour
     {
         if (towerIndex < 0 || towerIndex >= towerPrefabs.Length)
         {
+            Debug.LogWarning($"Invalid tower index: {towerIndex}");
             return null;
         }
 
@@ -245,6 +270,7 @@ public class TowerPlacement : MonoBehaviour
             {
                 return spriteRenderer.sprite;
             }
+            Debug.LogWarning($"No SpriteRenderer found for tower prefab at index {towerIndex}");
         }
         else
         {
@@ -255,66 +281,96 @@ public class TowerPlacement : MonoBehaviour
 
     private Sprite GetBarricadeSprite(Vector3Int cellPosition)
     {
-        if (minesTiles == null || minesTiles.Length != 6 || barricadeSprite == null || shopSprite == null)
+        if (pathTiles == null || pathTiles.Length == 0 || barricadeSprite == null || shopSprite == null)
         {
             Debug.LogWarning("TowerPlacement: Path tiles or barricade sprites not fully assigned!");
-            return null;
+            return barricadeSprite; // Default to barricadeSprite if array is invalid
         }
 
         TileBase currentTile = pathTilemap.GetTile(cellPosition);
         if (currentTile == null)
         {
-            return null;
-        }
-
-        if (currentTile == minesTiles[0])
-        {
-            return shopSprite;
-        }
-        else if (currentTile == minesTiles[1])
-        {
+            Debug.Log($"No tile found at {cellPosition}, using default barricade sprite");
             return barricadeSprite;
         }
-        else if (currentTile == minesTiles[2] || currentTile == minesTiles[3] || currentTile == minesTiles[4] || currentTile == minesTiles[5])
+
+        // Check if currentTile matches any in pathTiles with bounds checking
+        for (int i = 0; i < pathTiles.Length; i++)
         {
-            return shopSprite;
+            if (currentTile == pathTiles[i])
+            {
+                return (i == 1) ? barricadeSprite : shopSprite; // Index 1 for barricade, others for shop
+            }
         }
-        Debug.LogWarning($"TowerPlacement: Unrecognized path tile at {cellPosition}");
-        return shopSprite;
+        Debug.LogWarning($"Unrecognized path tile at {cellPosition}, using default barricade sprite");
+        return barricadeSprite;
     }
 
     private void ApplyBarricadeRotation(GameObject barricade, Vector3Int cellPosition)
     {
         SpriteRenderer barricadeRenderer = barricade.GetComponentInChildren<SpriteRenderer>();
-        if (barricadeRenderer != null)
+        if (barricadeRenderer == null)
         {
-            barricadeRenderer.sprite = GetBarricadeSprite(cellPosition);
-            TileBase currentTile = pathTilemap.GetTile(cellPosition);
-            if (currentTile == minesTiles[0])
+            Debug.LogWarning($"No SpriteRenderer found on barricade at {cellPosition}");
+            return;
+        }
+
+        barricadeRenderer.sprite = GetBarricadeSprite(cellPosition);
+        TileBase currentTile = pathTilemap.GetTile(cellPosition);
+        if (currentTile == null)
+        {
+            Debug.LogWarning($"No tile found at {cellPosition} for rotation");
+            return;
+        }
+
+        // Find the index of the current tile in pathTiles with bounds checking
+        int tileIndex = -1;
+        if (pathTiles != null)
+        {
+            for (int i = 0; i < pathTiles.Length; i++)
             {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else if (currentTile == minesTiles[1])
-            {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
-            }
-            else if (currentTile == minesTiles[2])
-            {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
-            }
-            else if (currentTile == minesTiles[3])
-            {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
-            }
-            else if (currentTile == minesTiles[4])
-            {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
-            }
-            else if (currentTile == minesTiles[5])
-            {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+                if (pathTiles[i] == currentTile)
+                {
+                    tileIndex = i;
+                    break;
+                }
             }
         }
+
+        if (tileIndex == -1)
+        {
+            Debug.LogWarning($"Tile at {cellPosition} not found in pathTiles, using default rotation");
+            barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else
+        {
+            switch (tileIndex)
+            {
+                case 0:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    break;
+                case 1:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    break;
+                case 2:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+                    break;
+                case 3:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+                    break;
+                case 4:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+                    break;
+                case 5:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+                    break;
+                default:
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+                    Debug.LogWarning($"Unexpected tile index {tileIndex} at {cellPosition}");
+                    break;
+            }
+        }
+        Debug.Log($"Applied rotation to barricade at {cellPosition} with index {tileIndex}");
     }
 
     private void RestoreTowers()

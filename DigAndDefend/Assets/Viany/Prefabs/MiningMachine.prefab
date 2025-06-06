@@ -107,8 +107,8 @@ MonoBehaviour:
   maxHealth: 100
   worldOffset: 1
   screenOffset: -120
-  healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
-  damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  healthColor: {r: 0.2, g: 0.6117647, b: 0.8, a: 1}
+  damageColor: {r: 0, g: 0, b: 0, a: 1}
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
   healthbarWidth: 100
   healthbarHeight: 10
@@ -125,7 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthbar: {fileID: 5967523537814915057}
-  lifespan: 15
+  activeSprite: {fileID: 6623313122585226201, guid: c536819c5b8923f48ae05ac0516633f9, type: 3}
+  deadSprite: {fileID: 6623313122585226201, guid: c536819c5b8923f48ae05ac0516633f9, type: 3}
 --- !u!61 &7752266152593138786
 BoxCollider2D:
   m_ObjectHideFlags: 0
