@@ -130,7 +130,7 @@ MonoBehaviour:
   health: 50
   damageToVillage: 5
   damageToBarricade: 3
-  canFly: 0
+  canFly: 1
 --- !u!61 &5626067731632144468
 BoxCollider2D:
   m_ObjectHideFlags: 0

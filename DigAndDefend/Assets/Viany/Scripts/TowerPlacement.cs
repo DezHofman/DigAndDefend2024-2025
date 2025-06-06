@@ -7,12 +7,12 @@ public class TowerPlacement : MonoBehaviour
     public GameObject[] towerPrefabs;
     public int[] copperCosts = { 25, 25, 20, 20, 15 };
     public int[] ironCosts = { 10, 15, 10, 10, 5 };
-    [SerializeField] private Tilemap pathTilemap; // Update to your new path tilemap name
-    [SerializeField] private Tilemap bigRocksTilemap; // Update to your new big rocks tilemap name
+    [SerializeField] private Tilemap pathTilemap;
+    [SerializeField] private Tilemap bigRocksTilemap;
     [SerializeField] private GameObject placementPreviewPrefab;
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
-    [SerializeField] private TileBase[] pathTiles; // Tiles for path matching
+    [SerializeField] private TileBase[] pathTiles;
     [SerializeField] private Sprite barricadeSprite;
     [SerializeField] private Sprite shopSprite;
     [SerializeField] private ShopManager shopManager;
@@ -37,9 +37,8 @@ public class TowerPlacement : MonoBehaviour
             spriteRenderer = placementPreview.GetComponent<SpriteRenderer>();
             placementPreview.SetActive(false);
         }
-        // Fallback to GameObject.Find if SerializeField is not set
-        if (pathTilemap == null) pathTilemap = GameObject.Find("PATHWAY")?.GetComponent<Tilemap>(); // Replace "PATHWAY" with your new name
-        if (bigRocksTilemap == null) bigRocksTilemap = GameObject.Find("ROCK_BLOCKS")?.GetComponent<Tilemap>(); // Replace "ROCK_BLOCKS" with your new name
+        if (pathTilemap == null) pathTilemap = GameObject.Find("PATHWAY")?.GetComponent<Tilemap>();
+        if (bigRocksTilemap == null) bigRocksTilemap = GameObject.Find("ROCK_BLOCKS")?.GetComponent<Tilemap>();
         if (pathTilemap == null || bigRocksTilemap == null)
         {
             Debug.LogError("TowerPlacement: Path or Big Rocks tilemap not found!");
@@ -132,11 +131,6 @@ public class TowerPlacement : MonoBehaviour
                     }
                 }
 
-                if (canPlace)
-                {
-                    canPlace = ResourceManager.Instance.SpendResources(0, 0); // Check if resources are sufficient
-                }
-
                 spriteRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
                 Debug.Log($"Can place: {canPlace}, IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}, HasMinimumDistance: {hasMinimumDistance}");
             }
@@ -175,28 +169,39 @@ public class TowerPlacement : MonoBehaviour
 
             if (canPlace)
             {
-                if (ResourceManager.Instance.SpendResources(copperCosts[selectedTowerIndex], ironCosts[selectedTowerIndex]))
+                // Only deduct resources if ShopManager hasn't already
+                if (lastCopperCost > 0 || lastIronCost > 0) // Check if resources were tracked (likely by ShopManager)
                 {
-                    Vector3 position = placementPosition;
-                    GameObject tower = Instantiate(towerPrefabs[selectedTowerIndex], position, Quaternion.identity);
-                    if (selectedTowerIndex == 4)
-                    {
-                        ApplyBarricadeRotation(tower, cellPosition);
-                        Debug.Log($"Instantiated barricade at {position}");
-                    }
-                    else
-                    {
-                        Debug.Log($"Instantiated tower at {position}");
-                    }
-                    GameManager.Instance.AddTower(position, selectedTowerIndex);
-                    selectedTowerIndex = -1;
-                    lastCopperCost = 0;
-                    lastIronCost = 0;
+                    Debug.Log($"Resources already deducted by ShopManager: {lastCopperCost} Copper, {lastIronCost} Iron");
                 }
                 else
                 {
-                    Debug.Log("Not enough resources to place.");
+                    if (ResourceManager.Instance.SpendResources(copperCosts[selectedTowerIndex], ironCosts[selectedTowerIndex]))
+                    {
+                        Debug.Log($"Deducted resources: {copperCosts[selectedTowerIndex]} Copper, {ironCosts[selectedTowerIndex]} Iron");
+                    }
+                    else
+                    {
+                        Debug.Log("Not enough resources to place.");
+                        return;
+                    }
                 }
+
+                Vector3 position = placementPosition;
+                GameObject tower = Instantiate(towerPrefabs[selectedTowerIndex], position, Quaternion.identity);
+                if (selectedTowerIndex == 4)
+                {
+                    ApplyBarricadeRotation(tower, cellPosition);
+                    Debug.Log($"Instantiated barricade at {position}");
+                }
+                else
+                {
+                    Debug.Log($"Instantiated tower at {position}");
+                }
+                GameManager.Instance.AddTower(position, selectedTowerIndex);
+                selectedTowerIndex = -1;
+                lastCopperCost = 0;
+                lastIronCost = 0;
             }
             else
             {
@@ -284,7 +289,7 @@ public class TowerPlacement : MonoBehaviour
         if (pathTiles == null || pathTiles.Length == 0 || barricadeSprite == null || shopSprite == null)
         {
             Debug.LogWarning("TowerPlacement: Path tiles or barricade sprites not fully assigned!");
-            return barricadeSprite; // Default to barricadeSprite if array is invalid
+            return barricadeSprite;
         }
 
         TileBase currentTile = pathTilemap.GetTile(cellPosition);
@@ -294,12 +299,11 @@ public class TowerPlacement : MonoBehaviour
             return barricadeSprite;
         }
 
-        // Check if currentTile matches any in pathTiles with bounds checking
         for (int i = 0; i < pathTiles.Length; i++)
         {
             if (currentTile == pathTiles[i])
             {
-                return (i == 1) ? barricadeSprite : shopSprite; // Index 1 for barricade, others for shop
+                return (i == 1) ? barricadeSprite : shopSprite;
             }
         }
         Debug.LogWarning($"Unrecognized path tile at {cellPosition}, using default barricade sprite");
@@ -323,7 +327,6 @@ public class TowerPlacement : MonoBehaviour
             return;
         }
 
-        // Find the index of the current tile in pathTiles with bounds checking
         int tileIndex = -1;
         if (pathTiles != null)
         {
