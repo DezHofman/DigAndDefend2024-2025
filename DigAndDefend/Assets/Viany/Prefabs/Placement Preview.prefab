@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5220689938182952241}
   - component: {fileID: 700331133631625993}
   m_Layer: 0
-  m_Name: PlacementPreview
+  m_Name: Placement Preview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

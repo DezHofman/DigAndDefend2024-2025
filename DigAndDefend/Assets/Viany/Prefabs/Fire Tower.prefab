@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 197480403871949122}
   - component: {fileID: 6949636099088818016}
   m_Layer: 7
-  m_Name: FirePoisonTowerSprite
+  m_Name: Fire Tower
   m_TagString: Tower
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

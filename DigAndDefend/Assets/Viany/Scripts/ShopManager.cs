@@ -30,7 +30,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private MiningPlacement miningPlacement; // New reference
 
     private int currentIndex = 0;
-    private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire/Poison Tower", "Barricade" };
+    private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire Tower", "Barricade" };
     private string mineTowerName = "Mining Machine";
     private int mineTowerCopperCost = 0;
     private int mineTowerIronCost = 0;
