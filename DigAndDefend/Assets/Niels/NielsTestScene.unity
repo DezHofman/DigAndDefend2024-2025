@@ -822,7 +822,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 72bc1f5af3415d84f8a80b7f86be28d9, type: 3}
---- !u!1 &1207633429
+--- !u!1 &1114055968
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -830,27 +830,27 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1207633432}
-  - component: {fileID: 1207633431}
-  - component: {fileID: 1207633430}
+  - component: {fileID: 1114055971}
+  - component: {fileID: 1114055970}
+  - component: {fileID: 1114055969}
   m_Layer: 0
-  m_Name: Mine Tower_0
+  m_Name: Mine Tower_0 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!95 &1207633430
+--- !u!95 &1114055969
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207633429}
+  m_GameObject: {fileID: 1114055968}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 9a9dd7a7572cf8243ad88e9cea0b33b5, type: 2}
+  m_Controller: {fileID: 9100000, guid: 3a77c5b81d33cc745b7695825061f726, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -862,13 +862,13 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!212 &1207633431
+--- !u!212 &1114055970
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207633429}
+  m_GameObject: {fileID: 1114055968}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -917,16 +917,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!4 &1207633432
+--- !u!4 &1114055971
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207633429}
+  m_GameObject: {fileID: 1114055968}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.16, y: 0.75, z: 0}
+  m_LocalPosition: {x: -1.53, y: 0.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1308,4 +1308,4 @@ SceneRoots:
   - {fileID: 457429219}
   - {fileID: 329172870}
   - {fileID: 874545151}
-  - {fileID: 1207633432}
+  - {fileID: 1114055971}
