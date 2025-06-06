@@ -4,8 +4,8 @@ using TMPro;
 public class ResourceManager : MonoBehaviour
 {
     public static ResourceManager Instance { get; private set; }
-    public int copper = 0;
-    public int iron = 0;
+    public int copper;
+    public int iron;
     [SerializeField] private TextMeshProUGUI copperText;
     [SerializeField] private TextMeshProUGUI ironText;
 
@@ -14,7 +14,6 @@ public class ResourceManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {

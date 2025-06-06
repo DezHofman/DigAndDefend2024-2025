@@ -6,11 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Viany/Scenes/GrassScene.unity
+    path: Assets/Viany/Scenes/Dig&Defend.unity
     guid: e1fb7409fb7feb8439fa84e019dc22cf
-  - enabled: 1
-    path: Assets/Viany/Scenes/CaveScene.unity
-    guid: d9e13f724b4fa6645a82ef1bb0e3f3e8
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

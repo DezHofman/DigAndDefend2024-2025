@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class BombProjectile : MonoBehaviour
 {
-    [SerializeField] private GameObject explosionPrefab; // Assign in Inspector
+    [SerializeField] private GameObject explosionPrefab;
     private float explosionRadius;
     private Vector3 targetPosition;
-    private float speed = 5f; // Speed at which the bomb moves to the target
-    private float explosionDelay = 1f; // 1 second delay before explosion
+    private float speed = 5f;
+    private float explosionDelay = 1f;
     private bool hasReachedTarget = false;
 
     public void SetTargetPosition(Vector3 position)
@@ -56,7 +56,7 @@ public class BombProjectile : MonoBehaviour
             BaseEnemy baseEnemy = enemy.GetComponent<BaseEnemy>();
             if (baseEnemy != null)
             {
-                baseEnemy.TakeDamage(20f); // Example damage
+                baseEnemy.TakeDamage(20f);
                 Debug.Log($"BombProjectile: Damaged enemy {enemy.name} for 20 damage");
             }
         }

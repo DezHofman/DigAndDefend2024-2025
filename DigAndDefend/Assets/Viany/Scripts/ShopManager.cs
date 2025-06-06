@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
-using UnityEngine.Tilemaps;
 
 public class ShopManager : MonoBehaviour
 {
@@ -26,27 +24,19 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Color goToMineColor = Color.white;
     [SerializeField] private Color goBackColor = Color.gray;
     [SerializeField] private MiningManager miningManager;
-    [SerializeField] private GameObject miningPlacementPreviewPrefab;
-    [SerializeField] private float canPlaceOpacity;
-    [SerializeField] private float cannotPlaceOpacity;
+    [SerializeField] private Camera mainCamera;
+    [SerializeField] private Vector2 grassCameraPosition = new Vector2(0f, 0f);
+    [SerializeField] private Vector2 caveCameraPosition = new Vector2(100f, 0f);
+    [SerializeField] private MiningPlacement miningPlacement; // New reference
 
     private int currentIndex = 0;
     private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire/Poison Tower", "Barricade" };
     private string mineTowerName = "Mining Machine";
     private int mineTowerCopperCost = 0;
     private int mineTowerIronCost = 0;
-    private bool isInCaveScene = false;
-    private GameObject miningPlacementPreview;
-    private SpriteRenderer miningPreviewRenderer;
-    private bool isPlacingMiningTower = false;
-    private int lastCopperCost = 0;
-    private int lastIronCost = 0;
+    private bool isInCaveArea = false;
 
-    private void Awake()
-    {
-        SceneManager.sceneLoaded += OnSceneLoaded;
-        DontDestroyOnLoad(gameObject);
-    }
+    public bool IsInCaveArea() => isInCaveArea;
 
     private void Start()
     {
@@ -55,29 +45,27 @@ public class ShopManager : MonoBehaviour
             Debug.LogWarning("ShopManager: towerSprites array length does not match towerPrefabs length!");
         }
 
-        if (miningPlacementPreview == null)
+        if (mainCamera == null)
         {
-            miningPlacementPreview = Instantiate(miningPlacementPreviewPrefab);
-            miningPreviewRenderer = miningPlacementPreview.GetComponent<SpriteRenderer>();
-            miningPlacementPreview.SetActive(false);
-            DontDestroyOnLoad(miningPlacementPreview);
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                Debug.LogError("ShopManager: Main Camera not found!");
+            }
         }
 
-        // Ensure time scale is normal
         if (Time.timeScale != 1f)
         {
             Debug.LogWarning("ShopManager: Time.timeScale was not 1, resetting to 1.");
             Time.timeScale = 1f;
         }
 
-        // Ensure EventSystem exists
-        if (FindObjectOfType<EventSystem>() == null)
+        if (FindFirstObjectByType<EventSystem>() == null)
         {
             Debug.LogWarning("ShopManager: No EventSystem found in scene! Adding one.");
             GameObject eventSystem = new GameObject("EventSystem");
             eventSystem.AddComponent<EventSystem>();
             eventSystem.AddComponent<StandaloneInputModule>();
-            DontDestroyOnLoad(eventSystem);
         }
 
         openedShop.SetActive(false);
@@ -85,6 +73,7 @@ public class ShopManager : MonoBehaviour
         SetupButtonListeners();
         UpdateMineButton();
         UpdateShopContent();
+        MoveCameraToGrass();
     }
 
     private void SetupButtonListeners()
@@ -92,11 +81,7 @@ public class ShopManager : MonoBehaviour
         if (openButton != null)
         {
             openButton.onClick.RemoveAllListeners();
-            openButton.onClick.AddListener(() =>
-            {
-                Debug.Log("ShopManager: Open button clicked!");
-                OpenShop();
-            });
+            openButton.onClick.AddListener(OpenShop);
             openButton.gameObject.SetActive(true);
             EnsureButtonInteractable(openButton);
         }
@@ -108,11 +93,7 @@ public class ShopManager : MonoBehaviour
         if (closeButton != null)
         {
             closeButton.onClick.RemoveAllListeners();
-            closeButton.onClick.AddListener(() =>
-            {
-                Debug.Log("ShopManager: Close button clicked!");
-                CloseShop();
-            });
+            closeButton.onClick.AddListener(CloseShop);
             EnsureButtonInteractable(closeButton);
         }
         else
@@ -123,11 +104,7 @@ public class ShopManager : MonoBehaviour
         if (buyButton != null)
         {
             buyButton.onClick.RemoveAllListeners();
-            buyButton.onClick.AddListener(() =>
-            {
-                Debug.Log("ShopManager: Buy button clicked!");
-                StartPlacingTower();
-            });
+            buyButton.onClick.AddListener(StartPlacingTower);
             EnsureButtonInteractable(buyButton);
         }
         else
@@ -138,11 +115,7 @@ public class ShopManager : MonoBehaviour
         if (nextButton != null)
         {
             nextButton.onClick.RemoveAllListeners();
-            nextButton.onClick.AddListener(() =>
-            {
-                Debug.Log("ShopManager: Next button clicked!");
-                NextItem();
-            });
+            nextButton.onClick.AddListener(NextItem);
             EnsureButtonInteractable(nextButton);
         }
         else
@@ -153,11 +126,7 @@ public class ShopManager : MonoBehaviour
         if (previousButton != null)
         {
             previousButton.onClick.RemoveAllListeners();
-            previousButton.onClick.AddListener(() =>
-            {
-                Debug.Log("ShopManager: Previous button clicked!");
-                PreviousItem();
-            });
+            previousButton.onClick.AddListener(PreviousItem);
             EnsureButtonInteractable(previousButton);
         }
         else
@@ -187,102 +156,10 @@ public class ShopManager : MonoBehaviour
                 canvasGroup.blocksRaycasts = true;
                 canvasGroup.ignoreParentGroups = false;
             }
-            Debug.Log($"ShopManager: Ensured {button.name} is interactable.");
         }
     }
 
-    private void Update()
-    {
-        Debug.Log("ShopManager: Update called, scene: " + SceneManager.GetActiveScene().name);
-        if (isPlacingMiningTower && isInCaveScene)
-        {
-            Tilemap minesTilemap = GameObject.Find("MINES")?.GetComponent<Tilemap>();
-            if (minesTilemap == null)
-            {
-                Debug.LogWarning("MINES Tilemap not found!");
-                miningPlacementPreview.SetActive(false);
-                return;
-            }
-
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int cellPosition = minesTilemap.WorldToCell(mousePos);
-            Vector3 placementPosition = minesTilemap.CellToWorld(cellPosition) + new Vector3(0.5f, 0.5f, 0f);
-
-            miningPlacementPreview.SetActive(true);
-            miningPlacementPreview.transform.position = placementPosition;
-            miningPreviewRenderer.sprite = mineTowerSprite;
-
-            bool canPlace = minesTilemap.HasTile(cellPosition);
-            if (canPlace)
-            {
-                Collider2D[] hitColliders = Physics2D.OverlapCircleAll(placementPosition, 0.1f);
-                foreach (Collider2D collider in hitColliders)
-                {
-                    if (collider.CompareTag("MiningMachine"))
-                    {
-                        canPlace = false;
-                        break;
-                    }
-                }
-            }
-
-            miningPreviewRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
-
-            if (Input.GetMouseButtonDown(0) && canPlace)
-            {
-                Debug.Log("ShopManager: Placing mining tower!");
-                if (ResourceManager.Instance.SpendResources(mineTowerCopperCost, mineTowerIronCost))
-                {
-                    GameObject miningTower = Instantiate(miningManager.miningMachinePrefab, placementPosition, Quaternion.identity);
-                    miningTower.tag = "MiningMachine";
-                    miningTower.SetActive(true);
-                    CloseShop();
-                }
-            }
-            else if (Input.GetMouseButtonDown(1)) // Right-click to cancel
-            {
-                Debug.Log("ShopManager: Canceling mining tower placement!");
-                isPlacingMiningTower = false;
-                miningPlacementPreview.SetActive(false);
-                ResourceManager.Instance.AddCopper(lastCopperCost);
-                ResourceManager.Instance.AddIron(lastIronCost);
-            }
-        }
-        else
-        {
-            miningPlacementPreview.SetActive(false);
-        }
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        Debug.Log("ShopManager: Scene loaded - " + scene.name);
-        UpdateMineButton();
-        isInCaveScene = scene.name == "CaveScene";
-        if (isInCaveScene)
-        {
-            miningManager = Object.FindFirstObjectByType<MiningManager>();
-            if (miningManager == null)
-            {
-                Debug.LogWarning("MiningManager not found in CaveScene!");
-            }
-        }
-        UpdateShopContent();
-        UpdateUIElements();
-        closedShop.SetActive(true);
-        if (openButton != null)
-        {
-            openButton.gameObject.SetActive(true);
-            EnsureButtonInteractable(openButton);
-        }
-        if (mineButton != null)
-        {
-            EnsureButtonInteractable(mineButton);
-        }
-        isPlacingMiningTower = false;
-    }
-
-    private void UpdateMineButton()
+    public void UpdateMineButton()
     {
         if (mineButton == null)
         {
@@ -290,43 +167,70 @@ public class ShopManager : MonoBehaviour
             return;
         }
 
-        string currentScene = SceneManager.GetActiveScene().name;
-        mineButton.onClick.RemoveAllListeners();
         bool waveActive = GameManager.Instance != null && GameManager.Instance.isWaveActive;
-        mineButton.interactable = !waveActive || currentScene == "CaveScene";
+        mineButton.onClick.RemoveAllListeners();
 
-        if (currentScene == "GrassScene")
+        if (!isInCaveArea)
         {
             mineButton.image.sprite = goToMineSprite;
             mineButton.image.color = goToMineColor;
+            mineButton.interactable = !waveActive;
             if (!waveActive)
             {
                 mineButton.onClick.AddListener(() =>
                 {
-                    Debug.Log("ShopManager: Loading CaveScene...");
-                    SceneManager.LoadScene("CaveScene");
+                    if (GameManager.Instance != null && GameManager.Instance.isWaveActive) return;
+                    isInCaveArea = true;
+                    MoveCameraToCave();
+                    UpdateMineButton();
+                    UpdateShopContent();
+                    GameManager.Instance.EnableStartButton(false);
+                    if (miningManager != null)
+                    {
+                        miningManager.gameObject.SetActive(true);
+                    }
                 });
             }
-            else
-            {
-                Debug.Log("ShopManager: Cannot enter CaveScene during an active wave!");
-            }
         }
-        else if (currentScene == "CaveScene")
+        else
         {
             mineButton.image.sprite = goBackSprite;
             mineButton.image.color = goBackColor;
+            mineButton.interactable = true;
             mineButton.onClick.AddListener(() =>
             {
-                Debug.Log("ShopManager: Loading GrassScene... (Home Button Clicked)");
-                SceneManager.LoadScene("GrassScene");
+                isInCaveArea = false;
+                MoveCameraToGrass();
+                UpdateMineButton();
+                UpdateShopContent();
+                GameManager.Instance.EnableStartButton(true);
+                if (miningManager != null)
+                {
+                    miningManager.gameObject.SetActive(false);
+                }
             });
+        }
+    }
+
+    private void MoveCameraToGrass()
+    {
+        if (mainCamera != null)
+        {
+            mainCamera.transform.position = new Vector3(grassCameraPosition.x, grassCameraPosition.y, mainCamera.transform.position.z);
+        }
+    }
+
+    private void MoveCameraToCave()
+    {
+        if (mainCamera != null)
+        {
+            mainCamera.transform.position = new Vector3(caveCameraPosition.x, caveCameraPosition.y, mainCamera.transform.position.z);
         }
     }
 
     private void UpdateShopContent()
     {
-        if (isInCaveScene)
+        if (isInCaveArea)
         {
             itemNameText.text = mineTowerName;
             costText.text = $"{mineTowerCopperCost} Copper, {mineTowerIronCost} Iron";
@@ -372,7 +276,6 @@ public class ShopManager : MonoBehaviour
 
     private void OpenShop()
     {
-        Debug.Log("ShopManager: Opening shop!");
         UpdateShopContent();
         openedShop.SetActive(true);
         closedShop.SetActive(false);
@@ -384,12 +287,6 @@ public class ShopManager : MonoBehaviour
 
     public void CloseShop()
     {
-        Debug.Log("ShopManager: Closing shop!");
-        isPlacingMiningTower = false;
-        if (miningPlacementPreview != null)
-        {
-            miningPlacementPreview.SetActive(false);
-        }
         openedShop.SetActive(false);
         closedShop.SetActive(true);
         if (openButton != null)
@@ -401,29 +298,30 @@ public class ShopManager : MonoBehaviour
 
     private void StartPlacingTower()
     {
-        if (isInCaveScene)
+        if (isInCaveArea)
         {
-            lastCopperCost = mineTowerCopperCost;
-            lastIronCost = mineTowerIronCost;
-            if (ResourceManager.Instance.SpendResources(lastCopperCost, lastIronCost))
+            int copperCost = mineTowerCopperCost;
+            int ironCost = mineTowerIronCost;
+            if (ResourceManager.Instance.SpendResources(copperCost, ironCost))
             {
-                isPlacingMiningTower = true;
+                miningPlacement.StartPlacing(copperCost, ironCost);
+                CloseShop();
             }
         }
         else
         {
             if (currentIndex >= 0 && currentIndex < towerPlacement.towerPrefabs.Length)
             {
-                lastCopperCost = towerPlacement.copperCosts[currentIndex];
-                lastIronCost = towerPlacement.ironCosts[currentIndex];
-                if (ResourceManager.Instance.SpendResources(lastCopperCost, lastIronCost))
+                int copperCost = towerPlacement.copperCosts[currentIndex];
+                int ironCost = towerPlacement.ironCosts[currentIndex];
+                if (ResourceManager.Instance.SpendResources(copperCost, ironCost))
                 {
                     towerPlacement.SetSelectedTowerIndex(currentIndex);
                     CloseShop();
                 }
                 else
                 {
-                    Debug.Log($"Not enough resources! Need {lastCopperCost} Copper and {lastIronCost} Iron.");
+                    Debug.Log($"Not enough resources! Need {copperCost} Copper and {ironCost} Iron.");
                 }
             }
         }
@@ -431,7 +329,7 @@ public class ShopManager : MonoBehaviour
 
     private void NextItem()
     {
-        if (!isInCaveScene)
+        if (!isInCaveArea)
         {
             currentIndex = (currentIndex + 1) % towerPlacement.towerPrefabs.Length;
             UpdateShopContent();
@@ -440,15 +338,10 @@ public class ShopManager : MonoBehaviour
 
     private void PreviousItem()
     {
-        if (!isInCaveScene)
+        if (!isInCaveArea)
         {
             currentIndex = (currentIndex - 1 + towerPlacement.towerPrefabs.Length) % towerPlacement.towerPrefabs.Length;
             UpdateShopContent();
         }
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

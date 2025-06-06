@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 using TMPro;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite activeWaveSprite;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private ShopManager shopManager;
 
     private int playerHealth = 100;
     public bool isWaveActive { get; private set; } = false;
@@ -26,37 +26,25 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            // Removed DontDestroyOnLoad
         }
         else
         {
             Destroy(gameObject);
         }
-        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void Start()
     {
-        if (scene.name == "GrassScene")
+        isGameOver = false;
+        currentWave = 0;
+        playerHealth = 100;
+        isWaveActive = false;
+        UpdateUI();
+        EnableStartButton(true);
+        if (startButton != null)
         {
-            isGameOver = false;
-            currentWave = 0;
-            playerHealth = 100;
-            isWaveActive = false;
-            UpdateUI();
-            EnableStartButton(true); // Always enable in GrassScene
-            if (startButton != null)
-            {
-                startButton.SetActive(true); // Always visible in GrassScene
-            }
-        }
-        else if (scene.name == "CaveScene")
-        {
-            UpdateUI();
-            if (startButton != null)
-            {
-                startButton.SetActive(false); // Hide in CaveScene
-            }
+            startButton.SetActive(true);
         }
     }
 
@@ -65,7 +53,6 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
 
         playerHealth -= damage;
-        Debug.Log($"Player took {damage} damage. Health: {playerHealth}");
         if (playerHealth <= 0)
         {
             playerHealth = 0;
@@ -79,10 +66,12 @@ public class GameManager : MonoBehaviour
     {
         if (startButton != null)
         {
+            bool inGrassArea = shopManager != null && !shopManager.IsInCaveArea();
+            startButton.SetActive(enable && inGrassArea);
             Button buttonComponent = startButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
-                buttonComponent.interactable = enable && !isWaveActive;
+                buttonComponent.interactable = enable && !isWaveActive && inGrassArea;
             }
             UpdateStartButtonSprite();
         }
@@ -92,13 +81,18 @@ public class GameManager : MonoBehaviour
     {
         if (!isWaveActive && !isGameOver && startButton.activeSelf)
         {
+            if (shopManager != null && shopManager.IsInCaveArea()) return;
             isWaveActive = true;
-            WaveManager waveManager = Object.FindFirstObjectByType<WaveManager>();
+            WaveManager waveManager = FindFirstObjectByType<WaveManager>();
             if (waveManager != null)
             {
                 waveManager.StartWave();
             }
             UpdateUI();
+            if (shopManager != null)
+            {
+                shopManager.UpdateMineButton();
+            }
         }
     }
 
@@ -107,6 +101,10 @@ public class GameManager : MonoBehaviour
         isWaveActive = false;
         EnableStartButton(true);
         UpdateUI();
+        if (shopManager != null)
+        {
+            shopManager.UpdateMineButton();
+        }
     }
 
     public void AddTower(Vector3 position, int index)
@@ -142,13 +140,7 @@ public class GameManager : MonoBehaviour
         if (!isGameOver)
         {
             currentWave++;
-            Debug.Log($"Wave incremented to {currentWave}");
             UpdateUI();
         }
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

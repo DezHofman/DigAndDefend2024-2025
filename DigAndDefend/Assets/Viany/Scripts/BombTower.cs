@@ -8,7 +8,7 @@ public class BombTower : Tower
     protected override void Start()
     {
         base.Start();
-        GameObject pathObject = GameObject.Find("PATH");
+        GameObject pathObject = GameObject.Find("HOME PATH");
         if (pathObject != null)
         {
             pathTilemap = pathObject.GetComponent<Tilemap>();

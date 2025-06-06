@@ -1,31 +1,32 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class TowerPlacement : MonoBehaviour
 {
     public GameObject[] towerPrefabs;
-    public int[] copperCosts = { 20, 20, 20, 20, 15 };
-    public int[] ironCosts = { 10, 10, 10, 10, 5 };
+    public int[] copperCosts = { 25, 25, 20, 20, 15 };
+    public int[] ironCosts = { 10, 15, 10, 10, 5 };
     [SerializeField] private Tilemap pathTilemap;
     [SerializeField] private Tilemap bigRocksTilemap;
     [SerializeField] private GameObject placementPreviewPrefab;
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
-    [SerializeField] private TileBase[] pathTiles;
-    [SerializeField] private Sprite barricadeHorizontalSprite;
-    [SerializeField] private Sprite barricadeVerticalSprite;
+    [SerializeField] private TileBase[] minesTiles;
+    [SerializeField] private Sprite barricadeSprite;
+    [SerializeField] private Sprite shopSprite;
+    [SerializeField] private ShopManager shopManager;
+
     private int selectedTowerIndex = -1;
     private GameObject placementPreview;
-    private SpriteRenderer previewRenderer;
-    private const float MINIMUM_TOWER_GAP = 1.5f;
-    private int lastCopperCost = 0; // Track cost for refund
-    private int lastIronCost = 0; // Track cost for refund
+    private SpriteRenderer spriteRenderer;
+    private const float MINIMUM_TOWER_DISTANCE = 1.5f;
+    private int lastCopperCost = 0;
+    private int lastIronCost = 0;
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        // Removed DontDestroyOnLoad
     }
 
     private void Start()
@@ -33,27 +34,18 @@ public class TowerPlacement : MonoBehaviour
         if (placementPreview == null)
         {
             placementPreview = Instantiate(placementPreviewPrefab);
-            previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
+            spriteRenderer = placementPreview.GetComponent<SpriteRenderer>();
             placementPreview.SetActive(false);
-            DontDestroyOnLoad(placementPreview);
+            // Removed DontDestroyOnLoad(placementPreview)
         }
-        SceneManager.sceneLoaded += OnSceneLoaded;
+        pathTilemap = GameObject.Find("HOME PATH")?.GetComponent<Tilemap>();
+        bigRocksTilemap = GameObject.Find("HOME BIG ROCKS")?.GetComponent<Tilemap>();
         RestoreTowers();
-    }
-
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        if (scene.name == "GrassScene")
-        {
-            pathTilemap = GameObject.Find("PATH")?.GetComponent<Tilemap>();
-            bigRocksTilemap = GameObject.Find("BIG STONES")?.GetComponent<Tilemap>();
-            RestoreTowers();
-        }
     }
 
     void Update()
     {
-        if (SceneManager.GetActiveScene().name != "GrassScene")
+        if (shopManager == null || shopManager.IsInCaveArea()) // Changed from IsInCave to IsInCaveArea
         {
             if (placementPreview != null)
             {
@@ -64,7 +56,6 @@ public class TowerPlacement : MonoBehaviour
 
         if (pathTilemap == null || bigRocksTilemap == null)
         {
-            Debug.LogWarning("TowerPlacement: Tilemap is null, skipping Update.");
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
@@ -87,13 +78,13 @@ public class TowerPlacement : MonoBehaviour
                 Sprite towerSprite = GetTowerSprite(selectedTowerIndex, cellPosition);
                 if (towerSprite != null)
                 {
-                    previewRenderer.sprite = towerSprite;
+                    spriteRenderer.sprite = towerSprite;
                 }
 
                 bool isOnPath = pathTilemap.HasTile(cellPosition);
                 bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
                 bool canPlace = false;
-                bool hasMinimumGap = HasMinimumGap(placementPosition);
+                bool hasMinimumDistance = HasMinimumDistance(placementPosition);
 
                 if (selectedTowerIndex == 4) // Barricade
                 {
@@ -104,7 +95,7 @@ public class TowerPlacement : MonoBehaviour
                 }
                 else // Towers
                 {
-                    if (!isOnPath && !isOnBigRocks && hasMinimumGap)
+                    if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
                     {
                         canPlace = true;
                     }
@@ -115,7 +106,7 @@ public class TowerPlacement : MonoBehaviour
                     canPlace = ResourceManager.Instance.SpendResources(0, 0);
                 }
 
-                previewRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
+                spriteRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
             }
         }
         else
@@ -131,7 +122,7 @@ public class TowerPlacement : MonoBehaviour
             bool isOnPath = pathTilemap.HasTile(cellPosition);
             bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
             bool canPlace = false;
-            bool hasMinimumGap = HasMinimumGap(placementPosition);
+            bool hasMinimumDistance = HasMinimumDistance(placementPosition);
 
             if (selectedTowerIndex == 4) // Barricade
             {
@@ -142,7 +133,7 @@ public class TowerPlacement : MonoBehaviour
             }
             else // Towers
             {
-                if (!isOnPath && !isOnBigRocks && hasMinimumGap)
+                if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
                 {
                     canPlace = true;
                 }
@@ -160,8 +151,8 @@ public class TowerPlacement : MonoBehaviour
                     }
                     GameManager.Instance.AddTower(position, selectedTowerIndex);
                     selectedTowerIndex = -1;
-                    lastCopperCost = 0; // Reset after placement
-                    lastIronCost = 0; // Reset after placement
+                    lastCopperCost = 0;
+                    lastIronCost = 0;
                 }
             }
             else
@@ -169,7 +160,7 @@ public class TowerPlacement : MonoBehaviour
                 string reason = "Cannot place here! ";
                 if (isOnPath) reason += "Towers cannot be on Path. ";
                 if (isOnBigRocks) reason += "Cannot place on Big Rocks. ";
-                if (!hasMinimumGap && selectedTowerIndex != 4) reason += "Must have a 1.5-unit gap between towers. ";
+                if (!hasMinimumDistance && selectedTowerIndex != 4) reason += "Must have a 1.5-unit gap between towers. ";
                 if (selectedTowerIndex == 4 && !isOnPath) reason += "Barricades can only be on Path.";
                 Debug.Log(reason);
             }
@@ -181,25 +172,25 @@ public class TowerPlacement : MonoBehaviour
             {
                 placementPreview.SetActive(false);
             }
-            ResourceManager.Instance.AddCopper(lastCopperCost); // Refund
-            ResourceManager.Instance.AddIron(lastIronCost); // Refund
-            ShopManager shop = FindObjectOfType<ShopManager>();
+            ResourceManager.Instance.AddCopper(lastCopperCost);
+            ResourceManager.Instance.AddIron(lastIronCost);
+            ShopManager shop = FindFirstObjectByType<ShopManager>();
             if (shop != null)
             {
                 shop.CloseShop();
             }
-            lastCopperCost = 0; // Reset after refund
-            lastIronCost = 0; // Reset after refund
+            lastCopperCost = 0;
+            lastIronCost = 0;
         }
     }
 
-    private bool HasMinimumGap(Vector3 position)
+    private bool HasMinimumDistance(Vector3 position)
     {
         GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
         foreach (GameObject tower in towers)
         {
             float distance = Vector2.Distance(position, tower.transform.position);
-            if (distance < MINIMUM_TOWER_GAP)
+            if (distance < MINIMUM_TOWER_DISTANCE)
             {
                 Debug.Log($"TowerPlacement: Position {position} is too close ({distance} units) to tower at {tower.transform.position}.");
                 return false;
@@ -213,8 +204,8 @@ public class TowerPlacement : MonoBehaviour
         selectedTowerIndex = index;
         if (index >= 0 && index < copperCosts.Length)
         {
-            lastCopperCost = copperCosts[index]; // Store cost for refund
-            lastIronCost = ironCosts[index]; // Store cost for refund
+            lastCopperCost = copperCosts[index];
+            lastIronCost = ironCosts[index];
         }
     }
 
@@ -243,7 +234,7 @@ public class TowerPlacement : MonoBehaviour
 
     private Sprite GetBarricadeSprite(Vector3Int cellPosition)
     {
-        if (pathTiles == null || pathTiles.Length != 6 || barricadeHorizontalSprite == null || barricadeVerticalSprite == null)
+        if (minesTiles == null || minesTiles.Length != 6 || barricadeSprite == null || shopSprite == null)
         {
             Debug.LogWarning("TowerPlacement: Path tiles or barricade sprites not fully assigned!");
             return null;
@@ -255,20 +246,20 @@ public class TowerPlacement : MonoBehaviour
             return null;
         }
 
-        if (currentTile == pathTiles[0])
+        if (currentTile == minesTiles[0])
         {
-            return barricadeVerticalSprite;
+            return shopSprite;
         }
-        else if (currentTile == pathTiles[1])
+        else if (currentTile == minesTiles[1])
         {
-            return barricadeHorizontalSprite;
+            return barricadeSprite;
         }
-        else if (currentTile == pathTiles[2] || currentTile == pathTiles[3] || currentTile == pathTiles[4] || currentTile == pathTiles[5])
+        else if (currentTile == minesTiles[2] || currentTile == minesTiles[3] || currentTile == minesTiles[4] || currentTile == minesTiles[5])
         {
-            return barricadeVerticalSprite;
+            return shopSprite;
         }
         Debug.LogWarning($"TowerPlacement: Unrecognized path tile at {cellPosition}");
-        return barricadeVerticalSprite;
+        return shopSprite;
     }
 
     private void ApplyBarricadeRotation(GameObject barricade, Vector3Int cellPosition)
@@ -278,13 +269,29 @@ public class TowerPlacement : MonoBehaviour
         {
             barricadeRenderer.sprite = GetBarricadeSprite(cellPosition);
             TileBase currentTile = pathTilemap.GetTile(cellPosition);
-            if (currentTile == pathTiles[0] || currentTile == pathTiles[2] || currentTile == pathTiles[3] || currentTile == pathTiles[4] || currentTile == pathTiles[5])
+            if (currentTile == minesTiles[0])
             {
                 barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
             }
-            else if (currentTile == pathTiles[1])
+            else if (currentTile == minesTiles[1])
             {
-                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 90);
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            else if (currentTile == minesTiles[2])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+            }
+            else if (currentTile == minesTiles[3])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+            }
+            else if (currentTile == minesTiles[4])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+            }
+            else if (currentTile == minesTiles[5])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
             }
         }
     }
@@ -301,10 +308,5 @@ public class TowerPlacement : MonoBehaviour
                 ApplyBarricadeRotation(tower, cellPosition);
             }
         }
-    }
-
-    private void OnDestroy()
-    {
-        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

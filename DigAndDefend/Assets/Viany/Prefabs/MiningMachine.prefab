@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1162829099470194232}
   - component: {fileID: 524545102545107705}
+  - component: {fileID: 5967523537814915057}
+  - component: {fileID: -518334579140779973}
   - component: {fileID: 7752266152593138786}
   - component: {fileID: 303259280575699946}
   m_Layer: 7
@@ -89,6 +91,41 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5967523537814915057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4949023671123579534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialHealth: 100
+  maxHealth: 100
+  worldOffset: 1
+  screenOffset: -120
+  healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
+  damageColor: {r: 0.8, g: 0.2, b: 0.2, a: 1}
+  outlineColor: {r: 0, g: 0, b: 0, a: 1}
+  healthbarWidth: 100
+  healthbarHeight: 10
+--- !u!114 &-518334579140779973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4949023671123579534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33399087e2e1d4b4d91eecc1377053f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healthbar: {fileID: 5967523537814915057}
+  lifespan: 15
 --- !u!61 &7752266152593138786
 BoxCollider2D:
   m_ObjectHideFlags: 0

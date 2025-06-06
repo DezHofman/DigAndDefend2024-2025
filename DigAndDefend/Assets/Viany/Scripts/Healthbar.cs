@@ -3,7 +3,7 @@ using UnityEngine;
 public class Healthbar : MonoBehaviour
 {
     [SerializeField] private float initialHealth;
-    [SerializeField] private float maxHealth;
+    [SerializeField] public float maxHealth;
     [SerializeField] private float worldOffset;
     [SerializeField] private float screenOffset;
     [SerializeField] private Color healthColor = new Color(0.2f, 0.8f, 0.2f);
