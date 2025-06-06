@@ -2,105 +2,109 @@ using UnityEngine;
 
 public class ArrowProjectile : Projectile
 {
-    private bool hasHitGround = false;
-    private bool hasHitEnemy = false;
+    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float rotateSpeed = 200f;
+    [SerializeField] private float trackingRange = 5f; // Range within which the arrow tracks the enemy
+    [SerializeField] private float damage = 10f; // Damage dealt to enemy
 
-    public new void Initialize(Tower tower, Transform newTarget) // Add 'new' to hide base method
+    private bool rotationLocked = false;
+    private bool isTracking = true;
+    private Vector2 lastDirection;
+    private float initialAngle;
+
+    new void Update()
     {
-        base.Initialize(tower, newTarget);
-        if (newTarget != null)
+        // Destroy if no target
+        if (base.target == null)
         {
-            BaseEnemy targetEnemy = newTarget.GetComponent<BaseEnemy>();
-            if (targetEnemy != null)
-            {
-                // Predict where the enemy will be based on its velocity and arrow speed
-                Vector3 enemyPosition = newTarget.position;
-                Vector3 enemyVelocity = targetEnemy.GetCurrentVelocity();
-                float timeToHit = Vector3.Distance(transform.position, enemyPosition) / speed;
-                Vector3 predictedPosition = enemyPosition + (enemyVelocity * timeToHit);
-                Debug.Log($"ArrowProjectile: Predicted enemy position at {predictedPosition}, time to hit: {timeToHit}");
+            isTracking = false; // Stop tracking if the target is destroyed
+        }
 
-                // Set velocity in the base class
-                velocity = (predictedPosition - transform.position).normalized * speed;
-                Debug.Log($"ArrowProjectile: Initial velocity: {velocity}");
+        // Calculate distance to target if it exists
+        float distanceToTarget = base.target != null ? Vector2.Distance(transform.position, base.target.position) : float.MaxValue;
+
+        // Stop tracking if the target is out of range
+        if (isTracking && distanceToTarget > trackingRange)
+        {
+            isTracking = false;
+            lastDirection = (base.target.position - transform.position).normalized; // Store the last direction
+        }
+
+        Vector2 direction;
+        if (isTracking && base.target != null)
+        {
+            direction = (base.target.position - transform.position).normalized;
+
+            // Lock initial rotation toward target on the first frame
+            if (!rotationLocked)
+            {
+                initialAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                transform.rotation = Quaternion.Euler(0, 0, initialAngle);
+                rotationLocked = true;
             }
             else
             {
-                velocity = (newTarget.position - transform.position).normalized * speed;
-                Debug.Log($"ArrowProjectile: Default velocity: {velocity}");
+                // Calculate desired angle and limit rotation change to ±25 degrees
+                float desiredAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+                float angleDifference = Mathf.DeltaAngle(initialAngle, desiredAngle);
+                float maxAngleChange = 25f;
+                if (Mathf.Abs(angleDifference) > maxAngleChange)
+                {
+                    desiredAngle = initialAngle + Mathf.Sign(angleDifference) * maxAngleChange;
+                }
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, desiredAngle), rotateSpeed * Time.deltaTime);
             }
         }
         else
         {
-            Debug.LogWarning("ArrowProjectile: No target assigned!");
-            Destroy(gameObject);
-        }
-    }
-
-    protected override void Update()
-    {
-        if (hasHitGround || hasHitEnemy || target == null)
-        {
-            Debug.Log("ArrowProjectile: Destroying arrow due to hit or lost target");
-            Destroy(gameObject);
-            return;
-        }
-
-        Move();
-    }
-
-    protected override void Move()
-    {
-        if (hasHitGround || hasHitEnemy) return;
-
-        transform.position += velocity * Time.deltaTime;
-
-        // Dynamically rotate the arrow to point toward the target
-        if (target != null)
-        {
-            Vector3 directionToTarget = (target.position - transform.position).normalized;
-            float angle = Mathf.Atan2(directionToTarget.y, directionToTarget.x) * Mathf.Rad2Deg - 90f; // -90 to align arrow tip
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-            Debug.Log($"ArrowProjectile: Rotating to face target at angle {angle}");
-        }
-
-        Debug.Log($"ArrowProjectile: Position: {transform.position}, velocity: {velocity}");
-    }
-
-    protected override void OnTriggerEnter2D(Collider2D other)
-    {
-        if (hasHitEnemy) return;
-
-        if (other.CompareTag("Enemy"))
-        {
-            BaseEnemy enemy = other.GetComponent<BaseEnemy>();
-            if (enemy != null)
+            // If not tracking, use the last direction or destroy if no direction set
+            if (lastDirection == Vector2.zero)
             {
-                hasHitEnemy = true;
-                OnHitEnemy(enemy);
-                Debug.Log($"ArrowProjectile: Hit enemy {enemy.name} at {transform.position}");
-                Destroy(gameObject, 0f);
+                direction = transform.up; // Default to current facing direction if no last direction
+            }
+            else
+            {
+                direction = lastDirection;
             }
         }
-        else if (other.CompareTag("Ground"))
+
+        float distanceThisFrame = moveSpeed * Time.deltaTime;
+        transform.Translate(direction * distanceThisFrame, Space.World);
+
+        // Check if the arrow hits the target while tracking
+        if (isTracking && base.target != null && distanceToTarget <= 0.1f)
         {
-            hasHitGround = true;
-            Debug.Log($"ArrowProjectile: Hit ground at {transform.position}");
-            Destroy(gameObject, 0f);
+            OnHitEnemy(base.target.GetComponent<BaseEnemy>());
+            return; // Exit early after hitting
         }
+
+        // Check if the arrow is outside the scene boundaries
+        Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
+        if (viewportPos.x < -0.1f || viewportPos.x > 1.1f || viewportPos.y < -0.1f || viewportPos.y > 1.1f)
+        {
+            Debug.Log("ArrowProjectile: Arrow left the scene boundaries and was destroyed.");
+            Destroy(gameObject);
+        }
+    }
+
+    public void SetTarget(Transform _target)
+    {
+        base.target = _target;
+    }
+
+    protected void HitTarget()
+    {
+        Debug.Log("Arrow hit " + base.target.name);
+        BaseEnemy enemy = base.target.GetComponent<BaseEnemy>();
+        if (enemy != null)
+        {
+            enemy.TakeDamage(damage); // Apply damage to enemy
+        }
+        Destroy(gameObject);
     }
 
     protected override void OnHitEnemy(BaseEnemy enemy)
     {
-        if (parentTower != null)
-        {
-            enemy.TakeDamage(parentTower.attackDamage);
-            Debug.Log($"ArrowProjectile: Dealt {parentTower.attackDamage} damage to enemy {enemy.name}");
-        }
-        else
-        {
-            Debug.LogWarning("ArrowProjectile: Parent tower not set, using default damage");
-            enemy.TakeDamage(10f); // Fallback damage
-        }
+        HitTarget();
     }
 }

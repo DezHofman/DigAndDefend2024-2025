@@ -6,15 +6,20 @@ public class ResourceManager : MonoBehaviour
     public static ResourceManager Instance { get; private set; }
     public int copper = 0;
     public int iron = 0;
-    public TMP_Text copperText;
-    public TMP_Text ironText;
+    [SerializeField] private TextMeshProUGUI copperText;
+    [SerializeField] private TextMeshProUGUI ironText;
 
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
+        {
             Destroy(gameObject);
+        }
     }
 
     private void Start()
@@ -46,9 +51,9 @@ public class ResourceManager : MonoBehaviour
         UpdateResourceUI();
     }
 
-    void UpdateResourceUI()
+    public void UpdateResourceUI()
     {
-        copperText.text = "Copper: " + copper;
-        ironText.text = "Iron: " + iron;
+        if (copperText != null) copperText.text = "Copper: " + copper;
+        if (ironText != null) ironText.text = "Iron: " + iron;
     }
 }

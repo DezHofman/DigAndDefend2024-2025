@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class TowerPlacement : MonoBehaviour
 {
-    public GameObject[] towerPrefabs; // Order: Archer, Bomb, Slow, Fire/Poison, Barricade
+    public GameObject[] towerPrefabs;
     public int[] copperCosts = { 20, 20, 20, 20, 15 };
     public int[] ironCosts = { 10, 10, 10, 10, 5 };
     [SerializeField] private Tilemap pathTilemap;
@@ -11,19 +13,63 @@ public class TowerPlacement : MonoBehaviour
     [SerializeField] private GameObject placementPreviewPrefab;
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
+    [SerializeField] private TileBase[] pathTiles;
+    [SerializeField] private Sprite barricadeHorizontalSprite;
+    [SerializeField] private Sprite barricadeVerticalSprite;
     private int selectedTowerIndex = -1;
     private GameObject placementPreview;
     private SpriteRenderer previewRenderer;
+    private const float MINIMUM_TOWER_GAP = 1.5f;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject); // Persist across scenes
+    }
 
     private void Start()
     {
-        placementPreview = Instantiate(placementPreviewPrefab);
-        previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
-        placementPreview.SetActive(false);
+        if (placementPreview == null)
+        {
+            placementPreview = Instantiate(placementPreviewPrefab);
+            previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
+            placementPreview.SetActive(false);
+            DontDestroyOnLoad(placementPreview); // Persist preview
+        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        RestoreTowers();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "GrassScene")
+        {
+            pathTilemap = GameObject.Find("PATH")?.GetComponent<Tilemap>();
+            bigRocksTilemap = GameObject.Find("BIG STONES")?.GetComponent<Tilemap>();
+            RestoreTowers();
+        }
     }
 
     void Update()
     {
+        if (SceneManager.GetActiveScene().name != "GrassScene")
+        {
+            if (placementPreview != null)
+            {
+                placementPreview.SetActive(false);
+            }
+            return;
+        }
+
+        if (pathTilemap == null || bigRocksTilemap == null)
+        {
+            Debug.LogWarning("TowerPlacement: Tilemap is null, skipping Update.");
+            if (placementPreview != null)
+            {
+                placementPreview.SetActive(false);
+            }
+            return;
+        }
+
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cellPosition = pathTilemap.WorldToCell(mousePos);
         Vector3 placementPosition = pathTilemap.CellToWorld(cellPosition);
@@ -31,24 +77,59 @@ public class TowerPlacement : MonoBehaviour
 
         if (selectedTowerIndex >= 0)
         {
-            placementPreview.SetActive(true);
-            placementPreview.transform.position = placementPosition;
-
-            // Update the preview sprite to match the selected tower
-            Sprite towerSprite = GetTowerSprite(selectedTowerIndex);
-            if (towerSprite != null)
+            if (placementPreview != null)
             {
-                previewRenderer.sprite = towerSprite;
-                Debug.Log($"TowerPlacement: Preview sprite updated for tower index {selectedTowerIndex}");
-            }
-            else
-            {
-                Debug.LogWarning($"TowerPlacement: Could not retrieve sprite for tower index {selectedTowerIndex}");
-            }
+                placementPreview.SetActive(true);
+                placementPreview.transform.position = placementPosition;
 
+                Sprite towerSprite = GetTowerSprite(selectedTowerIndex, cellPosition);
+                if (towerSprite != null)
+                {
+                    previewRenderer.sprite = towerSprite;
+                }
+
+                bool isOnPath = pathTilemap.HasTile(cellPosition);
+                bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
+                bool canPlace = false;
+                bool hasMinimumGap = HasMinimumGap(placementPosition);
+
+                if (selectedTowerIndex == 4) // Barricade
+                {
+                    if (isOnPath && !isOnBigRocks)
+                    {
+                        canPlace = true;
+                    }
+                }
+                else // Towers
+                {
+                    if (!isOnPath && !isOnBigRocks && hasMinimumGap)
+                    {
+                        canPlace = true;
+                    }
+                }
+
+                if (canPlace)
+                {
+                    canPlace = ResourceManager.Instance.SpendResources(0, 0);
+                }
+
+                previewRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
+            }
+        }
+        else
+        {
+            if (placementPreview != null)
+            {
+                placementPreview.SetActive(false);
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0) && selectedTowerIndex >= 0)
+        {
             bool isOnPath = pathTilemap.HasTile(cellPosition);
             bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
             bool canPlace = false;
+            bool hasMinimumGap = HasMinimumGap(placementPosition);
 
             if (selectedTowerIndex == 4) // Barricade
             {
@@ -57,42 +138,9 @@ public class TowerPlacement : MonoBehaviour
                     canPlace = true;
                 }
             }
-            else
+            else // Towers
             {
-                if (!isOnPath && !isOnBigRocks)
-                {
-                    canPlace = true;
-                }
-            }
-
-            if (canPlace)
-            {
-                canPlace = ResourceManager.Instance.SpendResources(0, 0);
-            }
-
-            previewRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
-        }
-        else
-        {
-            placementPreview.SetActive(false);
-        }
-
-        if (Input.GetMouseButtonDown(0) && selectedTowerIndex >= 0)
-        {
-            bool isOnPath = pathTilemap.HasTile(cellPosition);
-            bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
-            bool canPlace = false;
-
-            if (selectedTowerIndex == 4)
-            {
-                if (isOnPath && !isOnBigRocks)
-                {
-                    canPlace = true;
-                }
-            }
-            else
-            {
-                if (!isOnPath && !isOnBigRocks)
+                if (!isOnPath && !isOnBigRocks && hasMinimumGap)
                 {
                     canPlace = true;
                 }
@@ -102,53 +150,135 @@ public class TowerPlacement : MonoBehaviour
             {
                 if (ResourceManager.Instance.SpendResources(copperCosts[selectedTowerIndex], ironCosts[selectedTowerIndex]))
                 {
-                    Debug.Log("Instantiating tower at position: " + placementPosition);
-                    GameObject tower = Instantiate(towerPrefabs[selectedTowerIndex], placementPosition, Quaternion.identity, null);
-                    Debug.Log("Tower position after instantiation: " + tower.transform.position);
-                    Debug.Log("Tower parent: " + (tower.transform.parent != null ? tower.transform.parent.name : "None"));
-                    Debug.Log("Placed at: " + placementPosition);
+                    Vector3 position = placementPosition;
+                    GameObject tower = Instantiate(towerPrefabs[selectedTowerIndex], position, Quaternion.identity);
+                    if (selectedTowerIndex == 4)
+                    {
+                        ApplyBarricadeRotation(tower, cellPosition);
+                    }
+                    GameManager.Instance.AddTower(position, selectedTowerIndex);
                     selectedTowerIndex = -1;
-                }
-                else
-                {
-                    Debug.Log("Not enough resources! Need " + copperCosts[selectedTowerIndex] + " Copper and " + ironCosts[selectedTowerIndex] + " Iron.");
                 }
             }
             else
             {
-                Debug.Log("Cannot place here! Towers cannot be on Path or Big Rocks. Barricades can only be on Path.");
+                string reason = "Cannot place here! ";
+                if (isOnPath) reason += "Towers cannot be on Path. ";
+                if (isOnBigRocks) reason += "Cannot place on Big Rocks. ";
+                if (!hasMinimumGap && selectedTowerIndex != 4) reason += "Must have a 1.5-unit gap between towers. ";
+                if (selectedTowerIndex == 4 && !isOnPath) reason += "Barricades can only be on Path.";
+                Debug.Log(reason);
             }
         }
+    }
+
+    private bool HasMinimumGap(Vector3 position)
+    {
+        GameObject[] towers = GameObject.FindGameObjectsWithTag("Tower");
+        foreach (GameObject tower in towers)
+        {
+            float distance = Vector2.Distance(position, tower.transform.position);
+            if (distance < MINIMUM_TOWER_GAP)
+            {
+                Debug.Log($"TowerPlacement: Position {position} is too close ({distance} units) to tower at {tower.transform.position}.");
+                return false;
+            }
+        }
+        return true;
     }
 
     public void SetSelectedTowerIndex(int index)
     {
         selectedTowerIndex = index;
-        Debug.Log($"TowerPlacement: Selected tower index set to {index}");
     }
 
-    private Sprite GetTowerSprite(int towerIndex)
+    private Sprite GetTowerSprite(int towerIndex, Vector3Int cellPosition)
     {
         if (towerIndex < 0 || towerIndex >= towerPrefabs.Length)
         {
             return null;
         }
 
-        GameObject towerPrefab = towerPrefabs[towerIndex];
-        SpriteRenderer spriteRenderer = towerPrefab.GetComponentInChildren<SpriteRenderer>();
-        if (spriteRenderer != null)
+        if (towerIndex != 4)
         {
-            return spriteRenderer.sprite;
+            GameObject towerPrefab = towerPrefabs[towerIndex];
+            SpriteRenderer spriteRenderer = towerPrefab.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                return spriteRenderer.sprite;
+            }
+        }
+        else
+        {
+            return GetBarricadeSprite(cellPosition);
+        }
+        return null;
+    }
+
+    private Sprite GetBarricadeSprite(Vector3Int cellPosition)
+    {
+        if (pathTiles == null || pathTiles.Length != 6 || barricadeHorizontalSprite == null || barricadeVerticalSprite == null)
+        {
+            Debug.LogWarning("TowerPlacement: Path tiles or barricade sprites not fully assigned!");
+            return null;
         }
 
-        return null;
+        TileBase currentTile = pathTilemap.GetTile(cellPosition);
+        if (currentTile == null)
+        {
+            return null;
+        }
+
+        if (currentTile == pathTiles[0])
+        {
+            return barricadeVerticalSprite;
+        }
+        else if (currentTile == pathTiles[1])
+        {
+            return barricadeHorizontalSprite;
+        }
+        else if (currentTile == pathTiles[2] || currentTile == pathTiles[3] || currentTile == pathTiles[4] || currentTile == pathTiles[5])
+        {
+            return barricadeVerticalSprite;
+        }
+        Debug.LogWarning($"TowerPlacement: Unrecognized path tile at {cellPosition}");
+        return barricadeVerticalSprite;
+    }
+
+    private void ApplyBarricadeRotation(GameObject barricade, Vector3Int cellPosition)
+    {
+        SpriteRenderer barricadeRenderer = barricade.GetComponentInChildren<SpriteRenderer>();
+        if (barricadeRenderer != null)
+        {
+            barricadeRenderer.sprite = GetBarricadeSprite(cellPosition);
+            TileBase currentTile = pathTilemap.GetTile(cellPosition);
+            if (currentTile == pathTiles[0] || currentTile == pathTiles[2] || currentTile == pathTiles[3] || currentTile == pathTiles[4] || currentTile == pathTiles[5])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
+            }
+            else if (currentTile == pathTiles[1])
+            {
+                barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
+        }
+    }
+
+    private void RestoreTowers()
+    {
+        List<(Vector3, int)> towers = GameManager.Instance.GetTowers();
+        foreach (var (position, index) in towers)
+        {
+            GameObject tower = Instantiate(towerPrefabs[index], position, Quaternion.identity);
+            if (index == 4)
+            {
+                Vector3Int cellPosition = pathTilemap.WorldToCell(position);
+                ApplyBarricadeRotation(tower, cellPosition);
+            }
+        }
     }
 
     private void OnDestroy()
     {
-        if (placementPreview != null)
-        {
-            Destroy(placementPreview);
-        }
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

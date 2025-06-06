@@ -8,6 +8,7 @@ TagManager:
   - Tower
   - Barricade
   - Ground
+  - MiningMachine
   layers:
   - Default
   - TransparentFX

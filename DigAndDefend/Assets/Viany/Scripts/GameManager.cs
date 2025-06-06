@@ -1,21 +1,25 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
-    public int villageHealth = 100;
-    public int currentWave = 0;
-    public int totalWaves = 5;
-    public bool isGameOver = false;
-    public TMP_Text healthText;
-    public WaveManager waveManager;
 
-    [SerializeField] private Button startWaveButton; // Assign the button in Inspector
-    [SerializeField] private Sprite normalSprite;   // Assign the default sprite
-    [SerializeField] private Sprite startedSprite;  // Assign the "wave started" sprite
-    private Image buttonImage;                      // Reference to the button's Image
+    public bool isGameOver { get; private set; } = false;
+    public int currentWave { get; private set; } = 0;
+    public int totalWaves { get; private set; } = 10;
+    [SerializeField] private GameObject startButton;
+    [SerializeField] private Sprite startSprite;
+    [SerializeField] private Sprite activeWaveSprite;
+    [SerializeField] private TextMeshProUGUI waveText;
+    [SerializeField] private TextMeshProUGUI healthText;
+
+    private int playerHealth = 100;
+    public bool isWaveActive { get; private set; } = false;
+    private List<(Vector3, int)> placedTowers = new List<(Vector3, int)>();
 
     private void Awake()
     {
@@ -28,92 +32,117 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void Start()
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        UpdateHealthUI();
-        if (startWaveButton != null)
+        if (scene.name == "GrassScene")
         {
-            buttonImage = startWaveButton.GetComponent<Image>();
-            if (buttonImage != null)
-            {
-                buttonImage.sprite = normalSprite; // Set initial sprite
-            }
-            else
-            {
-                Debug.LogError("Image component not found on startWaveButton.");
-            }
+            isGameOver = false;
+            currentWave = 0;
+            playerHealth = 100;
+            isWaveActive = false;
+            UpdateUI();
+            EnableStartButton(true);
         }
-        else
+        else if (scene.name == "CaveScene")
         {
-            Debug.LogError("startWaveButton not assigned in Inspector.");
+            UpdateUI();
+            EnableStartButton(false); // Disable start button in CaveScene
         }
     }
 
     public void TakeDamage(int damage)
     {
-        villageHealth -= damage;
-        if (villageHealth <= 0)
+        if (isGameOver) return;
+
+        playerHealth -= damage;
+        Debug.Log($"Player took {damage} damage. Health: {playerHealth}");
+        if (playerHealth <= 0)
         {
-            villageHealth = 0;
-            GameOver();
+            playerHealth = 0;
+            isGameOver = true;
+            Debug.Log("Game Over!");
         }
-        UpdateHealthUI();
+        UpdateUI();
     }
 
-    public void GameOver()
+    public void EnableStartButton(bool enable)
     {
-        isGameOver = true;
-        Debug.Log("Game Over!");
-    }
-
-    void UpdateHealthUI()
-    {
-        healthText.text = "Health: " + villageHealth;
-    }
-
-    public void StartNextWave()
-    {
-        if (startWaveButton != null && startWaveButton.interactable)
+        if (startButton != null)
         {
-            currentWave++;
-            if (currentWave > totalWaves)
+            startButton.SetActive(enable);
+            Button buttonComponent = startButton.GetComponent<Button>();
+            if (buttonComponent != null)
             {
-                Debug.Log("All waves completed! You win!");
-                isGameOver = true;
+                buttonComponent.interactable = enable && !isWaveActive;
             }
-            else
+            UpdateStartButtonSprite();
+        }
+    }
+
+    public void StartWave()
+    {
+        if (!isWaveActive && !isGameOver && startButton.activeSelf)
+        {
+            isWaveActive = true;
+            WaveManager waveManager = Object.FindFirstObjectByType<WaveManager>(); // Fix warning
+            if (waveManager != null)
             {
                 waveManager.StartWave();
             }
+            UpdateUI();
+        }
+    }
 
-            // Disable the button and change sprite
-            startWaveButton.interactable = false;
-            if (buttonImage != null && startedSprite != null)
+    public void WaveComplete()
+    {
+        isWaveActive = false;
+        EnableStartButton(true);
+        UpdateUI();
+    }
+
+    public void AddTower(Vector3 position, int index)
+    {
+        placedTowers.Add((position, index));
+    }
+
+    public List<(Vector3, int)> GetTowers()
+    {
+        return new List<(Vector3, int)>(placedTowers);
+    }
+
+    private void UpdateStartButtonSprite()
+    {
+        if (startButton != null && startButton.activeSelf)
+        {
+            Image buttonImage = startButton.GetComponent<Image>();
+            if (buttonImage != null)
             {
-                buttonImage.sprite = startedSprite;
-            }
-            else
-            {
-                Debug.LogWarning("Failed to change sprite: buttonImage or startedSprite is null.");
+                buttonImage.sprite = isWaveActive ? activeWaveSprite : startSprite;
             }
         }
     }
 
-    public void EnableStartButton()
+    private void UpdateUI()
     {
-        if (startWaveButton != null && !isGameOver && currentWave < totalWaves)
+        if (waveText != null) waveText.text = "Wave: " + currentWave;
+        if (healthText != null) healthText.text = "Health: " + (isGameOver ? 0 : playerHealth);
+    }
+
+    public void IncrementWave()
+    {
+        if (!isGameOver)
         {
-            startWaveButton.interactable = true;
-            if (buttonImage != null && normalSprite != null)
-            {
-                buttonImage.sprite = normalSprite;
-            }
-            else
-            {
-                Debug.LogWarning("Failed to revert sprite: buttonImage or normalSprite is null.");
-            }
+            currentWave++;
+            Debug.Log($"Wave incremented to {currentWave}");
+            UpdateUI();
         }
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 }

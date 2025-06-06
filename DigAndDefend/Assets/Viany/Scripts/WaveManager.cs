@@ -22,14 +22,17 @@ public class WaveManager : MonoBehaviour
 
     private void Awake()
     {
-        enemyTypeToPrefab = new Dictionary<EnemyType, GameObject>
+        if (enemyTypeToPrefab == null)
         {
-            { EnemyType.Mushroom, mushroomPrefab },
-            { EnemyType.Golem, golemPrefab },
-            { EnemyType.Bat, batPrefab },
-            { EnemyType.Rat, ratPrefab }
-        };
-        Debug.Log("WaveManager initialized with prefabs: " + string.Join(", ", enemyTypeToPrefab.Keys));
+            enemyTypeToPrefab = new Dictionary<EnemyType, GameObject>
+            {
+                { EnemyType.Mushroom, mushroomPrefab },
+                { EnemyType.Golem, golemPrefab },
+                { EnemyType.Bat, batPrefab },
+                { EnemyType.Rat, ratPrefab }
+            };
+            Debug.Log("WaveManager initialized with prefabs: " + string.Join(", ", enemyTypeToPrefab.Keys));
+        }
     }
 
     private void Start()
@@ -47,6 +50,7 @@ public class WaveManager : MonoBehaviour
             return;
         }
 
+        GameManager.Instance.StartWave();
         WaveData currentWave = waves[currentWaveIndex];
         currentSpawnOrder = new List<EnemyType>(currentWave.enemySpawnOrder);
         currentEnemyCount = 0;
@@ -70,7 +74,7 @@ public class WaveManager : MonoBehaviour
                     if (enemy != null)
                     {
                         enemy.SetWaypoints(pathWaypoints);
-                        enemyObj.tag = "Enemy"; // Ensure tag is set
+                        enemyObj.tag = "Enemy";
                         Debug.Log("Spawned " + type + " at " + spawnPoint.position);
                     }
                     else
@@ -104,10 +108,12 @@ public class WaveManager : MonoBehaviour
         Debug.Log("Checking wave complete, enemies remaining: " + enemyCount);
         if (enemyCount == 0)
         {
-            if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave <= GameManager.Instance.totalWaves)
+            if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave < GameManager.Instance.totalWaves)
             {
+                GameManager.Instance.IncrementWave();
+                GameManager.Instance.WaveComplete();
                 Debug.Log("Wave complete, enabling start button.");
-                GameManager.Instance.EnableStartButton();
+                GameManager.Instance.EnableStartButton(true);
             }
             else
             {
@@ -123,6 +129,6 @@ public class WaveManager : MonoBehaviour
 
     void UpdateWaveUI()
     {
-        waveText.text = "Wave: " + GameManager.Instance.currentWave;
+        if (waveText != null) waveText.text = "Wave: " + GameManager.Instance.currentWave;
     }
 }
