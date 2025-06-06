@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 
 public class ShopManager : MonoBehaviour
@@ -25,9 +26,9 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Color goToMineColor = Color.white;
     [SerializeField] private Color goBackColor = Color.gray;
     [SerializeField] private MiningManager miningManager;
-    [SerializeField] private GameObject miningPlacementPreviewPrefab; // New: Preview for mining tower
-    [SerializeField] private float canPlaceOpacity; // New: Opacity for valid placement
-    [SerializeField] private float cannotPlaceOpacity; // New: Opacity for invalid placement
+    [SerializeField] private GameObject miningPlacementPreviewPrefab;
+    [SerializeField] private float canPlaceOpacity;
+    [SerializeField] private float cannotPlaceOpacity;
 
     private int currentIndex = 0;
     private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire/Poison Tower", "Barricade" };
@@ -35,13 +36,16 @@ public class ShopManager : MonoBehaviour
     private int mineTowerCopperCost = 0;
     private int mineTowerIronCost = 0;
     private bool isInCaveScene = false;
-    private GameObject miningPlacementPreview; // New: Preview instance
-    private SpriteRenderer miningPreviewRenderer; // New: Preview renderer
-    private bool isPlacingMiningTower = false; // New: State for placing mining tower
+    private GameObject miningPlacementPreview;
+    private SpriteRenderer miningPreviewRenderer;
+    private bool isPlacingMiningTower = false;
+    private int lastCopperCost = 0;
+    private int lastIronCost = 0;
 
     private void Awake()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -51,7 +55,6 @@ public class ShopManager : MonoBehaviour
             Debug.LogWarning("ShopManager: towerSprites array length does not match towerPrefabs length!");
         }
 
-        // Initialize mining placement preview
         if (miningPlacementPreview == null)
         {
             miningPlacementPreview = Instantiate(miningPlacementPreviewPrefab);
@@ -60,19 +63,137 @@ public class ShopManager : MonoBehaviour
             DontDestroyOnLoad(miningPlacementPreview);
         }
 
+        // Ensure time scale is normal
+        if (Time.timeScale != 1f)
+        {
+            Debug.LogWarning("ShopManager: Time.timeScale was not 1, resetting to 1.");
+            Time.timeScale = 1f;
+        }
+
+        // Ensure EventSystem exists
+        if (FindObjectOfType<EventSystem>() == null)
+        {
+            Debug.LogWarning("ShopManager: No EventSystem found in scene! Adding one.");
+            GameObject eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+            DontDestroyOnLoad(eventSystem);
+        }
+
         openedShop.SetActive(false);
-        openButton.onClick.AddListener(OpenShop);
-        closeButton.onClick.AddListener(CloseShop);
-        buyButton.onClick.AddListener(StartPlacingMiningTower); // Updated: Start placing mode
-        nextButton.onClick.AddListener(NextItem);
-        previousButton.onClick.AddListener(PreviousItem);
-        mineButton.onClick.RemoveAllListeners();
+        closedShop.SetActive(true);
+        SetupButtonListeners();
         UpdateMineButton();
         UpdateShopContent();
     }
 
+    private void SetupButtonListeners()
+    {
+        if (openButton != null)
+        {
+            openButton.onClick.RemoveAllListeners();
+            openButton.onClick.AddListener(() =>
+            {
+                Debug.Log("ShopManager: Open button clicked!");
+                OpenShop();
+            });
+            openButton.gameObject.SetActive(true);
+            EnsureButtonInteractable(openButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: openButton is not assigned!");
+        }
+
+        if (closeButton != null)
+        {
+            closeButton.onClick.RemoveAllListeners();
+            closeButton.onClick.AddListener(() =>
+            {
+                Debug.Log("ShopManager: Close button clicked!");
+                CloseShop();
+            });
+            EnsureButtonInteractable(closeButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: closeButton is not assigned!");
+        }
+
+        if (buyButton != null)
+        {
+            buyButton.onClick.RemoveAllListeners();
+            buyButton.onClick.AddListener(() =>
+            {
+                Debug.Log("ShopManager: Buy button clicked!");
+                StartPlacingTower();
+            });
+            EnsureButtonInteractable(buyButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: buyButton is not assigned!");
+        }
+
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveAllListeners();
+            nextButton.onClick.AddListener(() =>
+            {
+                Debug.Log("ShopManager: Next button clicked!");
+                NextItem();
+            });
+            EnsureButtonInteractable(nextButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: nextButton is not assigned!");
+        }
+
+        if (previousButton != null)
+        {
+            previousButton.onClick.RemoveAllListeners();
+            previousButton.onClick.AddListener(() =>
+            {
+                Debug.Log("ShopManager: Previous button clicked!");
+                PreviousItem();
+            });
+            EnsureButtonInteractable(previousButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: previousButton is not assigned!");
+        }
+
+        if (mineButton != null)
+        {
+            mineButton.onClick.RemoveAllListeners();
+            EnsureButtonInteractable(mineButton);
+        }
+        else
+        {
+            Debug.LogError("ShopManager: mineButton is not assigned!");
+        }
+    }
+
+    private void EnsureButtonInteractable(Button button)
+    {
+        if (button != null)
+        {
+            button.interactable = true;
+            var canvasGroup = button.GetComponent<CanvasGroup>();
+            if (canvasGroup != null)
+            {
+                canvasGroup.blocksRaycasts = true;
+                canvasGroup.ignoreParentGroups = false;
+            }
+            Debug.Log($"ShopManager: Ensured {button.name} is interactable.");
+        }
+    }
+
     private void Update()
     {
+        Debug.Log("ShopManager: Update called, scene: " + SceneManager.GetActiveScene().name);
         if (isPlacingMiningTower && isInCaveScene)
         {
             Tilemap minesTilemap = GameObject.Find("MINES")?.GetComponent<Tilemap>();
@@ -109,19 +230,22 @@ public class ShopManager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(0) && canPlace)
             {
+                Debug.Log("ShopManager: Placing mining tower!");
                 if (ResourceManager.Instance.SpendResources(mineTowerCopperCost, mineTowerIronCost))
                 {
                     GameObject miningTower = Instantiate(miningManager.miningMachinePrefab, placementPosition, Quaternion.identity);
                     miningTower.tag = "MiningMachine";
                     miningTower.SetActive(true);
-                    isPlacingMiningTower = false;
                     CloseShop();
                 }
             }
             else if (Input.GetMouseButtonDown(1)) // Right-click to cancel
             {
+                Debug.Log("ShopManager: Canceling mining tower placement!");
                 isPlacingMiningTower = false;
                 miningPlacementPreview.SetActive(false);
+                ResourceManager.Instance.AddCopper(lastCopperCost);
+                ResourceManager.Instance.AddIron(lastIronCost);
             }
         }
         else
@@ -132,6 +256,7 @@ public class ShopManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("ShopManager: Scene loaded - " + scene.name);
         UpdateMineButton();
         isInCaveScene = scene.name == "CaveScene";
         if (isInCaveScene)
@@ -145,28 +270,47 @@ public class ShopManager : MonoBehaviour
         UpdateShopContent();
         UpdateUIElements();
         closedShop.SetActive(true);
-        openButton.gameObject.SetActive(true);
-        isPlacingMiningTower = false; // Reset placement mode
+        if (openButton != null)
+        {
+            openButton.gameObject.SetActive(true);
+            EnsureButtonInteractable(openButton);
+        }
+        if (mineButton != null)
+        {
+            EnsureButtonInteractable(mineButton);
+        }
+        isPlacingMiningTower = false;
     }
 
     private void UpdateMineButton()
     {
+        if (mineButton == null)
+        {
+            Debug.LogWarning("ShopManager: mineButton is not assigned!");
+            return;
+        }
+
         string currentScene = SceneManager.GetActiveScene().name;
         mineButton.onClick.RemoveAllListeners();
         bool waveActive = GameManager.Instance != null && GameManager.Instance.isWaveActive;
-        mineButton.interactable = !waveActive;
+        mineButton.interactable = !waveActive || currentScene == "CaveScene";
+
         if (currentScene == "GrassScene")
         {
             mineButton.image.sprite = goToMineSprite;
             mineButton.image.color = goToMineColor;
-            mineButton.onClick.AddListener(() =>
+            if (!waveActive)
             {
-                if (!waveActive)
+                mineButton.onClick.AddListener(() =>
                 {
-                    Debug.Log("Loading CaveScene...");
+                    Debug.Log("ShopManager: Loading CaveScene...");
                     SceneManager.LoadScene("CaveScene");
-                }
-            });
+                });
+            }
+            else
+            {
+                Debug.Log("ShopManager: Cannot enter CaveScene during an active wave!");
+            }
         }
         else if (currentScene == "CaveScene")
         {
@@ -174,7 +318,7 @@ public class ShopManager : MonoBehaviour
             mineButton.image.color = goBackColor;
             mineButton.onClick.AddListener(() =>
             {
-                Debug.Log("Loading GrassScene... (Home Button Clicked)");
+                Debug.Log("ShopManager: Loading GrassScene... (Home Button Clicked)");
                 SceneManager.LoadScene("GrassScene");
             });
         }
@@ -228,41 +372,58 @@ public class ShopManager : MonoBehaviour
 
     private void OpenShop()
     {
+        Debug.Log("ShopManager: Opening shop!");
         UpdateShopContent();
         openedShop.SetActive(true);
         closedShop.SetActive(false);
-        openButton.gameObject.SetActive(false);
+        if (openButton != null)
+        {
+            openButton.gameObject.SetActive(false);
+        }
     }
 
-    private void CloseShop()
+    public void CloseShop()
     {
+        Debug.Log("ShopManager: Closing shop!");
         isPlacingMiningTower = false;
-        miningPlacementPreview.SetActive(false);
+        if (miningPlacementPreview != null)
+        {
+            miningPlacementPreview.SetActive(false);
+        }
         openedShop.SetActive(false);
         closedShop.SetActive(true);
-        openButton.gameObject.SetActive(true);
+        if (openButton != null)
+        {
+            openButton.gameObject.SetActive(true);
+            EnsureButtonInteractable(openButton);
+        }
     }
 
-    private void StartPlacingMiningTower()
+    private void StartPlacingTower()
     {
         if (isInCaveScene)
         {
-            isPlacingMiningTower = true;
+            lastCopperCost = mineTowerCopperCost;
+            lastIronCost = mineTowerIronCost;
+            if (ResourceManager.Instance.SpendResources(lastCopperCost, lastIronCost))
+            {
+                isPlacingMiningTower = true;
+            }
         }
         else
         {
             if (currentIndex >= 0 && currentIndex < towerPlacement.towerPrefabs.Length)
             {
-                int copperCost = towerPlacement.copperCosts[currentIndex];
-                int ironCost = towerPlacement.ironCosts[currentIndex];
-                if (ResourceManager.Instance.SpendResources(copperCost, ironCost))
+                lastCopperCost = towerPlacement.copperCosts[currentIndex];
+                lastIronCost = towerPlacement.ironCosts[currentIndex];
+                if (ResourceManager.Instance.SpendResources(lastCopperCost, lastIronCost))
                 {
                     towerPlacement.SetSelectedTowerIndex(currentIndex);
                     CloseShop();
                 }
                 else
                 {
-                    Debug.Log($"Not enough resources! Need {copperCost} Copper and {ironCost} Iron.");
+                    Debug.Log($"Not enough resources! Need {lastCopperCost} Copper and {lastIronCost} Iron.");
                 }
             }
         }

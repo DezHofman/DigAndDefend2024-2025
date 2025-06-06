@@ -20,10 +20,12 @@ public class TowerPlacement : MonoBehaviour
     private GameObject placementPreview;
     private SpriteRenderer previewRenderer;
     private const float MINIMUM_TOWER_GAP = 1.5f;
+    private int lastCopperCost = 0; // Track cost for refund
+    private int lastIronCost = 0; // Track cost for refund
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject); // Persist across scenes
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
@@ -33,7 +35,7 @@ public class TowerPlacement : MonoBehaviour
             placementPreview = Instantiate(placementPreviewPrefab);
             previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
             placementPreview.SetActive(false);
-            DontDestroyOnLoad(placementPreview); // Persist preview
+            DontDestroyOnLoad(placementPreview);
         }
         SceneManager.sceneLoaded += OnSceneLoaded;
         RestoreTowers();
@@ -158,6 +160,8 @@ public class TowerPlacement : MonoBehaviour
                     }
                     GameManager.Instance.AddTower(position, selectedTowerIndex);
                     selectedTowerIndex = -1;
+                    lastCopperCost = 0; // Reset after placement
+                    lastIronCost = 0; // Reset after placement
                 }
             }
             else
@@ -169,6 +173,23 @@ public class TowerPlacement : MonoBehaviour
                 if (selectedTowerIndex == 4 && !isOnPath) reason += "Barricades can only be on Path.";
                 Debug.Log(reason);
             }
+        }
+        else if (Input.GetMouseButtonDown(1) && selectedTowerIndex >= 0) // Right-click to cancel
+        {
+            selectedTowerIndex = -1;
+            if (placementPreview != null)
+            {
+                placementPreview.SetActive(false);
+            }
+            ResourceManager.Instance.AddCopper(lastCopperCost); // Refund
+            ResourceManager.Instance.AddIron(lastIronCost); // Refund
+            ShopManager shop = FindObjectOfType<ShopManager>();
+            if (shop != null)
+            {
+                shop.CloseShop();
+            }
+            lastCopperCost = 0; // Reset after refund
+            lastIronCost = 0; // Reset after refund
         }
     }
 
@@ -190,6 +211,11 @@ public class TowerPlacement : MonoBehaviour
     public void SetSelectedTowerIndex(int index)
     {
         selectedTowerIndex = index;
+        if (index >= 0 && index < copperCosts.Length)
+        {
+            lastCopperCost = copperCosts[index]; // Store cost for refund
+            lastIronCost = ironCosts[index]; // Store cost for refund
+        }
     }
 
     private Sprite GetTowerSprite(int towerIndex, Vector3Int cellPosition)

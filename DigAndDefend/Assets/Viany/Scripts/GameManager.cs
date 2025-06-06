@@ -44,12 +44,19 @@ public class GameManager : MonoBehaviour
             playerHealth = 100;
             isWaveActive = false;
             UpdateUI();
-            EnableStartButton(true);
+            EnableStartButton(true); // Always enable in GrassScene
+            if (startButton != null)
+            {
+                startButton.SetActive(true); // Always visible in GrassScene
+            }
         }
         else if (scene.name == "CaveScene")
         {
             UpdateUI();
-            EnableStartButton(false); // Disable start button in CaveScene
+            if (startButton != null)
+            {
+                startButton.SetActive(false); // Hide in CaveScene
+            }
         }
     }
 
@@ -72,7 +79,6 @@ public class GameManager : MonoBehaviour
     {
         if (startButton != null)
         {
-            startButton.SetActive(enable);
             Button buttonComponent = startButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
@@ -87,7 +93,7 @@ public class GameManager : MonoBehaviour
         if (!isWaveActive && !isGameOver && startButton.activeSelf)
         {
             isWaveActive = true;
-            WaveManager waveManager = Object.FindFirstObjectByType<WaveManager>(); // Fix warning
+            WaveManager waveManager = Object.FindFirstObjectByType<WaveManager>();
             if (waveManager != null)
             {
                 waveManager.StartWave();
