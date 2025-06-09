@@ -129,7 +129,7 @@ MonoBehaviour:
   speed: 0.75
   health: 700
   damageToVillage: 15
-  damageToBarricade: 10
+  damageToBarricade: 7
   canFly: 0
 --- !u!61 &7715664031866646253
 BoxCollider2D:
