@@ -83,7 +83,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.34, y: 0.67}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -105,9 +105,8 @@ MonoBehaviour:
   attackSpeed: 1.5
   attackDamage: 20
   rangeDisplayDuration: 5
-  rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
   projectilePrefab: {fileID: 433792562165019028, guid: b939119f02aa51e48acb4e8777ff56c0, type: 3}
-  defaultShootDistance: 5
+  rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
 --- !u!58 &2289174822030946732
 CircleCollider2D:
   m_ObjectHideFlags: 0
