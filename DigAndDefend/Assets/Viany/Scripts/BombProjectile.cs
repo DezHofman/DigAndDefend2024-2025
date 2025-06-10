@@ -6,7 +6,7 @@ public class BombProjectile : MonoBehaviour
     private float explosionRadius;
     private Vector3 targetPosition;
     private float speed = 5f;
-    private float explosionDelay = 1f;
+    private float explosionDelay = .2f;
     private bool hasReachedTarget = false;
 
     public void SetTargetPosition(Vector3 position)
