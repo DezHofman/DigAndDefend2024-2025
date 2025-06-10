@@ -85,7 +85,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.34, y: 0.71}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -125,8 +125,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthbar: {fileID: 5967523537814915057}
-  activeSprite: {fileID: 6623313122585226201, guid: c536819c5b8923f48ae05ac0516633f9, type: 3}
-  deadSprite: {fileID: 6623313122585226201, guid: c536819c5b8923f48ae05ac0516633f9, type: 3}
 --- !u!61 &7752266152593138786
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -166,7 +164,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1.5, y: 4.25}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 0.34, y: 0.71}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
