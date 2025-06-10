@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: Cave Tilemap_9
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 1374615584, guid: b451429120e4f484da703282dd577c00, type: 3}
+  m_Sprite: {fileID: -988561879, guid: b451429120e4f484da703282dd577c00, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

@@ -237,8 +237,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 198558e5d0b8b78479251b3bc378f63b
-      internalID: 1665744615
+      spriteID: cc7f7c9cb70083a42963d6e3fc037e63
+      internalID: 1047062170
       vertices: []
       indices: 
       edges: []
@@ -259,8 +259,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 67e566843aa30744eb163fb0514d4fbb
-      internalID: 359600206
+      spriteID: 62d364e69057575429758aeadfbdc514
+      internalID: 791934696
       vertices: []
       indices: 
       edges: []
@@ -281,8 +281,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a8ce20e3404c6db4e8a1155ea94da396
-      internalID: -1753344422
+      spriteID: 0733e9d56582f104b8cb18ba3c647308
+      internalID: 1064444834
       vertices: []
       indices: 
       edges: []
@@ -303,8 +303,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f4a31159fdada5744841bfec43ed2edc
-      internalID: -1910118340
+      spriteID: 2fa9156fe24feb8419d8ab8c7c660064
+      internalID: 438785414
       vertices: []
       indices: 
       edges: []
@@ -325,8 +325,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 9d4dac46498bfa844898e07b5ab590c4
-      internalID: 1374615584
+      spriteID: a7ae79b0ddd25324289b177a40a09629
+      internalID: -988561879
       vertices: []
       indices: 
       edges: []
@@ -335,8 +335,8 @@ TextureImporter:
       name: Cave Tilemap_10
       rect:
         serializedVersion: 2
-        x: 0
-        y: 32
+        x: 96
+        y: 64
         width: 32
         height: 32
       alignment: 0
@@ -347,8 +347,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b8d120d6efd5de24ea9f5538589db722
-      internalID: 981027186
+      spriteID: 81e24d6c3072bcb428f6d57ec14a1140
+      internalID: 1570600005
       vertices: []
       indices: 
       edges: []
@@ -357,6 +357,28 @@ TextureImporter:
       name: Cave Tilemap_11
       rect:
         serializedVersion: 2
+        x: 0
+        y: 32
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 68510260bfb52e5498b5d1f66b4b8a29
+      internalID: -693982226
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cave Tilemap_12
+      rect:
+        serializedVersion: 2
         x: 96
         y: 32
         width: 32
@@ -369,14 +391,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 54b980cdecc785e49b1686c7db8234e4
-      internalID: -1396338993
+      spriteID: 8ed5b30f171ef46488aa6aa4df0d50b6
+      internalID: -1427200268
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cave Tilemap_12
+      name: Cave Tilemap_13
       rect:
         serializedVersion: 2
         x: 128
@@ -391,14 +413,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1d06b37bb9307e44dba4fd6fa70e79ea
-      internalID: 1592742445
+      spriteID: d08fc46b95e634e4ba4b025e6f3d504c
+      internalID: 1646957353
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cave Tilemap_13
+      name: Cave Tilemap_14
       rect:
         serializedVersion: 2
         x: 0
@@ -413,14 +435,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 796ae773fb34d1048901498674e91b14
-      internalID: 1765437739
+      spriteID: dd20bc2fc0d01884084def27f266df5d
+      internalID: -455161134
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cave Tilemap_14
+      name: Cave Tilemap_15
       rect:
         serializedVersion: 2
         x: 96
@@ -435,14 +457,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 17065fcf9ebc5cc42b664466e27bbb60
-      internalID: -715620400
+      spriteID: f47edff675288a5429506bad0c1fe5eb
+      internalID: 1575670430
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Cave Tilemap_15
+      name: Cave Tilemap_16
       rect:
         serializedVersion: 2
         x: 128
@@ -457,8 +479,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ceea1a838dfd1a243bd65169a72b53d4
-      internalID: -1268111423
+      spriteID: 256e18e972394124cbd92d8cdc185d58
+      internalID: -706812964
       vertices: []
       indices: 
       edges: []
@@ -467,7 +489,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d6904e38f0662584dab453bd89af38ae
+    spriteID: b19a6d2702a16714a962c6e38391e38d
     internalID: 0
     vertices: []
     indices: 
@@ -479,20 +501,21 @@ TextureImporter:
     nameFileIdTable:
       Cave Tilemap_0: 6796157845688828318
       Cave Tilemap_1: -8479987831936900607
-      Cave Tilemap_10: 981027186
-      Cave Tilemap_11: -1396338993
-      Cave Tilemap_12: 1592742445
-      Cave Tilemap_13: 1765437739
-      Cave Tilemap_14: -715620400
-      Cave Tilemap_15: -1268111423
+      Cave Tilemap_10: 1570600005
+      Cave Tilemap_11: -693982226
+      Cave Tilemap_12: -1427200268
+      Cave Tilemap_13: 1646957353
+      Cave Tilemap_14: -455161134
+      Cave Tilemap_15: 1575670430
+      Cave Tilemap_16: -706812964
       Cave Tilemap_2: -2900915169048306594
       Cave Tilemap_3: -2526361936227877492
       Cave Tilemap_4: -599125299364608186
-      Cave Tilemap_5: 1665744615
-      Cave Tilemap_6: 359600206
-      Cave Tilemap_7: -1753344422
-      Cave Tilemap_8: -1910118340
-      Cave Tilemap_9: 1374615584
+      Cave Tilemap_5: 1047062170
+      Cave Tilemap_6: 791934696
+      Cave Tilemap_7: 1064444834
+      Cave Tilemap_8: 438785414
+      Cave Tilemap_9: -988561879
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
