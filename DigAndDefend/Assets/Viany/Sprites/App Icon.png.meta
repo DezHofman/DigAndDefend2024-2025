@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: acef9e5c67b89ce43b6b592a262facee
+guid: e0af91432b3cb034098e51fc6715b103
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5816275174484742147
-    second: Dig & Defend_0
+      213: 4326970947182336578
+    second: App_Icon 2_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Dig & Defend_0
+      name: App_Icon 2_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 2000
+        width: 1000
         height: 1000
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 300161b847f87b050800000000000000
-      internalID: 5816275174484742147
+      spriteID: 24a1d34b62d7c0c30800000000000000
+      internalID: 4326970947182336578
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 1fb1efd9ea2f2594abbebce4ea680d3c
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Dig & Defend_0: 5816275174484742147
+      App_Icon 2_0: 4326970947182336578
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

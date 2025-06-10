@@ -106,7 +106,7 @@ MonoBehaviour:
   initialHealth: 100
   maxHealth: 100
   worldOffset: 1
-  screenOffset: -120
+  screenOffset: -90
   healthColor: {r: 0.2, g: 0.6117647, b: 0.8, a: 1}
   damageColor: {r: 0, g: 0, b: 0, a: 1}
   outlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -159,7 +159,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.00972563, y: 0.6321525}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -169,7 +169,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.5, y: 4.25}
+  m_Size: {x: 0.9164752, y: 2.0909557}
   m_EdgeRadius: 0
 --- !u!95 &303259280575699946
 Animator:
@@ -181,7 +181,7 @@ Animator:
   m_GameObject: {fileID: 4949023671123579534}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3a77c5b81d33cc745b7695825061f726, type: 2}
+  m_Controller: {fileID: 9100000, guid: 9a9dd7a7572cf8243ad88e9cea0b33b5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
