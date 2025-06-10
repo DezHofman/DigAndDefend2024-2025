@@ -14,9 +14,6 @@ TextureImporter:
   - first:
       213: 6387166018096463929
     second: Mine Tower_3
-  - first:
-      213: -8729195845830506995
-    second: Mine Tower_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -199,33 +196,11 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
-    - serializedVersion: 2
-      name: Mine Tower_4
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 0
-        width: 48
-        height: 136
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d060572a0aaabd680800000000000000
-      internalID: -8729195845830506995
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: d9fd10d340112654b8ebbe23afe03481
+    spriteID: dee8e1d06e74a6d40adae1ade3167380
     internalID: 0
     vertices: []
     indices: 
@@ -239,7 +214,6 @@ TextureImporter:
       Mine Tower_1: -7927932157097992270
       Mine Tower_2: 2511689825132532406
       Mine Tower_3: 6387166018096463929
-      Mine Tower_4: -8729195845830506995
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
