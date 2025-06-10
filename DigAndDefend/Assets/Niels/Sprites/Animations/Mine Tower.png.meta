@@ -8,6 +8,15 @@ TextureImporter:
   - first:
       213: -7927932157097992270
     second: Mine Tower_1
+  - first:
+      213: 2511689825132532406
+    second: Mine Tower_2
+  - first:
+      213: 6387166018096463929
+    second: Mine Tower_3
+  - first:
+      213: -8729195845830506995
+    second: Mine Tower_4
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -160,10 +169,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 2cb6cec709eb1984ca5e67ac544793cc
-      internalID: 2111806675
+      spriteID: 6b2dcf4a6905bd220800000000000000
+      internalID: 2511689825132532406
       vertices: []
       indices: 
       edges: []
@@ -182,10 +191,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: 7577343e4207c8841978c6bd2623e555
-      internalID: 1764574472
+      spriteID: 930061e17a5c3a850800000000000000
+      internalID: 6387166018096463929
       vertices: []
       indices: 
       edges: []
@@ -204,10 +213,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: 0
+      tessellationDetail: -1
       bones: []
-      spriteID: cd7ecc9684a537540a9f548ae4acf809
-      internalID: -398778006
+      spriteID: d060572a0aaabd680800000000000000
+      internalID: -8729195845830506995
       vertices: []
       indices: 
       edges: []
@@ -216,7 +225,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 33a2e7f1b49c69844821b25d509a6529
+    spriteID: d9fd10d340112654b8ebbe23afe03481
     internalID: 0
     vertices: []
     indices: 
@@ -228,9 +237,9 @@ TextureImporter:
     nameFileIdTable:
       Mine Tower_0: 6623313122585226201
       Mine Tower_1: -7927932157097992270
-      Mine Tower_2: 2111806675
-      Mine Tower_3: 1764574472
-      Mine Tower_4: -398778006
+      Mine Tower_2: 2511689825132532406
+      Mine Tower_3: 6387166018096463929
+      Mine Tower_4: -8729195845830506995
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
