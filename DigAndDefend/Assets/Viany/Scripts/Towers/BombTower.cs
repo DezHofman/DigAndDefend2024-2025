@@ -25,53 +25,69 @@ public class BombTower : Tower
 
     protected override void HandleAttack(Collider2D[] enemies)
     {
-        if (pathTilemap != null)
+        if (pathTilemap != null && enemies.Length > 0)
         {
-            // Find the closest path tile to the tower
-            Vector3Int cellPosition = pathTilemap.WorldToCell(transform.position);
-            BoundsInt bounds = pathTilemap.cellBounds;
-            Vector3 closestTilePosition = transform.position;
+            // Find the nearest enemy
+            Collider2D nearestEnemy = null;
             float minDistance = float.MaxValue;
-            bool foundTile = false;
-
-            for (int x = bounds.xMin; x < bounds.xMax; x++)
+            foreach (Collider2D enemy in enemies)
             {
-                for (int y = bounds.yMin; y < bounds.yMax; y++)
+                float distance = Vector2.Distance(transform.position, enemy.transform.position);
+                if (distance < minDistance)
                 {
-                    Vector3Int tilePosition = new Vector3Int(x, y, 0);
-                    if (pathTilemap.HasTile(tilePosition))
+                    minDistance = distance;
+                    nearestEnemy = enemy;
+                }
+            }
+
+            if (nearestEnemy != null)
+            {
+                // Find the closest path tile to the nearest enemy
+                Vector3Int cellPosition = pathTilemap.WorldToCell(nearestEnemy.transform.position);
+                BoundsInt bounds = pathTilemap.cellBounds;
+                Vector3 closestTilePosition = nearestEnemy.transform.position; // Default to enemy position if no tile found
+                float minTileDistance = float.MaxValue;
+                bool foundTile = false;
+
+                for (int x = bounds.xMin; x < bounds.xMax; x++)
+                {
+                    for (int y = bounds.yMin; y < bounds.yMax; y++)
                     {
-                        Vector3 worldPosition = pathTilemap.CellToWorld(tilePosition) + new Vector3(0.5f, 0.5f, 0f);
-                        float distance = Vector2.Distance(transform.position, worldPosition);
-                        if (distance < minDistance)
+                        Vector3Int tilePosition = new Vector3Int(x, y, 0);
+                        if (pathTilemap.HasTile(tilePosition))
                         {
-                            minDistance = distance;
-                            closestTilePosition = worldPosition;
-                            foundTile = true;
+                            Vector3 worldPosition = pathTilemap.CellToWorld(tilePosition) + new Vector3(0.5f, 0.5f, 0f);
+                            float distance = Vector2.Distance(nearestEnemy.transform.position, worldPosition);
+                            if (distance < minTileDistance)
+                            {
+                                minTileDistance = distance;
+                                closestTilePosition = worldPosition;
+                                foundTile = true;
+                            }
                         }
                     }
                 }
-            }
 
-            if (foundTile)
-            {
-                GameObject bomb = Instantiate(projectilePrefab, transform.position + Vector3.up, Quaternion.identity);
-                BombProjectile bombProj = bomb.GetComponent<BombProjectile>();
-                if (bombProj != null)
+                if (foundTile)
                 {
-                    bombProj.SetTargetPosition(closestTilePosition);
-                    bombProj.SetExplosionRadius(2f);
-                    Debug.Log($"BombTower: Bomb instantiated at {bomb.transform.position}, targeting {closestTilePosition}");
+                    GameObject bomb = Instantiate(projectilePrefab, transform.position + Vector3.up, Quaternion.identity);
+                    BombProjectile bombProj = bomb.GetComponent<BombProjectile>();
+                    if (bombProj != null)
+                    {
+                        bombProj.SetTargetPosition(closestTilePosition);
+                        bombProj.SetExplosionRadius(2f);
+                        Debug.Log($"BombTower: Bomb instantiated at {bomb.transform.position}, targeting {closestTilePosition} near enemy at {nearestEnemy.transform.position}");
+                    }
                 }
-            }
-            else
-            {
-                Debug.LogWarning("BombTower: No path tiles found in Tilemap bounds!");
+                else
+                {
+                    Debug.LogWarning("BombTower: No path tiles found near the nearest enemy!");
+                }
             }
         }
         else
         {
-            Debug.LogWarning("BombTower: Path Tilemap not found!");
+            Debug.LogWarning("BombTower: No enemies or path Tilemap not found!");
         }
     }
 }

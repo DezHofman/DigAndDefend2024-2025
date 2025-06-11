@@ -52,8 +52,11 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
-  - name: Tower_Layer
-    uniqueID: 2698517123
+  - name: Towers_Below
+    uniqueID: 1771884157
+    locked: 0
+  - name: Death_Effect
+    uniqueID: 207357543
     locked: 0
   - name: Golem_Up
     uniqueID: 312036705
@@ -93,6 +96,9 @@ TagManager:
     locked: 0
   - name: Towers
     uniqueID: 3003845275
+    locked: 0
+  - name: Towers_Above
+    uniqueID: 1076505065
     locked: 0
   - name: UI
     uniqueID: 350214841

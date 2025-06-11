@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FirePoisonTower : Tower
+public class FireTower : Tower
 {
     public float dotDamagePerSecond = 5f;
     public float dotDuration = 3f;
@@ -17,8 +17,15 @@ public class FirePoisonTower : Tower
             BaseEnemy enemy = enemyCollider.GetComponent<BaseEnemy>();
             if (enemy != null)
             {
-                enemy.TakeDamage(attackDamage);
-                enemy.ApplyDoT(dotDamagePerSecond, dotDuration);
+                GameObject fireball = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+                FireballProjectile projectile = fireball.GetComponent<FireballProjectile>();
+                if (projectile != null)
+                {
+                    projectile.Initialize(this, enemy.transform);
+                    projectile.dotDamagePerSecond = dotDamagePerSecond;
+                    projectile.dotDuration = dotDuration;
+                    Debug.Log($"Initialized fireball with DoT: {dotDamagePerSecond} for {dotDuration}s");
+                }
             }
         }
     }

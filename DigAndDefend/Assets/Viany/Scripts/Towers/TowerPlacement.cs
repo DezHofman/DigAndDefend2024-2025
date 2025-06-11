@@ -20,6 +20,7 @@ public class TowerPlacement : MonoBehaviour
     private int selectedTowerIndex = -1;
     private GameObject placementPreview;
     private SpriteRenderer spriteRenderer;
+    private GameObject rangeIndicatorPreview; // New for range during placement
     private const float MINIMUM_TOWER_DISTANCE = 1.5f;
     private int lastCopperCost = 0;
     private int lastIronCost = 0;
@@ -59,6 +60,10 @@ public class TowerPlacement : MonoBehaviour
             {
                 placementPreview.SetActive(false);
             }
+            if (rangeIndicatorPreview != null)
+            {
+                rangeIndicatorPreview.SetActive(false);
+            }
             return;
         }
 
@@ -70,6 +75,10 @@ public class TowerPlacement : MonoBehaviour
             {
                 placementPreview.SetActive(false);
             }
+            if (rangeIndicatorPreview != null)
+            {
+                rangeIndicatorPreview.SetActive(false);
+            }
             return;
         }
 
@@ -79,6 +88,10 @@ public class TowerPlacement : MonoBehaviour
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
+            }
+            if (rangeIndicatorPreview != null)
+            {
+                rangeIndicatorPreview.SetActive(false);
             }
             return;
         }
@@ -90,56 +103,79 @@ public class TowerPlacement : MonoBehaviour
 
         if (selectedTowerIndex >= 0)
         {
-            if (placementPreview != null)
+            if (placementPreview == null)
             {
-                placementPreview.SetActive(true);
-                placementPreview.transform.position = placementPosition;
+                placementPreview = Instantiate(placementPreviewPrefab);
+                spriteRenderer = placementPreview.GetComponent<SpriteRenderer>();
+            }
+            placementPreview.SetActive(true);
+            placementPreview.transform.position = placementPosition;
 
-                Sprite towerSprite = GetTowerSprite(selectedTowerIndex, cellPosition);
-                if (towerSprite != null)
+            Sprite towerSprite = GetTowerSprite(selectedTowerIndex, cellPosition);
+            if (towerSprite != null)
+            {
+                spriteRenderer.sprite = towerSprite;
+            }
+            else
+            {
+                Debug.LogWarning($"Tower sprite for index {selectedTowerIndex} is null at position {cellPosition}");
+            }
+
+            // Show range indicator during placement
+            if (rangeIndicatorPreview == null)
+            {
+                Tower towerPrefab = towerPrefabs[selectedTowerIndex].GetComponent<Tower>();
+                if (towerPrefab != null && towerPrefab.rangeIndicatorPrefab != null)
                 {
-                    spriteRenderer.sprite = towerSprite;
+                    rangeIndicatorPreview = Instantiate(towerPrefab.rangeIndicatorPrefab, placementPosition, Quaternion.identity);
+                    rangeIndicatorPreview.transform.localScale = new Vector3(towerPrefab.attackRange * 2, towerPrefab.attackRange * 2, 1);
+                    rangeIndicatorPreview.layer = LayerMask.NameToLayer("Ignore Raycast");
+                }
+            }
+            if (rangeIndicatorPreview != null)
+            {
+                rangeIndicatorPreview.transform.position = placementPosition;
+                rangeIndicatorPreview.SetActive(true);
+            }
+
+            bool isOnPath = pathTilemap.HasTile(cellPosition);
+            bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
+            bool canPlace = false;
+            bool hasMinimumDistance = HasMinimumDistance(placementPosition);
+
+            if (selectedTowerIndex == 4) // Barricade
+            {
+                if (isOnPath && !isOnBigRocks)
+                {
+                    canPlace = true;
+                    Debug.Log("Barricade: Valid placement spot on path.");
                 }
                 else
                 {
-                    Debug.LogWarning($"Tower sprite for index {selectedTowerIndex} is null at position {cellPosition}");
+                    Debug.Log($"Barricade: Invalid placement. IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}");
                 }
-
-                bool isOnPath = pathTilemap.HasTile(cellPosition);
-                bool isOnBigRocks = bigRocksTilemap.HasTile(cellPosition);
-                bool canPlace = false;
-                bool hasMinimumDistance = HasMinimumDistance(placementPosition);
-
-                if (selectedTowerIndex == 4) // Barricade
-                {
-                    if (isOnPath && !isOnBigRocks)
-                    {
-                        canPlace = true;
-                        Debug.Log("Barricade: Valid placement spot on path.");
-                    }
-                    else
-                    {
-                        Debug.Log($"Barricade: Invalid placement. IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}");
-                    }
-                }
-                else // Towers
-                {
-                    if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
-                    {
-                        canPlace = true;
-                        Debug.Log("Tower: Valid placement spot off path.");
-                    }
-                }
-
-                spriteRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
-                Debug.Log($"Can place: {canPlace}, IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}, HasMinimumDistance: {hasMinimumDistance}");
             }
+            else // Towers
+            {
+                if (!isOnPath && !isOnBigRocks && hasMinimumDistance)
+                {
+                    canPlace = true;
+                    Debug.Log("Tower: Valid placement spot off path.");
+                }
+            }
+
+            spriteRenderer.color = canPlace ? new Color(0f, 1f, 0f, canPlaceOpacity) : new Color(1f, 0f, 0f, cannotPlaceOpacity);
+            Debug.Log($"Can place: {canPlace}, IsOnPath: {isOnPath}, IsOnBigRocks: {isOnBigRocks}, HasMinimumDistance: {hasMinimumDistance}");
         }
         else
         {
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
+            }
+            if (rangeIndicatorPreview != null)
+            {
+                rangeIndicatorPreview.SetActive(false);
             }
         }
 
@@ -200,6 +236,11 @@ public class TowerPlacement : MonoBehaviour
                 }
                 GameManager.Instance.AddTower(position, selectedTowerIndex);
                 selectedTowerIndex = -1;
+                if (rangeIndicatorPreview != null)
+                {
+                    Destroy(rangeIndicatorPreview);
+                    rangeIndicatorPreview = null;
+                }
                 lastCopperCost = 0;
                 lastIronCost = 0;
             }
@@ -219,6 +260,11 @@ public class TowerPlacement : MonoBehaviour
             if (placementPreview != null)
             {
                 placementPreview.SetActive(false);
+            }
+            if (rangeIndicatorPreview != null)
+            {
+                Destroy(rangeIndicatorPreview);
+                rangeIndicatorPreview = null;
             }
             ResourceManager.Instance.AddCopper(lastCopperCost);
             ResourceManager.Instance.AddIron(lastIronCost);

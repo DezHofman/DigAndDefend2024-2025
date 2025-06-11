@@ -80,7 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 919227991
-  m_SortingLayer: 12
+  m_SortingLayer: 13
   m_SortingOrder: 0
   m_Sprite: {fileID: 6143221684603395509, guid: 57a393a39a32ea54fbdd74d180df6e6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -131,6 +131,9 @@ MonoBehaviour:
   damageToVillage: 5
   damageToBarricade: 5
   canFly: 0
+  deathEffectPrefab: {fileID: 7235168694598194115, guid: 79a0c98e3c1f8cf46b8bebaeba2cf6f1, type: 3}
+  deathEffectDuration: 0.6
+  deathEffectColor: {r: 0.36786252, g: 0.509434, b: 0.3244037, a: 1}
 --- !u!61 &3841671394626096645
 BoxCollider2D:
   m_ObjectHideFlags: 0

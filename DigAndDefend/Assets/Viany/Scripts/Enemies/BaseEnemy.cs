@@ -17,6 +17,12 @@ public abstract class BaseEnemy : MonoBehaviour
     private float slowDuration;
     private bool isSlowed = false;
     private Vector3 currentVelocity; // Track velocity
+    private Color originalColor;
+
+    [Header("Death Effect")]
+    public GameObject deathEffectPrefab; // Assign the prefab in the inspector
+    public float deathEffectDuration = 1.0f; // Adjustable duration in seconds
+    public Color deathEffectColor = Color.white; // Adjustable color in inspector
 
     private void Awake()
     {
@@ -32,6 +38,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
         if (spriteRenderer != null)
         {
+            originalColor = spriteRenderer.color; // Store original color
             string enemyType = GetEnemyType();
             SetSortingLayer(enemyType, "");
             EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
@@ -209,7 +216,11 @@ public abstract class BaseEnemy : MonoBehaviour
     public virtual void TakeDamage(float amount)
     {
         Debug.Log("Taking damage: " + amount + ", Current health: " + health);
-        health -= (int)amount;
+        health -= (int)Mathf.Max(1, Mathf.Floor(amount)); // Floor to nearest integer, minimum 1
+        if (spriteRenderer != null)
+        {
+            StartCoroutine(FlashOnOff());
+        }
         if (healthbar != null)
         {
             healthbar.UpdateHealth(health);
@@ -220,10 +231,36 @@ public abstract class BaseEnemy : MonoBehaviour
         }
     }
 
+    private System.Collections.IEnumerator FlashOnOff()
+    {
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.enabled = false; // Turn off rendering
+            yield return new WaitForSeconds(0.1f); // Off for 0.1 seconds
+            spriteRenderer.enabled = true; // Turn on rendering
+            // Ends after one flash
+        }
+    }
+
     protected virtual void OnDeath()
     {
         string enemyType = GetEnemyType();
         EnemySortingManager.ReleaseSortingOrder(gameObject, enemyType);
+
+        // Spawn death effect if prefab is assigned
+        if (deathEffectPrefab != null)
+        {
+            GameObject effect = Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+            SpriteRenderer effectRenderer = effect.GetComponent<SpriteRenderer>();
+            if (effectRenderer != null)
+            {
+                effectRenderer.color = deathEffectColor; // Set the color
+            }
+
+            // Destroy effect after duration
+            Destroy(effect, deathEffectDuration);
+        }
+
         Destroy(gameObject);
     }
 
@@ -260,11 +297,16 @@ public abstract class BaseEnemy : MonoBehaviour
     private System.Collections.IEnumerator ApplyDoTOverTime(float damagePerSecond, float duration)
     {
         float elapsed = 0f;
+        float delay = 0.5f; // Add 0.5-second delay between ticks
+        float totalDamage = 0f;
         while (elapsed < duration)
         {
-            TakeDamage(damagePerSecond * Time.deltaTime);
-            elapsed += Time.deltaTime;
-            yield return null;
+            yield return new WaitForSeconds(delay);
+            float damageThisTick = damagePerSecond * delay; // Calculate damage for this interval
+            totalDamage += damageThisTick;
+            TakeDamage(damageThisTick);
+            Debug.Log($"DoT tick: {damageThisTick}, Total Damage: {totalDamage}, Health: {health}");
+            elapsed += delay;
         }
     }
 

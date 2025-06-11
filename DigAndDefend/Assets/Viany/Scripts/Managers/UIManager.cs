@@ -136,10 +136,10 @@ public class UIManager : MonoBehaviour
     private void RestartToMainMenu()
     {
         // Destroy any persistent GameManager before reloading
-        GameObject gameManager = GameObject.Find("GameManager");
+        GameManager gameManager = FindFirstObjectByType<GameManager>();
         if (gameManager != null)
         {
-            Destroy(gameManager);
+            Destroy(gameManager.gameObject);
             Debug.Log("Destroyed persistent GameManager");
         }
 
