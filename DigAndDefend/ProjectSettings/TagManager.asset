@@ -52,20 +52,17 @@ TagManager:
   - name: Decoration
     uniqueID: 3693837971
     locked: 0
-  - name: Towers_Below
-    uniqueID: 1771884157
+  - name: Explosion
+    uniqueID: 1746615101
     locked: 0
   - name: Death_Effect
     uniqueID: 207357543
     locked: 0
-  - name: Golem_Up
-    uniqueID: 312036705
+  - name: Towers_Below
+    uniqueID: 1771884157
     locked: 0
-  - name: Golem_Down
-    uniqueID: 3600790507
-    locked: 0
-  - name: Golem
-    uniqueID: 3333086415
+  - name: Enemy
+    uniqueID: 2224632071
     locked: 0
   - name: Rat_Up
     uniqueID: 1308860815
@@ -94,14 +91,36 @@ TagManager:
   - name: Bat
     uniqueID: 2633478063
     locked: 0
+  - name: Golem_Up
+    uniqueID: 312036705
+    locked: 0
+  - name: Golem_Down
+    uniqueID: 3600790507
+    locked: 0
+  - name: Golem
+    uniqueID: 3333086415
+    locked: 0
+  - name: Enemy_Up
+    uniqueID: 2284193541
+    locked: 0
+  - name: Enemy_Down
+    uniqueID: 1031478777
+    locked: 0
+  - name: Enemy_RightLeft
+    uniqueID: 1185597901
+    locked: 0
   - name: Towers
     uniqueID: 3003845275
     locked: 0
   - name: Towers_Above
     uniqueID: 1076505065
     locked: 0
+  - name: Projectile
+    uniqueID: 1593620143
+    locked: 0
   - name: UI
     uniqueID: 350214841
     locked: 0
   m_RenderingLayers:
   - Default
+  - sprites

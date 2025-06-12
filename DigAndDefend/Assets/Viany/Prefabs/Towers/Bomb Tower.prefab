@@ -101,9 +101,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8c45f02f5ad2f34a9383d4d7f582915, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 2
+  attackRange: 2.5
   attackSpeed: 0.5
-  attackDamage: 40
+  attackDamage: 80
   rangeDisplayDuration: 1
   projectilePrefab: {fileID: 8786412605479849387, guid: f875c873c60a0d14bbd37c2607776258, type: 3}
   rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}

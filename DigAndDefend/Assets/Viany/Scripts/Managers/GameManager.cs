@@ -8,14 +8,21 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public bool isGameOver { get; private set; } = false;
-    public int currentWave { get; private set; } = 0;
-    public int totalWaves { get; private set; } = 10;
+    public int currentWave { get; private set; } = 0; // Starts at 0, will increment on wave start
+    [SerializeField] public int totalWaves = 10;
     [SerializeField] private GameObject startButton;
     [SerializeField] private Sprite startSprite;
     [SerializeField] private Sprite activeWaveSprite;
     [SerializeField] private TextMeshProUGUI waveText;
     [SerializeField] private TextMeshProUGUI healthText;
+    [SerializeField] private TextMeshProUGUI hintText; // Hint text in the panel
+    [SerializeField] private Image towerImage; // Tower image in the panel
+    [SerializeField] private GameObject hintPanel; // Reference to the panel GameObject
     [SerializeField] private ShopManager shopManager;
+    [SerializeField] private Sprite archerTowerSprite; // Assign in Inspector
+    [SerializeField] private Sprite slowTowerSprite;   // Assign in Inspector
+    [SerializeField] private Sprite fireTowerSprite;   // Assign in Inspector
+    [SerializeField] private Sprite bombTowerSprite;   // Assign in Inspector
 
     private int playerHealth = 100;
     public bool isWaveActive { get; private set; } = false;
@@ -26,7 +33,6 @@ public class GameManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Removed DontDestroyOnLoad
         }
         else
         {
@@ -37,7 +43,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         isGameOver = false;
-        currentWave = 0;
+        currentWave = 0; // Wave 1 will start from here
         playerHealth = 100;
         isWaveActive = false;
         UpdateUI();
@@ -45,6 +51,10 @@ public class GameManager : MonoBehaviour
         if (startButton != null)
         {
             startButton.SetActive(true);
+        }
+        if (hintPanel != null)
+        {
+            hintPanel.SetActive(false); // Hide panel initially
         }
     }
 
@@ -83,6 +93,8 @@ public class GameManager : MonoBehaviour
         {
             if (shopManager != null && shopManager.IsInCaveArea()) return;
             isWaveActive = true;
+            currentWave++; // Increment currentWave to the wave being started (e.g., 1, then 2, etc.)
+            if (hintPanel != null) hintPanel.SetActive(false); // Hide panel when wave starts
             WaveManager waveManager = FindFirstObjectByType<WaveManager>();
             if (waveManager != null)
             {
@@ -131,16 +143,40 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (waveText != null) waveText.text = "Wave: " + currentWave;
+        if (waveText != null) waveText.text = "Wave: " + currentWave + "/" + totalWaves;
         if (healthText != null) healthText.text = "Health: " + (isGameOver ? 0 : playerHealth);
+        if (hintText != null && !isWaveActive) // Only update hint when wave is inactive
+        {
+            bool showHint = false;
+            if (currentWave == 2)
+            {
+                hintText.text = "Consider adding a Slow Tower for tougher waves!";
+                if (towerImage != null) towerImage.sprite = slowTowerSprite;
+                showHint = true;
+            }
+            else if (currentWave == 3)
+            {
+                hintText.text = "Use a Bomb Tower to clear groups!";
+                if (towerImage != null) towerImage.sprite = bombTowerSprite;
+                showHint = true;
+            }
+            else if (currentWave == 4)
+            {
+                hintText.text = "Add a Fire Tower to handle groups!";
+                if (towerImage != null) towerImage.sprite = fireTowerSprite;
+                showHint = true;
+            }
+            else
+            {
+                hintText.text = "";
+                if (towerImage != null) towerImage.sprite = null;
+            }
+            if (hintPanel != null) hintPanel.SetActive(showHint); // Show/hide panel based on hint
+        }
     }
 
     public void IncrementWave()
     {
-        if (!isGameOver)
-        {
-            currentWave++;
-            UpdateUI();
-        }
+        // No longer needed to increment here, handled in StartWave
     }
 }

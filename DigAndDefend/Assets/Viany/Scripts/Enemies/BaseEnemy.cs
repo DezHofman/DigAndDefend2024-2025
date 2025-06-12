@@ -40,7 +40,7 @@ public abstract class BaseEnemy : MonoBehaviour
         {
             originalColor = spriteRenderer.color; // Store original color
             string enemyType = GetEnemyType();
-            SetSortingLayer(enemyType, "");
+            UpdateSortingLayer(enemyType, Vector2.zero); // Initial update
             EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
         }
     }
@@ -135,15 +135,10 @@ public abstract class BaseEnemy : MonoBehaviour
         }
         else
         {
-            layerSuffix = "";
+            layerSuffix = "RightLeft";
         }
 
-        SetSortingLayer(enemyType, layerSuffix);
-    }
-
-    void SetSortingLayer(string enemyType, string suffix)
-    {
-        string layerName = string.IsNullOrEmpty(suffix) ? enemyType : $"{enemyType}_{suffix}";
+        string layerName = "Enemy_" + layerSuffix;
         spriteRenderer.sortingLayerName = layerName;
 
         var enemies = EnemySortingManager.GetActiveEnemies(enemyType);
@@ -154,14 +149,14 @@ public abstract class BaseEnemy : MonoBehaviour
 
         int baseOrder, maxOrder;
         bool reverseOrder = false;
-        switch (suffix)
+        switch (layerSuffix)
         {
             case "Up":
                 baseOrder = 500;
                 maxOrder = 999;
                 reverseOrder = false;
                 break;
-            case "":
+            case "RightLeft":
                 baseOrder = 0;
                 maxOrder = 499;
                 reverseOrder = true;
@@ -198,7 +193,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
         spriteRenderer.sortingOrder = Mathf.Clamp(order, baseOrder, maxOrder);
 
-        Debug.Log($"Set {gameObject.name} to layer: {layerName}, order: {spriteRenderer.sortingOrder}, index: {myIndex}, count: {enemyCount}, direction: {Vector2.up}, frame: {Time.frameCount}");
+        Debug.Log($"Set {gameObject.name} to layer: {layerName}, order: {spriteRenderer.sortingOrder}, index: {myIndex}, count: {enemyCount}, direction: {direction}, frame: {Time.frameCount}");
     }
 
     void ResumeMovement()

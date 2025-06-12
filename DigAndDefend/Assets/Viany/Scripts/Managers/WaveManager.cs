@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using System.Linq;
 
 public class WaveManager : MonoBehaviour
 {
@@ -9,7 +10,6 @@ public class WaveManager : MonoBehaviour
     public GameObject batPrefab;
     public GameObject ratPrefab;
 
-    public WaveData[] waves;
     public Transform spawnPoint;
     public Transform[] pathWaypoints;
     public float timeBetweenSpawns = 2f;
@@ -17,7 +17,7 @@ public class WaveManager : MonoBehaviour
 
     private int currentWaveIndex = -1;
     private int currentEnemyCount = 0;
-    private List<EnemyType> currentSpawnOrder;
+    private List<EnemyType> currentSpawnOrder; // Reference to existing EnemyType enum
     private Dictionary<EnemyType, GameObject> enemyTypeToPrefab;
 
     private void Awake()
@@ -44,18 +44,66 @@ public class WaveManager : MonoBehaviour
     {
         Debug.Log("Starting wave: " + (currentWaveIndex + 1));
         currentWaveIndex++;
-        if (currentWaveIndex >= waves.Length || GameManager.Instance.isGameOver)
+        if (currentWaveIndex >= GameManager.Instance.totalWaves || GameManager.Instance.isGameOver)
         {
             Debug.Log("Wave start aborted: index " + currentWaveIndex + " or game over.");
             return;
         }
 
         GameManager.Instance.StartWave();
-        WaveData currentWave = waves[currentWaveIndex];
-        currentSpawnOrder = new List<EnemyType>(currentWave.enemySpawnOrder);
+        GenerateWaveEnemies();
         currentEnemyCount = 0;
         InvokeRepeating("SpawnEnemy", 0f, timeBetweenSpawns);
         UpdateWaveUI();
+    }
+
+    void GenerateWaveEnemies()
+    {
+        int wave = GameManager.Instance.currentWave + 1;
+        int totalEnemies = Mathf.Clamp(5 + wave * 2, 5, 20);
+        currentSpawnOrder = new List<EnemyType>();
+
+        float mushroomWeight = 0.6f - (wave * 0.05f);
+        float batWeight = 0.2f + (wave * 0.05f);
+        float ratWeight = 0.2f + (wave * 0.05f);
+        float golemWeight = (wave >= 4 ? (wave - 3) * 0.05f : 0f);
+
+        float totalWeight = mushroomWeight + batWeight + ratWeight + golemWeight;
+        mushroomWeight /= totalWeight;
+        batWeight /= totalWeight;
+        ratWeight /= totalWeight;
+        golemWeight /= totalWeight;
+
+        for (int i = 0; i < totalEnemies; i++)
+        {
+            float roll = Random.value;
+            if (roll < mushroomWeight)
+                currentSpawnOrder.Add(EnemyType.Mushroom);
+            else if (roll < mushroomWeight + batWeight)
+                currentSpawnOrder.Add(EnemyType.Bat);
+            else if (roll < mushroomWeight + batWeight + ratWeight)
+                currentSpawnOrder.Add(EnemyType.Rat);
+            else
+                currentSpawnOrder.Add(EnemyType.Golem);
+        }
+
+        // Adjust HP based on wave (example)
+        if (wave >= 5)
+        {
+            // Update prefabs' BaseEnemy HP in Awake or a separate method
+            foreach (GameObject prefab in new[] { mushroomPrefab, batPrefab, ratPrefab, golemPrefab })
+            {
+                BaseEnemy enemy = prefab.GetComponent<BaseEnemy>();
+                if (enemy != null)
+                {
+                    if (enemy.GetType() == typeof(MushroomEnemy)) enemy.health = 120;
+                    else if (enemy.GetType() == typeof(BatEnemy) || enemy.GetType() == typeof(RatEnemy)) enemy.health = 60;
+                    // Golem remains 700
+                }
+            }
+        }
+
+        Debug.Log($"Wave {wave}: Generated {totalEnemies} enemies - {string.Join(", ", currentSpawnOrder)}");
     }
 
     void SpawnEnemy()
@@ -110,7 +158,6 @@ public class WaveManager : MonoBehaviour
         {
             if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave < GameManager.Instance.totalWaves)
             {
-                GameManager.Instance.IncrementWave();
                 GameManager.Instance.WaveComplete();
                 Debug.Log("Wave complete, enabling start button.");
                 GameManager.Instance.EnableStartButton(true);

@@ -101,14 +101,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bab34da4387ac642b8a8d0573f71bcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 2.5
+  attackRange: 3
   attackSpeed: 1
-  attackDamage: 10
+  attackDamage: 1
   rangeDisplayDuration: 1
   projectilePrefab: {fileID: 944500335357975579, guid: 821fde00c9f0f854298b5989bf565976, type: 3}
   rangeIndicatorPrefab: {fileID: 8477612035696998119, guid: f65515297c3bd2f458fb5f2694c6eee7, type: 3}
   clickAreaRadius: 0.5
-  dotDamagePerSecond: 1
+  dotDamagePerSecond: 2
   dotDuration: 3
 --- !u!58 &6949636099088818016
 CircleCollider2D:

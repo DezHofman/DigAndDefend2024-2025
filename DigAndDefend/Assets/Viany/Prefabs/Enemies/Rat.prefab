@@ -79,8 +79,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 240652385
-  m_SortingLayer: 10
+  m_SortingLayerID: 1185597901
+  m_SortingLayer: 19
   m_SortingOrder: 0
   m_Sprite: {fileID: 3713595503836188120, guid: cfce682dae4f04f48b541bb709533463, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -105,8 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b3cfed10ed1e5b4691e2c4b84e6826c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialHealth: 50
-  maxHealth: 50
+  initialHealth: 60
+  maxHealth: 60
   worldOffset: 1
   screenOffset: -50
   healthColor: {r: 0.2, g: 0.8, b: 0.2, a: 1}
@@ -127,7 +127,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
-  health: 50
+  health: 60
   damageToVillage: 10
   damageToBarricade: 2
   canFly: 0
@@ -178,7 +178,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.3, y: 0.2}
+  m_Size: {x: 0.82, y: 0.53}
   m_EdgeRadius: 0
 --- !u!50 &-1705660589996471708
 Rigidbody2D:

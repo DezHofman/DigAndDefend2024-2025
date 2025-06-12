@@ -41,6 +41,7 @@ public abstract class Tower : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
+            UpdateSortingOrder(); // Set initial sorting order based on inverted Y
         }
         else
         {
@@ -96,6 +97,12 @@ public abstract class Tower : MonoBehaviour
                 }
             }
         }
+
+        // Update sorting order continuously based on inverted Y-position
+        if (spriteRenderer != null)
+        {
+            UpdateSortingOrder();
+        }
     }
 
     protected virtual void Attack()
@@ -104,7 +111,7 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            // Update tower layer based on nearest enemy
+            // Update tower layer based on nearest enemy, keep sorting order
             UpdateTowerLayer(enemies);
         }
         else
@@ -137,8 +144,7 @@ public abstract class Tower : MonoBehaviour
             float enemyY = nearestEnemy.transform.position.y;
             float towerY = transform.position.y;
 
-            // Switch layer based on enemy Y-position
-            // Assume lower Y is in front (adjust if your Y-axis is inverted)
+            // Switch layer based on enemy Y-position, retain inverted Y-based sorting order
             if (enemyY < towerY)
             {
                 // Enemy is in front, tower should be below
@@ -156,8 +162,17 @@ public abstract class Tower : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            // Reset to base layer when no enemies are near
+            // Reset to base layer, retain inverted Y-based sorting order
             spriteRenderer.sortingLayerName = baseLayer;
+        }
+    }
+
+    private void UpdateSortingOrder()
+    {
+        if (spriteRenderer != null)
+        {
+            // Set sorting order to the integer part of the inverted Y-position
+            spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y);
         }
     }
 
