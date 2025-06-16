@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3841671394626096645}
   - component: {fileID: 6518300584332342313}
   - component: {fileID: 1921232867185997594}
-  - component: {fileID: 8592278222314498032}
+  - component: {fileID: -8171542436423603366}
   m_Layer: 6
   m_Name: Mushroom
   m_TagString: Enemy
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1185597901
-  m_SortingLayer: 19
+  m_SortingLayer: 22
   m_SortingOrder: 0
   m_Sprite: {fileID: 6143221684603395509, guid: 57a393a39a32ea54fbdd74d180df6e6c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -229,7 +229,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &8592278222314498032
+--- !u!114 &-8171542436423603366
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

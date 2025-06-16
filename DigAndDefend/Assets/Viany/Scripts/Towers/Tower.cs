@@ -19,6 +19,7 @@ public abstract class Tower : MonoBehaviour
 
     private string baseLayer = "Towers_Below"; // Default layer below enemies
     private string aboveLayer = "Towers_Above"; // Layer above enemies
+    private const float LAYER_SWITCH_BUFFER = 0.1f; // Small buffer to prevent rapid toggling
 
     protected virtual void Start()
     {
@@ -41,7 +42,8 @@ public abstract class Tower : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
-            UpdateSortingOrder(); // Set initial sorting order based on inverted Y
+            // Removed call to UpdateSortingOrder since it's now handled by UpdateLayerAndOrder
+            UpdateLayerAndOrder(); // Initialize layer and sorting order
         }
         else
         {
@@ -98,11 +100,8 @@ public abstract class Tower : MonoBehaviour
             }
         }
 
-        // Update sorting order continuously based on inverted Y-position
-        if (spriteRenderer != null)
-        {
-            UpdateSortingOrder();
-        }
+        // Update sorting order and layer continuously
+        UpdateLayerAndOrder();
     }
 
     protected virtual void Attack()
@@ -111,8 +110,8 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            // Update tower layer based on nearest enemy, keep sorting order
-            UpdateTowerLayer(enemies);
+            // Update tower layer and sorting order based on all enemies
+            UpdateLayerAndOrder();
         }
         else
         {
@@ -122,56 +121,47 @@ public abstract class Tower : MonoBehaviour
 
     protected abstract void HandleAttack(Collider2D[] enemies);
 
-    private void UpdateTowerLayer(Collider2D[] enemies)
+    private void UpdateLayerAndOrder()
     {
         if (spriteRenderer == null) return;
 
-        // Find the nearest enemy
-        Collider2D nearestEnemy = null;
-        float minDistance = float.MaxValue;
+        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, attackRange, LayerMask.GetMask("Enemies"));
+        if (enemies.Length == 0)
+        {
+            ResetTowerLayer();
+            return;
+        }
+
+        int aboveCount = 0;
+        int belowCount = 0;
+        float towerY = transform.position.y;
+
         foreach (Collider2D enemy in enemies)
         {
-            float distance = Vector2.Distance(transform.position, enemy.transform.position);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                nearestEnemy = enemy;
-            }
+            float enemyY = enemy.transform.position.y;
+            if (enemyY < towerY - LAYER_SWITCH_BUFFER) belowCount++;
+            else if (enemyY > towerY + LAYER_SWITCH_BUFFER) aboveCount++;
         }
 
-        if (nearestEnemy != null)
+        // Determine layer based on majority of enemy positions
+        if (aboveCount > belowCount)
         {
-            float enemyY = nearestEnemy.transform.position.y;
-            float towerY = transform.position.y;
-
-            // Switch layer based on enemy Y-position, retain inverted Y-based sorting order
-            if (enemyY < towerY)
-            {
-                // Enemy is in front, tower should be below
-                spriteRenderer.sortingLayerName = baseLayer;
-            }
-            else
-            {
-                // Enemy is behind, tower should be above
-                spriteRenderer.sortingLayerName = aboveLayer;
-            }
+            spriteRenderer.sortingLayerName = aboveLayer;
         }
+        else
+        {
+            spriteRenderer.sortingLayerName = baseLayer;
+        }
+
+        // Set sorting order based on inverted Y-position, adjusted by layer
+        spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y) + (spriteRenderer.sortingLayerName == aboveLayer ? 10 : 0);
     }
 
     private void ResetTowerLayer()
     {
         if (spriteRenderer != null)
         {
-            // Reset to base layer, retain inverted Y-based sorting order
             spriteRenderer.sortingLayerName = baseLayer;
-        }
-    }
-
-    private void UpdateSortingOrder()
-    {
-        if (spriteRenderer != null)
-        {
-            // Set sorting order to the integer part of the inverted Y-position
             spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y);
         }
     }

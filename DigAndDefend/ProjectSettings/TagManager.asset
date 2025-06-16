@@ -55,17 +55,14 @@ TagManager:
   - name: Explosion
     uniqueID: 1746615101
     locked: 0
-  - name: Death_Effect
-    uniqueID: 207357543
-    locked: 0
   - name: Barricade
     uniqueID: 1447958631
     locked: 0
   - name: Towers_Below
     uniqueID: 1771884157
     locked: 0
-  - name: Enemy
-    uniqueID: 2224632071
+  - name: Death_Effect
+    uniqueID: 207357543
     locked: 0
   - name: Rat_Up
     uniqueID: 1308860815
@@ -103,14 +100,17 @@ TagManager:
   - name: Golem
     uniqueID: 3333086415
     locked: 0
+  - name: Enemy
+    uniqueID: 2224632071
+    locked: 0
   - name: Enemy_Up
     uniqueID: 2284193541
     locked: 0
-  - name: Enemy_Down
-    uniqueID: 1031478777
-    locked: 0
   - name: Enemy_RightLeft
     uniqueID: 1185597901
+    locked: 0
+  - name: Enemy_Down
+    uniqueID: 1031478777
     locked: 0
   - name: Towers
     uniqueID: 3003845275

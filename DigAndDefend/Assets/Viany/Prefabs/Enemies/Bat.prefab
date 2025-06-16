@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5626067731632144468}
   - component: {fileID: 6294392102713326305}
   - component: {fileID: 4315421809242088600}
-  - component: {fileID: -3264126704837021354}
+  - component: {fileID: 4723819739287742456}
   m_Layer: 6
   m_Name: Bat
   m_TagString: Enemy
@@ -80,7 +80,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1185597901
-  m_SortingLayer: 19
+  m_SortingLayer: 22
   m_SortingOrder: 0
   m_Sprite: {fileID: -5615083056166418387, guid: 571a5319ea2306d4689f001411b58018, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -229,7 +229,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &-3264126704837021354
+--- !u!114 &4723819739287742456
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

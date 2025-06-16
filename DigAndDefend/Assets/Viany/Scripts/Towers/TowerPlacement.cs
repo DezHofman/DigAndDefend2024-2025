@@ -402,16 +402,16 @@ public class TowerPlacement : MonoBehaviour
                     barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
                 case 2:
-                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
                 case 3:
-                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
                 case 4:
-                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 135);
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
                 case 5:
-                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 45);
+                    barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
                     break;
                 default:
                     barricadeRenderer.transform.rotation = Quaternion.Euler(0, 0, 0);
