@@ -23,10 +23,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite slowTowerSprite;   // Assign in Inspector
     [SerializeField] private Sprite fireTowerSprite;   // Assign in Inspector
     [SerializeField] private Sprite bombTowerSprite;   // Assign in Inspector
+    [SerializeField] private Canvas gameOverCanvas; // Variable for game over Canvas
+    [SerializeField] private Canvas winCanvas; // Variable for win Canvas
+    [SerializeField] private VictoryLoseTextManager victoryLoseTextManager;
 
     private int playerHealth = 100;
     public bool isWaveActive { get; private set; } = false;
     private List<(Vector3, int)> placedTowers = new List<(Vector3, int)>();
+    private enum GameState { Playing, GameOver, Win }
+    private GameState currentState = GameState.Playing;
 
     private void Awake()
     {
@@ -56,25 +61,79 @@ public class GameManager : MonoBehaviour
         {
             hintPanel.SetActive(false); // Hide panel initially
         }
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.enabled = false; // Disable game over Canvas initially
+        }
+        if (winCanvas != null)
+        {
+            winCanvas.enabled = false; // Disable win Canvas initially
+        }
     }
 
     public void TakeDamage(int damage)
     {
-        if (isGameOver) return;
+        if (currentState != GameState.Playing) return;
 
         playerHealth -= damage;
         if (playerHealth <= 0)
         {
             playerHealth = 0;
-            isGameOver = true;
-            Debug.Log("Game Over!");
+            SetGameOver();
         }
         UpdateUI();
     }
 
+    private void SetGameOver()
+    {
+        currentState = GameState.GameOver;
+        isGameOver = true;
+        isWaveActive = false;
+        Debug.Log("Game Over!");
+        EnableStartButton(false);
+        Time.timeScale = 0f;
+        victoryLoseTextManager.DisplayLoseText();
+        gameOverCanvas.enabled = true;
+        if (shopManager != null)
+        {
+            shopManager.CloseShop(); // Ensure shop is closed
+        }
+        if (hintPanel != null)
+        {
+            hintPanel.SetActive(false); // Hide hint panel
+        }
+        if (winCanvas != null)
+        {
+            winCanvas.enabled = false; // Ensure win Canvas is off
+        }
+    }
+
+    public void SetWin()
+    {
+        currentState = GameState.Win;
+        isWaveActive = false;
+        Debug.Log("Victory!");
+        EnableStartButton(false);
+        Time.timeScale = 0f;
+        victoryLoseTextManager.DisplayVictoryText();
+        winCanvas.enabled = true;
+        if (shopManager != null)
+        {
+            shopManager.CloseShop(); // Ensure shop is closed
+        }
+        if (hintPanel != null)
+        {
+            hintPanel.SetActive(false); // Hide hint panel
+        }
+        if (gameOverCanvas != null)
+        {
+            gameOverCanvas.enabled = false; // Ensure game over Canvas is off
+        }
+    }
+
     public void EnableStartButton(bool enable)
     {
-        if (startButton != null)
+        if (startButton != null && currentState == GameState.Playing)
         {
             bool inGrassArea = shopManager != null && !shopManager.IsInCaveArea();
             startButton.SetActive(enable && inGrassArea);
@@ -89,7 +148,7 @@ public class GameManager : MonoBehaviour
 
     public void StartWave()
     {
-        if (!isWaveActive && !isGameOver && startButton.activeSelf)
+        if (currentState != GameState.Playing || !isWaveActive && !isGameOver && startButton.activeSelf)
         {
             if (shopManager != null && shopManager.IsInCaveArea()) return;
             isWaveActive = true;
@@ -117,11 +176,18 @@ public class GameManager : MonoBehaviour
         {
             shopManager.UpdateMineButton();
         }
+        if (currentWave >= totalWaves)
+        {
+            SetWin();
+        }
     }
 
     public void AddTower(Vector3 position, int index)
     {
-        placedTowers.Add((position, index));
+        if (currentState == GameState.Playing)
+        {
+            placedTowers.Add((position, index));
+        }
     }
 
     public List<(Vector3, int)> GetTowers()
@@ -131,7 +197,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateStartButtonSprite()
     {
-        if (startButton != null && startButton.activeSelf)
+        if (startButton != null && startButton.activeSelf && currentState == GameState.Playing)
         {
             Image buttonImage = startButton.GetComponent<Image>();
             if (buttonImage != null)
@@ -145,7 +211,7 @@ public class GameManager : MonoBehaviour
     {
         if (waveText != null) waveText.text = "Wave: " + currentWave + "/" + totalWaves;
         if (healthText != null) healthText.text = "Health: " + (isGameOver ? 0 : playerHealth);
-        if (hintText != null && !isWaveActive) // Only update hint when wave is inactive
+        if (hintText != null && !isWaveActive && currentState == GameState.Playing) // Only update hint when wave is inactive and game is playing
         {
             bool showHint = false;
             if (currentWave == 2)
@@ -173,10 +239,5 @@ public class GameManager : MonoBehaviour
             }
             if (hintPanel != null) hintPanel.SetActive(showHint); // Show/hide panel based on hint
         }
-    }
-
-    public void IncrementWave()
-    {
-        // No longer needed to increment here, handled in StartWave
     }
 }

@@ -18,8 +18,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button continueButton;
     [SerializeField] private Button settingsButtonPause;
     [SerializeField] private Button quitButtonPause;
-    [SerializeField] private Button gameOverButton;
-    [SerializeField] private Button winButton;
+    [SerializeField] private Button gameOverRetryButton; // Button for retry on game over canvas
+    [SerializeField] private Button winRetryButton;     // Button for retry on win canvas
     [SerializeField] private Button previousButton; // Button for previous page
     [SerializeField] private Button nextButton; // Button for next page
     [SerializeField] private Button closeButton; // Button to close guide
@@ -43,8 +43,8 @@ public class UIManager : MonoBehaviour
         continueButton.onClick.AddListener(ContinueGame);
         settingsButtonPause.onClick.AddListener(OpenSettings);
         quitButtonPause.onClick.AddListener(RestartToMainMenu);
-        gameOverButton.onClick.AddListener(RestartToMainMenu);
-        winButton.onClick.AddListener(RestartToMainMenu);
+        gameOverRetryButton.onClick.AddListener(RetryGame); // Retry button for game over
+        winRetryButton.onClick.AddListener(RetryGame);      // Retry button for win
         previousButton.onClick.AddListener(PreviousPage);
         nextButton.onClick.AddListener(NextPage);
         closeButton.onClick.AddListener(CloseGuide);
@@ -145,6 +145,22 @@ public class UIManager : MonoBehaviour
 
         // Reload the current scene to fully restart the game
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void RetryGame()
+    {
+        // Destroy any persistent GameManager before reloading
+        GameManager gameManager = FindFirstObjectByType<GameManager>();
+        if (gameManager != null)
+        {
+            Destroy(gameManager.gameObject);
+            Debug.Log("Destroyed persistent GameManager");
+        }
+
+        // Reload the current scene and start directly in-game
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // Ensure in-game state is set after loading (rely on StartGame logic)
+        StartGame();
     }
 
     private void ShowGameOver()

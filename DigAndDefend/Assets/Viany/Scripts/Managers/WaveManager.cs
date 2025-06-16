@@ -19,6 +19,7 @@ public class WaveManager : MonoBehaviour
     private int currentEnemyCount = 0;
     private List<EnemyType> currentSpawnOrder; // Reference to existing EnemyType enum
     private Dictionary<EnemyType, GameObject> enemyTypeToPrefab;
+    public GameManager gameManager;
 
     private void Awake()
     {
@@ -165,6 +166,7 @@ public class WaveManager : MonoBehaviour
             else
             {
                 Debug.Log("Wave complete but game over or no more waves.");
+                gameManager.SetWin();
             }
         }
         else
