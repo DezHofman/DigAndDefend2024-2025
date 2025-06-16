@@ -29,6 +29,11 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Vector2 caveCameraPosition = new Vector2(100f, 0f);
     [SerializeField] private MiningPlacement miningPlacement; // New reference
 
+    [SerializeField] private Image lockOverlay; // Opacity overlay for locked towers
+    [SerializeField] private Image lockImage; // Lock icon for locked towers
+    [SerializeField] private TextMeshProUGUI unlockText; // Text for "Unlock at Wave X"
+    [SerializeField] private int[] unlockWaves; // Editable array of wave numbers for tower unlocks
+
     private int currentIndex = 0;
     private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire Tower", "Barricade" };
     private string mineTowerName = "Mining Machine";
@@ -43,6 +48,16 @@ public class ShopManager : MonoBehaviour
         if (towerSprites.Length != towerPlacement.towerPrefabs.Length)
         {
             Debug.LogWarning("ShopManager: towerSprites array length does not match towerPrefabs length!");
+        }
+
+        if (unlockWaves == null || unlockWaves.Length != towerPlacement.towerPrefabs.Length)
+        {
+            Debug.LogWarning("ShopManager: unlockWaves array length does not match towerPrefabs length! Initializing with default values.");
+            unlockWaves = new int[towerPlacement.towerPrefabs.Length];
+            for (int i = 0; i < unlockWaves.Length; i++)
+            {
+                unlockWaves[i] = (i + 1) * 5; // Default: Wave 5, 10, 15, etc.
+            }
         }
 
         if (mainCamera == null)
@@ -230,6 +245,10 @@ public class ShopManager : MonoBehaviour
 
     private void UpdateShopContent()
     {
+        if (lockOverlay != null) lockOverlay.gameObject.SetActive(false);
+        if (lockImage != null) lockImage.gameObject.SetActive(false);
+        if (unlockText != null) unlockText.gameObject.SetActive(false);
+
         if (isInCaveArea)
         {
             itemNameText.text = mineTowerName;
@@ -238,6 +257,7 @@ public class ShopManager : MonoBehaviour
             nextButton.interactable = false;
             previousButton.interactable = false;
             currentIndex = -1;
+            buyButton.interactable = true; // Mining Machine always available
         }
         else
         {
@@ -252,6 +272,30 @@ public class ShopManager : MonoBehaviour
             }
             nextButton.interactable = true;
             previousButton.interactable = true;
+
+            if (GameManager.Instance != null && currentIndex >= 0 && currentIndex < unlockWaves.Length)
+            {
+                int unlockWave = unlockWaves[currentIndex];
+                int currentWave = GameManager.Instance.currentWave;
+                if (currentWave < unlockWave)
+                {
+                    buyButton.interactable = false;
+                    if (lockOverlay != null) lockOverlay.gameObject.SetActive(true);
+                    if (lockImage != null) lockImage.gameObject.SetActive(true);
+                    if (unlockText != null)
+                    {
+                        unlockText.gameObject.SetActive(true);
+                        unlockText.text = $"Unlock at Wave {unlockWave}";
+                    }
+                }
+                else
+                {
+                    buyButton.interactable = true;
+                    if (lockOverlay != null) lockOverlay.gameObject.SetActive(false);
+                    if (lockImage != null) lockImage.gameObject.SetActive(false);
+                    if (unlockText != null) unlockText.gameObject.SetActive(false);
+                }
+            }
         }
     }
 

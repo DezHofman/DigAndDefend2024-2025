@@ -154,13 +154,13 @@ public class GameManager : MonoBehaviour
                 if (towerImage != null) towerImage.sprite = slowTowerSprite;
                 showHint = true;
             }
-            else if (currentWave == 3)
+            else if (currentWave == 4)
             {
                 hintText.text = "Use a Bomb Tower to clear groups!";
                 if (towerImage != null) towerImage.sprite = bombTowerSprite;
                 showHint = true;
             }
-            else if (currentWave == 4)
+            else if (currentWave == 6)
             {
                 hintText.text = "Add a Fire Tower to handle groups!";
                 if (towerImage != null) towerImage.sprite = fireTowerSprite;

@@ -19,7 +19,7 @@ TagManager:
   - Enemies
   - Towers
   - Barricades
-  - 
+  - destroyableLayers
   - 
   - 
   - 
@@ -57,6 +57,9 @@ TagManager:
     locked: 0
   - name: Death_Effect
     uniqueID: 207357543
+    locked: 0
+  - name: Barricade
+    uniqueID: 1447958631
     locked: 0
   - name: Towers_Below
     uniqueID: 1771884157
