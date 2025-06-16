@@ -61,9 +61,13 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape) && !mainMenuCanvas.enabled && !gameOverCanvas.enabled && !winCanvas.enabled)
         {
             if (isPaused)
+            {
                 ContinueGame();
+            }
             else
+            {
                 PauseGame();
+            }
         }
     }
 
