@@ -41,7 +41,7 @@ public abstract class BaseEnemy : MonoBehaviour
             originalColor = spriteRenderer.color; // Store original color
             string enemyType = GetEnemyType();
             // UpdateSortingLayer(enemyType, Vector2.zero); // Initial update
-            EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
+            // EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
         }
     }
 
@@ -240,7 +240,7 @@ public abstract class BaseEnemy : MonoBehaviour
     protected virtual void OnDeath()
     {
         string enemyType = GetEnemyType();
-        EnemySortingManager.ReleaseSortingOrder(gameObject, enemyType);
+        // EnemySortingManager.ReleaseSortingOrder(gameObject, enemyType);
 
         // Spawn death effect if prefab is assigned
         if (deathEffectPrefab != null)
