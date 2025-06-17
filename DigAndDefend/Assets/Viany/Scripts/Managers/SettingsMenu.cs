@@ -5,10 +5,30 @@ using TMPro; // For TextMeshProUGUI
 
 public class SettingsMenu : MonoBehaviour
 {
-    public Toggle runCustomClassToggle; // Toggle UI object to run your custom class
+    public static SettingsMenu Instance { get; private set; }
+
+    public Toggle runCustomClassToggle; // Toggle to run your custom class
+    public Toggle autoWaveToggle; // Toggle for Auto Wave On or Off
+    public Toggle ingameGuideToggle; // Toggle for Ingame Guide On or Off
+    public Toggle ingameSpeedToggle; // Toggle for Ingame Speed 1/2
     public Slider volumeSlider; // Volume slider
     public TextMeshProUGUI volumeLabel; // TMP text for volume percentage
     public AudioMixer audioMixer;
+    public UIManager uiManager; // Reference to the existing UIManager script
+    public Canvas settingsCanvas; // Reference to the Settings canvas
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // Optional: Persist across scenes
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
@@ -31,6 +51,26 @@ public class SettingsMenu : MonoBehaviour
         {
             Debug.LogWarning("runCustomClassToggle is not assigned; custom class toggle will be skipped.");
         }
+        if (autoWaveToggle == null)
+        {
+            Debug.LogWarning("autoWaveToggle is not assigned; auto wave toggle will be skipped.");
+        }
+        if (ingameGuideToggle == null)
+        {
+            Debug.LogWarning("ingameGuideToggle is not assigned; ingame guide toggle will be skipped.");
+        }
+        if (ingameSpeedToggle == null)
+        {
+            Debug.LogWarning("ingameSpeedToggle is not assigned; ingame speed toggle will be skipped.");
+        }
+        if (uiManager == null)
+        {
+            Debug.LogWarning("uiManager is not assigned; ingame speed will not update.");
+        }
+        if (settingsCanvas == null)
+        {
+            Debug.LogWarning("settingsCanvas is not assigned; settings UI will not be managed.");
+        }
 
         // Volume slider setup
         volumeSlider.minValue = 0;
@@ -39,31 +79,58 @@ public class SettingsMenu : MonoBehaviour
         volumeSlider.interactable = true; // Ensure interactable
 
         // Initialize volume
-        float currentVolume;
-        if (audioMixer.GetFloat("MasterVolume", out currentVolume))
+        float initialVolume = 100f; // Default fallback
+        if (PlayerPrefs.HasKey("MasterVolume"))
         {
-            volumeSlider.value = Mathf.RoundToInt(DBToLinear(currentVolume) * 100); // Convert dB to 0-100
-            Debug.Log($"Initial MasterVolume: {currentVolume}dB, Slider Value: {volumeSlider.value}");
+            initialVolume = PlayerPrefs.GetFloat("MasterVolume");
+            Debug.Log($"Loaded initial volume from PlayerPrefs: {initialVolume}%");
         }
         else
         {
-            volumeSlider.value = 100; // Default to 50%
-            Debug.LogWarning("Could not get MasterVolume from AudioMixer; defaulting to 50.");
+            float currentVolume;
+            if (audioMixer.GetFloat("MasterVolume", out currentVolume))
+            {
+                initialVolume = Mathf.RoundToInt(DBToLinear(currentVolume) * 100);
+                Debug.Log($"Loaded initial volume from AudioMixer: {currentVolume}dB ({initialVolume}%)");
+            }
+            else
+            {
+                Debug.LogWarning("Could not get MasterVolume from AudioMixer; using default 50%.");
+            }
         }
+        volumeSlider.value = initialVolume;
+        UpdateVolumeLabel(initialVolume);
 
         // Set up slider listener with snapping
         volumeSlider.onValueChanged.RemoveAllListeners(); // Clear existing listeners
         volumeSlider.onValueChanged.AddListener(SetVolume);
-        UpdateVolumeLabel(volumeSlider.value); // Initial label update
 
-        // Set up toggle listener
+        // Set up toggle listeners
         if (runCustomClassToggle != null)
         {
             runCustomClassToggle.onValueChanged.AddListener(RunCustomClass);
-            Debug.Log($"Initial Toggle State: {runCustomClassToggle.isOn}");
+            Debug.Log($"Initial runCustomClassToggle State: {runCustomClassToggle.isOn}");
+        }
+        if (autoWaveToggle != null)
+        {
+            autoWaveToggle.isOn = PlayerPrefs.GetInt("AutoWave", 0) == 1; // Default to false
+            autoWaveToggle.onValueChanged.AddListener(RunAutoWave);
+            Debug.Log($"Initial autoWaveToggle State: {autoWaveToggle.isOn}");
+        }
+        if (ingameGuideToggle != null)
+        {
+            ingameGuideToggle.isOn = PlayerPrefs.GetInt("IngameGuide", 1) == 1; // Default to true
+            ingameGuideToggle.onValueChanged.AddListener(RunIngameGuide);
+            Debug.Log($"Initial ingameGuideToggle State: {ingameGuideToggle.isOn}");
+        }
+        if (ingameSpeedToggle != null)
+        {
+            ingameSpeedToggle.isOn = PlayerPrefs.GetInt("IngameSpeed", 1) == 1; // Default to true
+            ingameSpeedToggle.onValueChanged.AddListener(RunIngameSpeed);
+            Debug.Log($"Initial ingameSpeedToggle State: {ingameSpeedToggle.isOn}");
         }
 
-        // Load saved settings
+        // Load saved settings for toggles
         LoadSettings();
     }
 
@@ -101,6 +168,11 @@ public class SettingsMenu : MonoBehaviour
 
         // Update label
         UpdateVolumeLabel(snappedSliderValue);
+
+        // Save volume automatically
+        PlayerPrefs.SetFloat("MasterVolume", snappedSliderValue);
+        PlayerPrefs.Save();
+        Debug.Log("Volume saved to PlayerPrefs.");
     }
 
     void UpdateVolumeLabel(float value)
@@ -129,28 +201,91 @@ public class SettingsMenu : MonoBehaviour
         }
     }
 
+    void RunAutoWave(bool isOn)
+    {
+        if (autoWaveToggle != null)
+        {
+            if (isOn)
+            {
+                Debug.Log("autoWaveToggle is on; enabling auto wave.");
+                PlayerPrefs.SetInt("AutoWave", 1);
+            }
+            else
+            {
+                Debug.Log("autoWaveToggle is off; disabling auto wave.");
+                PlayerPrefs.SetInt("AutoWave", 0);
+            }
+            PlayerPrefs.Save();
+        }
+    }
+
+    void RunIngameGuide(bool isOn)
+    {
+        if (ingameGuideToggle != null)
+        {
+            if (isOn)
+            {
+                Debug.Log("ingameGuideToggle is on; enabling hints.");
+                GameManager.Instance.ToggleHints(true);
+                PlayerPrefs.SetInt("IngameGuide", 1);
+            }
+            else
+            {
+                Debug.Log("ingameGuideToggle is off; disabling hints.");
+                GameManager.Instance.ToggleHints(false);
+                PlayerPrefs.SetInt("IngameGuide", 0);
+            }
+            PlayerPrefs.Save();
+        }
+    }
+
+    void RunIngameSpeed(bool isOn)
+    {
+        if (ingameSpeedToggle != null && uiManager != null)
+        {
+            if (isOn)
+            {
+                Debug.Log("ingameSpeedToggle is on; setting time to 1.");
+                uiManager.time = 1; // Set to time 1 when toggle is on
+                PlayerPrefs.SetInt("IngameSpeed", 1);
+            }
+            else
+            {
+                Debug.Log("ingameSpeedToggle is off; setting time to 2.");
+                uiManager.time = 2; // Set to time 2 when toggle is off
+                PlayerPrefs.SetInt("IngameSpeed", 0);
+            }
+            PlayerPrefs.Save();
+        }
+    }
+
     public void SaveSettings()
     {
         if (volumeSlider != null)
         {
             PlayerPrefs.SetFloat("MasterVolume", volumeSlider.value);
             PlayerPrefs.Save();
-            Debug.Log("Settings saved.");
+            Debug.Log("Settings saved manually.");
         }
     }
 
     void LoadSettings()
     {
-        if (PlayerPrefs.HasKey("MasterVolume") && volumeSlider != null)
+        if (autoWaveToggle != null && PlayerPrefs.HasKey("AutoWave"))
         {
-            float volume = PlayerPrefs.GetFloat("MasterVolume");
-            volumeSlider.value = volume; // Snapping handled in SetVolume
-            if (audioMixer != null)
+            autoWaveToggle.isOn = PlayerPrefs.GetInt("AutoWave") == 1;
+        }
+        if (ingameGuideToggle != null && PlayerPrefs.HasKey("IngameGuide"))
+        {
+            ingameGuideToggle.isOn = PlayerPrefs.GetInt("IngameGuide") == 1;
+        }
+        if (ingameSpeedToggle != null && PlayerPrefs.HasKey("IngameSpeed"))
+        {
+            ingameSpeedToggle.isOn = PlayerPrefs.GetInt("IngameSpeed") == 1;
+            if (uiManager != null)
             {
-                audioMixer.SetFloat("MasterVolume", LinearToDB(volume / 100));
+                uiManager.time = ingameSpeedToggle.isOn ? 1 : 2; // Load initial time
             }
-            UpdateVolumeLabel(volume);
-            Debug.Log($"Loaded Volume: {volume}%");
         }
     }
 }

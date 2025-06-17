@@ -32,7 +32,7 @@ public abstract class Tower : MonoBehaviour
             attackCollider.isTrigger = true;
         }
         gameObject.tag = "Tower";
-        gameObject.layer = LayerMask.NameToLayer("Towers");
+        gameObject.layer = LayerMask.GetMask("Towers");
 
         rangeIndicator = Instantiate(rangeIndicatorPrefab, transform.position, Quaternion.identity, transform);
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
@@ -42,7 +42,6 @@ public abstract class Tower : MonoBehaviour
         if (spriteRenderer != null)
         {
             spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
-            // Removed call to UpdateSortingOrder since it's now handled by UpdateLayerAndOrder
             UpdateLayerAndOrder(); // Initialize layer and sorting order
         }
         else
@@ -79,7 +78,7 @@ public abstract class Tower : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !IsCanvasOpen())
         {
             RaycastHit2D[] hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Mathf.Infinity, LayerMask.GetMask("Towers"));
             foreach (RaycastHit2D hit in hits)
@@ -110,7 +109,6 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            // Update tower layer and sorting order based on all enemies
             UpdateLayerAndOrder();
         }
         else
@@ -143,7 +141,6 @@ public abstract class Tower : MonoBehaviour
             else if (enemyY > towerY + LAYER_SWITCH_BUFFER) aboveCount++;
         }
 
-        // Determine layer based on majority of enemy positions
         if (aboveCount > belowCount)
         {
             spriteRenderer.sortingLayerName = aboveLayer;
@@ -153,7 +150,6 @@ public abstract class Tower : MonoBehaviour
             spriteRenderer.sortingLayerName = baseLayer;
         }
 
-        // Set sorting order based on inverted Y-position, adjusted by layer
         spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y) + (spriteRenderer.sortingLayerName == aboveLayer ? 10 : 0);
     }
 
@@ -164,6 +160,12 @@ public abstract class Tower : MonoBehaviour
             spriteRenderer.sortingLayerName = baseLayer;
             spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y);
         }
+    }
+
+    private bool IsCanvasOpen()
+    {
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        return gm != null && gm.IsAnyCanvasOpen();
     }
 
     private void OnDestroy()

@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Button nextButton; // Button for next page
     [SerializeField] private Button closeButton; // Button to close guide
     [SerializeField] private GameObject[] guidePanels; // Single array for all panels
+    public int time;
 
     private bool isPaused = false;
     private int currentPage = 1; // Start at page 1
@@ -32,7 +33,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         // Initial setup
-        Time.timeScale = 1f;
+        ApplyTimeScale();
         ShowMainMenu();
 
         // Assign button listeners
@@ -71,6 +72,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    private void ApplyTimeScale()
+    {
+        Time.timeScale = isPaused ? 0f : time;
+    }
+
     private void ShowMainMenu()
     {
         mainMenuCanvas.enabled = true;
@@ -80,7 +86,8 @@ public class UIManager : MonoBehaviour
         winCanvas.enabled = false;
         guideMenuCanvas.enabled = false;
         EnableMainMenuButtons(true);
-        Time.timeScale = 0f;
+        isPaused = true; // Main menu is a paused state
+        ApplyTimeScale();
     }
 
     private void StartGame()
@@ -92,27 +99,42 @@ public class UIManager : MonoBehaviour
         winCanvas.enabled = false;
         guideMenuCanvas.enabled = false;
         EnableMainMenuButtons(false);
-        Time.timeScale = 1f;
+        isPaused = false; // Game is running
+        ApplyTimeScale();
     }
 
     private void PauseGame()
     {
         isPaused = true;
         pauseMenuCanvas.enabled = true;
-        Time.timeScale = 0f; // inGameCanvas remains enabled
+        ApplyTimeScale(); // Set Time.timeScale to 0
     }
 
     private void ContinueGame()
     {
         isPaused = false;
         pauseMenuCanvas.enabled = false;
-        Time.timeScale = 1f;
+        SettingsMenu settings = FindFirstObjectByType<SettingsMenu>();
+        if (settings != null && settings.settingsCanvas != null)
+        {
+            settings.settingsCanvas.enabled = false; // Close settings if open
+        }
+        ApplyTimeScale(); // Restore Time.timeScale to time
     }
 
     private void OpenSettings()
     {
-        // Placeholder for future settings implementation
-        Debug.Log("Settings menu opened (to be implemented)");
+        SettingsMenu settings = FindFirstObjectByType<SettingsMenu>();
+        if (settings != null && settings.settingsCanvas != null)
+        {
+            settings.settingsCanvas.enabled = true;
+            isPaused = true; // Pause game when settings are open
+            ApplyTimeScale();
+        }
+        else
+        {
+            Debug.LogWarning("Settings canvas not assigned or SettingsMenu not found.");
+        }
     }
 
     private void OpenGuide()
@@ -122,7 +144,8 @@ public class UIManager : MonoBehaviour
         EnableMainMenuButtons(false); // Disable main menu buttons
         currentPage = 1; // Start at page 1
         PopulateGuideMenu();
-        Time.timeScale = 0f;
+        isPaused = true; // Pause game during guide
+        ApplyTimeScale();
     }
 
     private void QuitGame()
@@ -169,18 +192,20 @@ public class UIManager : MonoBehaviour
 
     private void ShowGameOver()
     {
-        inGameCanvas.enabled = false;
         gameOverCanvas.enabled = true;
+        inGameCanvas.enabled = false;
         EnableMainMenuButtons(false);
-        Time.timeScale = 0f;
+        isPaused = true; // Game over is a paused state
+        ApplyTimeScale();
     }
 
     private void ShowWin()
     {
-        inGameCanvas.enabled = false;
         winCanvas.enabled = true;
+        inGameCanvas.enabled = false;
         EnableMainMenuButtons(false);
-        Time.timeScale = 0f;
+        isPaused = true; // Win is a paused state
+        ApplyTimeScale();
     }
 
     private void PopulateGuideMenu()
@@ -224,7 +249,8 @@ public class UIManager : MonoBehaviour
         guideMenuCanvas.enabled = false;
         inGameCanvas.enabled = true; // Return to in-game state
         EnableMainMenuButtons(true); // Re-enable main menu buttons
-        Time.timeScale = 1f;
+        isPaused = false; // Resume game
+        ApplyTimeScale();
         RestartToMainMenu(); // Send back to main menu with full restart
     }
 

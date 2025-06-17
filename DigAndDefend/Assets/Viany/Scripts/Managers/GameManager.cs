@@ -25,13 +25,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite bombTowerSprite;   // Assign in Inspector
     [SerializeField] private Canvas gameOverCanvas; // Variable for game over Canvas
     [SerializeField] private Canvas winCanvas; // Variable for win Canvas
+    [SerializeField] private Canvas mainMenuCanvas; // New canvas
+    [SerializeField] private Canvas pauseMenuCanvas; // New canvas
+    [SerializeField] private Canvas inGameMenuCanvas; // New canvas
+    [SerializeField] private Canvas guideMenuCanvas; // New canvas
+    [SerializeField] private Canvas settingsMenuCanvas; // New canvas (assuming SettingsMenu uses this)
     [SerializeField] private VictoryLoseTextManager victoryLoseTextManager;
 
-    private int playerHealth = 100;
+    [SerializeField] private int playerHealth = 100;
     public bool isWaveActive { get; private set; } = false;
     private List<(Vector3, int)> placedTowers = new List<(Vector3, int)>();
     private enum GameState { Playing, GameOver, Win }
     private GameState currentState = GameState.Playing;
+    private bool showHints = true; // Default to showing hints
+    private bool firstWaveStarted = false; // Track if first wave has been manually started
 
     private void Awake()
     {
@@ -55,7 +62,7 @@ public class GameManager : MonoBehaviour
         EnableStartButton(true);
         if (startButton != null)
         {
-            startButton.SetActive(true);
+            startButton.SetActive(true); // Ensure button is visible
         }
         if (hintPanel != null)
         {
@@ -68,6 +75,26 @@ public class GameManager : MonoBehaviour
         if (winCanvas != null)
         {
             winCanvas.enabled = false; // Disable win Canvas initially
+        }
+        if (mainMenuCanvas != null)
+        {
+            mainMenuCanvas.enabled = true; // Disable main menu Canvas initially
+        }
+        if (pauseMenuCanvas != null)
+        {
+            pauseMenuCanvas.enabled = false; // Disable pause menu Canvas initially
+        }
+        if (inGameMenuCanvas != null)
+        {
+            inGameMenuCanvas.enabled = false; // Disable in-game menu Canvas initially
+        }
+        if (guideMenuCanvas != null)
+        {
+            guideMenuCanvas.enabled = false; // Disable guide menu Canvas initially
+        }
+        if (settingsMenuCanvas != null)
+        {
+            settingsMenuCanvas.enabled = false; // Disable settings menu Canvas initially
         }
     }
 
@@ -106,6 +133,26 @@ public class GameManager : MonoBehaviour
         {
             winCanvas.enabled = false; // Ensure win Canvas is off
         }
+        if (mainMenuCanvas != null)
+        {
+            mainMenuCanvas.enabled = false; // Ensure main menu is off
+        }
+        if (pauseMenuCanvas != null)
+        {
+            pauseMenuCanvas.enabled = false; // Ensure pause menu is off
+        }
+        if (inGameMenuCanvas != null)
+        {
+            inGameMenuCanvas.enabled = false; // Ensure in-game menu is off
+        }
+        if (guideMenuCanvas != null)
+        {
+            guideMenuCanvas.enabled = false; // Ensure guide menu is off
+        }
+        if (settingsMenuCanvas != null)
+        {
+            settingsMenuCanvas.enabled = false; // Ensure settings menu is off
+        }
     }
 
     public void SetWin()
@@ -129,6 +176,26 @@ public class GameManager : MonoBehaviour
         {
             gameOverCanvas.enabled = false; // Ensure game over Canvas is off
         }
+        if (mainMenuCanvas != null)
+        {
+            mainMenuCanvas.enabled = false; // Ensure main menu is off
+        }
+        if (pauseMenuCanvas != null)
+        {
+            pauseMenuCanvas.enabled = false; // Ensure pause menu is off
+        }
+        if (inGameMenuCanvas != null)
+        {
+            inGameMenuCanvas.enabled = false; // Ensure in-game menu is off
+        }
+        if (guideMenuCanvas != null)
+        {
+            guideMenuCanvas.enabled = false; // Ensure guide menu is off
+        }
+        if (settingsMenuCanvas != null)
+        {
+            settingsMenuCanvas.enabled = false; // Ensure settings menu is off
+        }
     }
 
     public void EnableStartButton(bool enable)
@@ -136,11 +203,11 @@ public class GameManager : MonoBehaviour
         if (startButton != null && currentState == GameState.Playing)
         {
             bool inGrassArea = shopManager != null && !shopManager.IsInCaveArea();
-            startButton.SetActive(enable && inGrassArea);
+            startButton.SetActive(true); // Keep button visible
             Button buttonComponent = startButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
-                buttonComponent.interactable = enable && !isWaveActive && inGrassArea;
+                buttonComponent.interactable = enable && !isWaveActive && inGrassArea && (!IsAutoWaveEnabled() || !firstWaveStarted);
             }
             UpdateStartButtonSprite();
         }
@@ -152,6 +219,7 @@ public class GameManager : MonoBehaviour
         {
             if (shopManager != null && shopManager.IsInCaveArea()) return;
             isWaveActive = true;
+            if (currentWave == 0) firstWaveStarted = true; // Mark first wave as started
             currentWave++; // Increment currentWave to the wave being started (e.g., 1, then 2, etc.)
             if (hintPanel != null) hintPanel.SetActive(false); // Hide panel when wave starts
             WaveManager waveManager = FindFirstObjectByType<WaveManager>();
@@ -170,7 +238,6 @@ public class GameManager : MonoBehaviour
     public void WaveComplete()
     {
         isWaveActive = false;
-        EnableStartButton(true);
         UpdateUI();
         if (shopManager != null)
         {
@@ -179,6 +246,11 @@ public class GameManager : MonoBehaviour
         if (currentWave >= totalWaves)
         {
             SetWin();
+        }
+        if (IsAutoWaveEnabled() && currentWave < totalWaves)
+        {
+            StartWave(); // Start next wave immediately if auto wave is enabled
+            UpdateUI(); // Ensure UI updates with new wave count
         }
     }
 
@@ -209,9 +281,9 @@ public class GameManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (waveText != null) waveText.text = "Wave: " + currentWave + "/" + totalWaves;
+        if (waveText != null) waveText.text = "Wave: " + currentWave + "/" + totalWaves; // Always show wave count
         if (healthText != null) healthText.text = "Health: " + (isGameOver ? 0 : playerHealth);
-        if (hintText != null && !isWaveActive && currentState == GameState.Playing) // Only update hint when wave is inactive and game is playing
+        if (hintText != null && !isWaveActive && currentState == GameState.Playing && showHints) // Only show hints when inactive
         {
             bool showHint = false;
             if (currentWave == 2)
@@ -239,5 +311,31 @@ public class GameManager : MonoBehaviour
             }
             if (hintPanel != null) hintPanel.SetActive(showHint); // Show/hide panel based on hint
         }
+    }
+
+    public void ToggleHints(bool enable)
+    {
+        showHints = enable;
+        if (hintPanel != null)
+        {
+            hintPanel.SetActive(false); // Hide panel when hints are disabled
+        }
+        UpdateUI(); // Refresh UI to reflect new hint state
+    }
+
+    public bool IsAutoWaveEnabled()
+    {
+        return SettingsMenu.Instance != null && SettingsMenu.Instance.autoWaveToggle != null && SettingsMenu.Instance.autoWaveToggle.isOn;
+    }
+
+    // Updated method to check if any canvas is open
+    public bool IsAnyCanvasOpen()
+    {
+        return (gameOverCanvas != null && gameOverCanvas.enabled) ||
+               (winCanvas != null && winCanvas.enabled) ||
+               (mainMenuCanvas != null && mainMenuCanvas.enabled) ||
+               (pauseMenuCanvas != null && pauseMenuCanvas.enabled) ||
+               (guideMenuCanvas != null && guideMenuCanvas.enabled) ||
+               (settingsMenuCanvas != null && settingsMenuCanvas.enabled);
     }
 }

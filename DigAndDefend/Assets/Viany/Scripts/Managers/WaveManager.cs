@@ -146,8 +146,8 @@ public class WaveManager : MonoBehaviour
         else
         {
             CancelInvoke("SpawnEnemy");
-            Debug.Log("All enemies scheduled, checking completion in " + (timeBetweenSpawns + 1f) + "s");
-            Invoke("CheckWaveComplete", timeBetweenSpawns + 1f);
+            Debug.Log("All enemies spawned, checking completion immediately.");
+            CheckWaveComplete(); // Check immediately
         }
     }
 
@@ -160,24 +160,27 @@ public class WaveManager : MonoBehaviour
             if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave < GameManager.Instance.totalWaves)
             {
                 GameManager.Instance.WaveComplete();
-                Debug.Log("Wave complete, enabling start button.");
-                GameManager.Instance.EnableStartButton(true);
+                if (GameManager.Instance.IsAutoWaveEnabled() && GameManager.Instance.currentWave > 1) // Auto-start after first wave
+                {
+                    Debug.Log("Auto wave enabled, starting next wave immediately.");
+                    StartWave(); // Trigger next wave instantly
+                }
             }
-            else
+            else if (GameManager.Instance.currentWave >= GameManager.Instance.totalWaves)
             {
-                Debug.Log("Wave complete but game over or no more waves.");
+                Debug.Log("Wave complete but no more waves, setting win.");
                 gameManager.SetWin();
             }
         }
         else
         {
-            Debug.Log("Wave not complete, rescheduling check.");
-            Invoke("CheckWaveComplete", timeBetweenSpawns + 1f);
+            Debug.Log("Wave not complete, checking again in 0.5s.");
+            Invoke("CheckWaveComplete", 0.5f); // Quick recheck
         }
     }
 
     void UpdateWaveUI()
     {
-        if (waveText != null) waveText.text = "Wave: " + GameManager.Instance.currentWave;
+        if (waveText != null) waveText.text = "Wave: " + GameManager.Instance.currentWave + "/" + GameManager.Instance.totalWaves;
     }
 }
