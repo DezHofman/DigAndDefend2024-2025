@@ -239,6 +239,7 @@ public class GameManager : MonoBehaviour
     {
         isWaveActive = false;
         UpdateUI();
+        UpdateStartButtonSprite();
         if (shopManager != null)
         {
             shopManager.UpdateMineButton();
