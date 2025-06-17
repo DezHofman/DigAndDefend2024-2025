@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite bombTowerSprite;   // Assign in Inspector
     [SerializeField] private Canvas gameOverCanvas; // Variable for game over Canvas
     [SerializeField] private Canvas winCanvas; // Variable for win Canvas
-    [SerializeField] private Canvas mainMenuCanvas; // New canvas
+    [SerializeField] public Canvas mainMenuCanvas; // New canvas
     [SerializeField] private Canvas pauseMenuCanvas; // New canvas
     [SerializeField] private Canvas inGameMenuCanvas; // New canvas
     [SerializeField] private Canvas guideMenuCanvas; // New canvas

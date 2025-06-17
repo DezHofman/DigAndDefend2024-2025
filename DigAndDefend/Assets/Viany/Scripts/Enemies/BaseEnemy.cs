@@ -40,7 +40,7 @@ public abstract class BaseEnemy : MonoBehaviour
         {
             originalColor = spriteRenderer.color; // Store original color
             string enemyType = GetEnemyType();
-            UpdateSortingLayer(enemyType, Vector2.zero); // Initial update
+            // UpdateSortingLayer(enemyType, Vector2.zero); // Initial update
             EnemySortingManager.AssignSortingOrder(gameObject, enemyType);
         }
     }
@@ -118,11 +118,11 @@ public abstract class BaseEnemy : MonoBehaviour
         if (spriteRenderer != null)
         {
             string enemyType = GetEnemyType();
-            UpdateSortingLayer(enemyType, direction);
+            // UpdateSortingLayer(enemyType, direction);
         }
     }
 
-    void UpdateSortingLayer(string enemyType, Vector2 direction)
+    /* void UpdateSortingLayer(string enemyType, Vector2 direction)
     {
         string layerSuffix;
         if (direction.y > 0.7f)
@@ -194,7 +194,7 @@ public abstract class BaseEnemy : MonoBehaviour
         spriteRenderer.sortingOrder = Mathf.Clamp(order, baseOrder, maxOrder);
 
         Debug.Log($"Set {gameObject.name} to layer: {layerName}, order: {spriteRenderer.sortingOrder}, index: {myIndex}, count: {enemyCount}, direction: {direction}, frame: {Time.frameCount}");
-    }
+    }*/
 
     void ResumeMovement()
     {

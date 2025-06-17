@@ -41,8 +41,8 @@ public abstract class Tower : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
-            UpdateLayerAndOrder(); // Initialize layer and sorting order
+            // spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
+            // UpdateLayerAndOrder(); // Initialize layer and sorting order
         }
         else
         {
@@ -100,7 +100,7 @@ public abstract class Tower : MonoBehaviour
         }
 
         // Update sorting order and layer continuously
-        UpdateLayerAndOrder();
+        // UpdateLayerAndOrder();
     }
 
     protected virtual void Attack()
@@ -109,17 +109,17 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            UpdateLayerAndOrder();
+            // UpdateLayerAndOrder();
         }
         else
         {
-            ResetTowerLayer();
+            // ResetTowerLayer();
         }
     }
 
     protected abstract void HandleAttack(Collider2D[] enemies);
 
-    private void UpdateLayerAndOrder()
+    /* private void UpdateLayerAndOrder()
     {
         if (spriteRenderer == null) return;
 
@@ -151,16 +151,16 @@ public abstract class Tower : MonoBehaviour
         }
 
         spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y) + (spriteRenderer.sortingLayerName == aboveLayer ? 10 : 0);
-    }
+    }*/
 
-    private void ResetTowerLayer()
+    /*private void ResetTowerLayer()
     {
         if (spriteRenderer != null)
         {
             spriteRenderer.sortingLayerName = baseLayer;
             spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y);
         }
-    }
+    }*/
 
     private bool IsCanvasOpen()
     {
