@@ -144,33 +144,23 @@ public class SettingsMenu : MonoBehaviour
     private float LinearToDB(float linear)
     {
         float db = linear > 0 ? Mathf.Log10(linear) * 20 : -80f;
-        return Mathf.Round(db / 10) * 10; // Snap volume to 10 dB increments
+        return db;
     }
 
     void SetVolume(float value)
     {
-        // Snap slider value to nearest multiple of 10
-        float snappedSliderValue = Mathf.Round(value / 10) * 10;
-        if (Mathf.Abs(volumeSlider.value - snappedSliderValue) > 0.01f) // Prevent recursive calls
-        {
-            volumeSlider.value = snappedSliderValue;
-            Debug.Log($"Snapped Slider to: {snappedSliderValue}%");
-        }
+        float sliderValue = value;
 
-        // Update AudioMixer with snapped volume
-        float linear = snappedSliderValue / 100; // Convert 0-100 to 0-1
+        float linear = sliderValue / 100f;
         if (audioMixer != null)
         {
-            float snappedDB = LinearToDB(linear); // Snap to -80, -70, -60, ..., 0 dB
-            audioMixer.SetFloat("MasterVolume", snappedDB);
-            Debug.Log($"Set Volume: {snappedSliderValue}% ({snappedDB}dB)");
+            float db = LinearToDB(linear);
+            audioMixer.SetFloat("MasterVolume", db);
+            Debug.Log($"Set Volume: {sliderValue}% ({db}dB)");
         }
 
-        // Update label
-        UpdateVolumeLabel(snappedSliderValue);
-
-        // Save volume automatically
-        PlayerPrefs.SetFloat("MasterVolume", snappedSliderValue);
+        UpdateVolumeLabel(sliderValue);
+        PlayerPrefs.SetFloat("MasterVolume", sliderValue);
         PlayerPrefs.Save();
         Debug.Log("Volume saved to PlayerPrefs.");
     }
