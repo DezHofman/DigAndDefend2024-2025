@@ -69,20 +69,6 @@ public class ShopManager : MonoBehaviour
             }
         }
 
-        if (Time.timeScale != 1f)
-        {
-            Debug.LogWarning("ShopManager: Time.timeScale was not 1, resetting to 1.");
-            Time.timeScale = 1f;
-        }
-
-        if (FindFirstObjectByType<EventSystem>() == null)
-        {
-            Debug.LogWarning("ShopManager: No EventSystem found in scene! Adding one.");
-            GameObject eventSystem = new GameObject("EventSystem");
-            eventSystem.AddComponent<EventSystem>();
-            eventSystem.AddComponent<StandaloneInputModule>();
-        }
-
         openedShop.SetActive(false);
         closedShop.SetActive(true);
         SetupButtonListeners();
@@ -183,6 +169,7 @@ public class ShopManager : MonoBehaviour
         }
 
         bool waveActive = GameManager.Instance != null && GameManager.Instance.isWaveActive;
+        Debug.Log($"UpdateMineButton: isWaveActive = {waveActive}, isInCaveArea = {isInCaveArea}");
         mineButton.onClick.RemoveAllListeners();
 
         if (!isInCaveArea)

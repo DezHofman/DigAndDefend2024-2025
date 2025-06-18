@@ -24,7 +24,7 @@ public class ArrowProjectile : Projectile
         float distanceToTarget = base.target != null ? Vector2.Distance(transform.position, base.target.position) : float.MaxValue;
 
         // Stop tracking if the target is out of range
-        if (isTracking && distanceToTarget > trackingRange)
+        if (isTracking && base.target != null && distanceToTarget > trackingRange)
         {
             isTracking = false;
             lastDirection = (base.target.position - transform.position).normalized; // Store the last direction
@@ -61,6 +61,7 @@ public class ArrowProjectile : Projectile
             if (lastDirection == Vector2.zero)
             {
                 direction = transform.up; // Default to current facing direction if no last direction
+                Destroy(gameObject); // Destroy if no valid direction after losing target
             }
             else
             {
@@ -94,8 +95,15 @@ public class ArrowProjectile : Projectile
 
     protected void HitTarget()
     {
-        Debug.Log("Arrow hit " + base.target.name);
-        BaseEnemy enemy = base.target.GetComponent<BaseEnemy>();
+        if (base.target != null)
+        {
+            Debug.Log("Arrow hit " + base.target.name); // Safe to access name with null check
+        }
+        else
+        {
+            Debug.Log("Arrow hit a destroyed target."); // Log for debugging
+        }
+        BaseEnemy enemy = base.target != null ? base.target.GetComponent<BaseEnemy>() : null;
         if (enemy != null)
         {
             enemy.TakeDamage(damage); // Apply damage to enemy
@@ -105,6 +113,13 @@ public class ArrowProjectile : Projectile
 
     protected override void OnHitEnemy(BaseEnemy enemy)
     {
-        HitTarget();
+        if (enemy != null) // Ensure enemy is valid before hitting
+        {
+            HitTarget();
+        }
+        else
+        {
+            Destroy(gameObject); // Destroy if enemy is already null
+        }
     }
 }

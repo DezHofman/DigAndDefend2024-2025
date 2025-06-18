@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     public bool isGameOver { get; private set; } = false;
     public int currentWave { get; private set; } = 0; // Starts at 0, will increment on wave start
-    [SerializeField] public int totalWaves = 10;
+    [SerializeField] public int totalWaves = 20; // Updated to 20 based on your mention
     [SerializeField] private GameObject startButton;
     [SerializeField] private Sprite startSprite;
     [SerializeField] private Sprite activeWaveSprite;
@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
     private enum GameState { Playing, GameOver, Win }
     private GameState currentState = GameState.Playing;
     private bool showHints = true; // Default to showing hints
-    private bool firstWaveStarted = false; // Track if first wave has been manually started
 
     private void Awake()
     {
@@ -207,7 +206,8 @@ public class GameManager : MonoBehaviour
             Button buttonComponent = startButton.GetComponent<Button>();
             if (buttonComponent != null)
             {
-                buttonComponent.interactable = enable && !isWaveActive && inGrassArea && (!IsAutoWaveEnabled() || !firstWaveStarted);
+                // Simplified: Button is interactable if not in cave and not during an active wave
+                buttonComponent.interactable = inGrassArea && !isWaveActive;
             }
             UpdateStartButtonSprite();
         }
@@ -219,7 +219,6 @@ public class GameManager : MonoBehaviour
         {
             if (shopManager != null && shopManager.IsInCaveArea()) return;
             isWaveActive = true;
-            if (currentWave == 0) firstWaveStarted = true; // Mark first wave as started
             currentWave++; // Increment currentWave to the wave being started (e.g., 1, then 2, etc.)
             if (hintPanel != null) hintPanel.SetActive(false); // Hide panel when wave starts
             WaveManager waveManager = FindFirstObjectByType<WaveManager>();
@@ -228,6 +227,8 @@ public class GameManager : MonoBehaviour
                 waveManager.StartWave();
             }
             UpdateUI();
+            EnableStartButton(false); // Disable button during wave
+            UpdateStartButtonSprite(); // Ensure sprite updates immediately
             if (shopManager != null)
             {
                 shopManager.UpdateMineButton();
@@ -239,19 +240,16 @@ public class GameManager : MonoBehaviour
     {
         isWaveActive = false;
         UpdateUI();
-        UpdateStartButtonSprite();
+        EnableStartButton(true); // Re-enable button after wave
+        UpdateStartButtonSprite(); // Ensure sprite updates after wave
         if (shopManager != null)
         {
-            shopManager.UpdateMineButton();
+            shopManager.UpdateMineButton(); // Ensure mine button updates post-wave
         }
+        Debug.Log($"Wave {currentWave} completed. Total waves: {totalWaves}");
         if (currentWave >= totalWaves)
         {
             SetWin();
-        }
-        if (IsAutoWaveEnabled() && currentWave < totalWaves)
-        {
-            StartWave(); // Start next wave immediately if auto wave is enabled
-            UpdateUI(); // Ensure UI updates with new wave count
         }
     }
 
@@ -322,11 +320,6 @@ public class GameManager : MonoBehaviour
             hintPanel.SetActive(false); // Hide panel when hints are disabled
         }
         UpdateUI(); // Refresh UI to reflect new hint state
-    }
-
-    public bool IsAutoWaveEnabled()
-    {
-        return SettingsMenu.Instance != null && SettingsMenu.Instance.autoWaveToggle != null && SettingsMenu.Instance.autoWaveToggle.isOn;
     }
 
     // Updated method to check if any canvas is open

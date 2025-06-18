@@ -160,11 +160,6 @@ public class WaveManager : MonoBehaviour
             if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave < GameManager.Instance.totalWaves)
             {
                 GameManager.Instance.WaveComplete();
-                if (GameManager.Instance.IsAutoWaveEnabled() && GameManager.Instance.currentWave > 1) // Auto-start after first wave
-                {
-                    Debug.Log("Auto wave enabled, starting next wave immediately.");
-                    StartWave(); // Trigger next wave instantly
-                }
             }
             else if (GameManager.Instance.currentWave >= GameManager.Instance.totalWaves)
             {

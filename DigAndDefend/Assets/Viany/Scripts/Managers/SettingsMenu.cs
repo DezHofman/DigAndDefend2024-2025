@@ -7,7 +7,6 @@ public class SettingsMenu : MonoBehaviour
     public static SettingsMenu Instance { get; private set; }
 
     public Toggle runCustomClassToggle; // Toggle to run your custom class
-    public Toggle autoWaveToggle; // Toggle for Auto Wave On or Off
     public Toggle ingameGuideToggle; // Toggle for Ingame Guide On or Off
     public Toggle ingameSpeedToggle; // Toggle for Ingame Speed 1/2
     public Slider volumeSlider; // Volume slider
@@ -20,7 +19,17 @@ public class SettingsMenu : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Optional: Persist across scenes
+            // Ensure this is a root GameObject before applying DontDestroyOnLoad
+            if (transform.parent == null)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                // Detach and make it a root GameObject
+                transform.SetParent(null, true);
+                DontDestroyOnLoad(gameObject);
+            }
         }
         else
         {
@@ -43,10 +52,6 @@ public class SettingsMenu : MonoBehaviour
         if (runCustomClassToggle == null)
         {
             Debug.LogWarning("runCustomClassToggle is not assigned; custom class toggle will be skipped.");
-        }
-        if (autoWaveToggle == null)
-        {
-            Debug.LogWarning("autoWaveToggle is not assigned; auto wave toggle will be skipped.");
         }
         if (ingameGuideToggle == null)
         {
@@ -87,11 +92,6 @@ public class SettingsMenu : MonoBehaviour
         if (runCustomClassToggle != null)
         {
             runCustomClassToggle.onValueChanged.AddListener(RunCustomClass);
-        }
-        if (autoWaveToggle != null)
-        {
-            autoWaveToggle.isOn = PlayerPrefs.GetInt("AutoWave", 0) == 1;
-            autoWaveToggle.onValueChanged.AddListener(RunAutoWave);
         }
         if (ingameGuideToggle != null)
         {
@@ -136,22 +136,6 @@ public class SettingsMenu : MonoBehaviour
             {
                 Debug.Log("runCustomClassToggle is off; custom class not run.");
             }
-        }
-    }
-
-    void RunAutoWave(bool isOn)
-    {
-        if (autoWaveToggle != null)
-        {
-            if (isOn)
-            {
-                PlayerPrefs.SetInt("AutoWave", 1);
-            }
-            else
-            {
-                PlayerPrefs.SetInt("AutoWave", 0);
-            }
-            PlayerPrefs.Save();
         }
     }
 
@@ -202,10 +186,6 @@ public class SettingsMenu : MonoBehaviour
 
     void LoadSettings()
     {
-        if (autoWaveToggle != null && PlayerPrefs.HasKey("AutoWave"))
-        {
-            autoWaveToggle.isOn = PlayerPrefs.GetInt("AutoWave") == 1;
-        }
         if (ingameGuideToggle != null && PlayerPrefs.HasKey("IngameGuide"))
         {
             ingameGuideToggle.isOn = PlayerPrefs.GetInt("IngameGuide") == 1;

@@ -17,10 +17,6 @@ public abstract class Tower : MonoBehaviour
     private Vector3 initialPosition;
     public float clickAreaRadius;
 
-    private string baseLayer = "Towers_Below"; // Default layer below enemies
-    private string aboveLayer = "Towers_Above"; // Layer above enemies
-    private const float LAYER_SWITCH_BUFFER = 0.1f; // Small buffer to prevent rapid toggling
-
     protected virtual void Start()
     {
         initialPosition = transform.position;
@@ -32,7 +28,6 @@ public abstract class Tower : MonoBehaviour
             attackCollider.isTrigger = true;
         }
         gameObject.tag = "Tower";
-        gameObject.layer = LayerMask.GetMask("Towers");
 
         rangeIndicator = Instantiate(rangeIndicatorPrefab, transform.position, Quaternion.identity, transform);
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
@@ -41,8 +36,7 @@ public abstract class Tower : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            // spriteRenderer.sortingLayerName = baseLayer; // Start with Towers_Below
-            // UpdateLayerAndOrder(); // Initialize layer and sorting order
+            // Removed sorting layer initialization
         }
         else
         {
@@ -98,9 +92,6 @@ public abstract class Tower : MonoBehaviour
                 }
             }
         }
-
-        // Update sorting order and layer continuously
-        // UpdateLayerAndOrder();
     }
 
     protected virtual void Attack()
@@ -109,58 +100,10 @@ public abstract class Tower : MonoBehaviour
         if (enemies.Length > 0)
         {
             HandleAttack(enemies);
-            // UpdateLayerAndOrder();
-        }
-        else
-        {
-            // ResetTowerLayer();
         }
     }
 
     protected abstract void HandleAttack(Collider2D[] enemies);
-
-    /* private void UpdateLayerAndOrder()
-    {
-        if (spriteRenderer == null) return;
-
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, attackRange, LayerMask.GetMask("Enemies"));
-        if (enemies.Length == 0)
-        {
-            ResetTowerLayer();
-            return;
-        }
-
-        int aboveCount = 0;
-        int belowCount = 0;
-        float towerY = transform.position.y;
-
-        foreach (Collider2D enemy in enemies)
-        {
-            float enemyY = enemy.transform.position.y;
-            if (enemyY < towerY - LAYER_SWITCH_BUFFER) belowCount++;
-            else if (enemyY > towerY + LAYER_SWITCH_BUFFER) aboveCount++;
-        }
-
-        if (aboveCount > belowCount)
-        {
-            spriteRenderer.sortingLayerName = aboveLayer;
-        }
-        else
-        {
-            spriteRenderer.sortingLayerName = baseLayer;
-        }
-
-        spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y) + (spriteRenderer.sortingLayerName == aboveLayer ? 10 : 0);
-    }*/
-
-    /*private void ResetTowerLayer()
-    {
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.sortingLayerName = baseLayer;
-            spriteRenderer.sortingOrder = Mathf.RoundToInt(-transform.position.y);
-        }
-    }*/
 
     private bool IsCanvasOpen()
     {

@@ -18,7 +18,17 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // Persist across scenes
+            // Ensure this is a root GameObject before applying DontDestroyOnLoad
+            if (transform.parent == null)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
+            else
+            {
+                // Detach and make it a root GameObject
+                transform.SetParent(null, true);
+                DontDestroyOnLoad(gameObject);
+            }
         }
         else
         {
