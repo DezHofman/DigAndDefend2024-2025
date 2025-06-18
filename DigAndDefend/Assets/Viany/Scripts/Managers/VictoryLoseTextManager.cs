@@ -3,11 +3,10 @@ using TMPro;
 
 public class VictoryLoseTextManager : MonoBehaviour
 {
-    [SerializeField] private TextMeshProUGUI gameOverText; // Text in gameOverCanvas
-    [SerializeField] private TextMeshProUGUI winText;     // Text in winCanvas
+    [SerializeField] private TextMeshProUGUI gameOverText;
+    [SerializeField] private TextMeshProUGUI winText;
     [SerializeField] private GameManager gameManager;
 
-    // Victory lines
     private string[] victoryLines = new string[]
     {
         "That’s one way to lose your head.",
@@ -35,7 +34,6 @@ public class VictoryLoseTextManager : MonoBehaviour
         "Perfect! Now do it again, but without crying this time."
     };
 
-    // Lose lines
     private string[] loseLines = new string[]
     {
         "Golem used laser eyes. It was super effective.",
@@ -59,11 +57,11 @@ public class VictoryLoseTextManager : MonoBehaviour
 
     public void DisplayLoseText()
     {
-            gameOverText.text = loseLines[Random.Range(0, loseLines.Length)];
+        gameOverText.text = loseLines[Random.Range(0, loseLines.Length)];
     }
 
     public void DisplayVictoryText()
     {
-            winText.text = victoryLines[Random.Range(0, victoryLines.Length)];
+        winText.text = victoryLines[Random.Range(0, victoryLines.Length)];
     }
 }

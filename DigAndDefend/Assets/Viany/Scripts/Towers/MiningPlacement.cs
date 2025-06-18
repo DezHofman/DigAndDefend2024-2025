@@ -8,21 +8,21 @@ public class MiningPlacement : MonoBehaviour
     [SerializeField] private float canPlaceOpacity;
     [SerializeField] private float cannotPlaceOpacity;
     [SerializeField] private ShopManager shopManager;
+    [SerializeField] private RuntimeAnimatorController animatorController;
 
-    private bool isPlacing = false;
+    private bool isPlacing;
     private GameObject placementPreview;
     private SpriteRenderer previewRenderer;
-    private int lastCopperCost = 0;
-    private int lastIronCost = 0;
+    private int lastCopperCost;
+    private int lastIronCost;
 
     private void Start()
     {
-        if (placementPreview == null)
-        {
-            placementPreview = Instantiate(placementPreviewPrefab);
-            previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
-            placementPreview.SetActive(false);
-        }
+        placementPreview = Instantiate(placementPreviewPrefab);
+        previewRenderer = placementPreview.GetComponent<SpriteRenderer>();
+        placementPreview.SetActive(false);
+
+        placementPreview.GetComponent<Animator>().runtimeAnimatorController = animatorController;
     }
 
     private void Update()
@@ -39,7 +39,6 @@ public class MiningPlacement : MonoBehaviour
         Tilemap minesTilemap = GameObject.Find("MINE MINES")?.GetComponent<Tilemap>();
         if (minesTilemap == null)
         {
-            Debug.LogWarning("MINES Tilemap not found!");
             placementPreview.SetActive(false);
             return;
         }
@@ -70,17 +69,17 @@ public class MiningPlacement : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0) && canPlace)
         {
-            if (ResourceManager.Instance.SpendResources(0, 0)) // Resources already spent on buy
+            if (ResourceManager.Instance.SpendResources(0, 0))
             {
                 GameObject miningTower = Instantiate(miningManager.MiningMachinePrefab, placementPosition, Quaternion.identity);
                 miningTower.tag = "MiningMachine";
                 miningTower.SetActive(true);
-                miningManager.ConfigureMiningTower(miningTower); // Configure lifespan and health
+                miningManager.ConfigureMiningTower(miningTower);
                 isPlacing = false;
                 placementPreview.SetActive(false);
             }
         }
-        else if (Input.GetMouseButtonDown(1)) // Right-click to cancel
+        else if (Input.GetMouseButtonDown(1))
         {
             isPlacing = false;
             placementPreview.SetActive(false);

@@ -1,32 +1,30 @@
 using UnityEngine;
-using UnityEngine.UI; // For Slider and Toggle
-using TMPro; // For TextMeshProUGUI
+using UnityEngine.UI;
+using TMPro;
 
 public class SettingsMenu : MonoBehaviour
 {
     public static SettingsMenu Instance { get; private set; }
 
-    public Toggle runCustomClassToggle; // Toggle to run your custom class
-    public Toggle ingameGuideToggle; // Toggle for Ingame Guide On or Off
-    public Toggle ingameSpeedToggle; // Toggle for Ingame Speed 1/2
-    public Slider volumeSlider; // Volume slider
-    public TextMeshProUGUI volumeLabel; // TMP text for volume percentage
-    public UIManager uiManager; // Reference to the existing UIManager script
-    public Canvas settingsCanvas; // Reference to the Settings canvas
+    public Toggle runCustomClassToggle;
+    public Toggle ingameGuideToggle;
+    public Toggle ingameSpeedToggle;
+    public Slider volumeSlider;
+    public TextMeshProUGUI volumeLabel;
+    public UIManager uiManager;
+    public Canvas settingsCanvas;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            // Ensure this is a root GameObject before applying DontDestroyOnLoad
             if (transform.parent == null)
             {
                 DontDestroyOnLoad(gameObject);
             }
             else
             {
-                // Detach and make it a root GameObject
                 transform.SetParent(null, true);
                 DontDestroyOnLoad(gameObject);
             }
@@ -39,45 +37,17 @@ public class SettingsMenu : MonoBehaviour
 
     void Start()
     {
-        // Check for unassigned components
         if (volumeSlider == null)
         {
-            Debug.LogError("volumeSlider is not assigned in the Inspector!");
             return;
         }
-        if (volumeLabel == null)
-        {
-            Debug.LogWarning("volumeLabel is not assigned; percentage display will be skipped.");
-        }
-        if (runCustomClassToggle == null)
-        {
-            Debug.LogWarning("runCustomClassToggle is not assigned; custom class toggle will be skipped.");
-        }
-        if (ingameGuideToggle == null)
-        {
-            Debug.LogWarning("ingameGuideToggle is not assigned; ingame guide toggle will be skipped.");
-        }
-        if (ingameSpeedToggle == null)
-        {
-            Debug.LogWarning("ingameSpeedToggle is not assigned; ingame speed toggle will be skipped.");
-        }
-        if (uiManager == null)
-        {
-            Debug.LogWarning("uiManager is not assigned; ingame speed will not update.");
-        }
-        if (settingsCanvas == null)
-        {
-            Debug.LogWarning("settingsCanvas is not assigned; settings UI will not be managed.");
-        }
 
-        // Volume slider setup
         volumeSlider.minValue = 0;
         volumeSlider.maxValue = 100;
-        volumeSlider.wholeNumbers = true; // Ensure whole numbers for snapping
+        volumeSlider.wholeNumbers = true;
         volumeSlider.interactable = true;
 
-        // Initialize volume
-        float initialVolume = 100f; // Default fallback
+        float initialVolume = 100f;
         if (PlayerPrefs.HasKey("MasterVolume"))
         {
             initialVolume = PlayerPrefs.GetFloat("MasterVolume");
@@ -85,14 +55,9 @@ public class SettingsMenu : MonoBehaviour
         volumeSlider.value = initialVolume;
         UpdateVolumeLabel(initialVolume);
 
-        // Set up slider listener
         volumeSlider.onValueChanged.RemoveAllListeners();
         volumeSlider.onValueChanged.AddListener(SetVolume);
-
-        if (runCustomClassToggle != null)
-        {
-            runCustomClassToggle.onValueChanged.AddListener(RunCustomClass);
-        }
+        
         if (ingameGuideToggle != null)
         {
             ingameGuideToggle.isOn = PlayerPrefs.GetInt("IngameGuide", 1) == 1;
@@ -124,20 +89,6 @@ public class SettingsMenu : MonoBehaviour
         }
     }
 
-    void RunCustomClass(bool isOn)
-    {
-        if (runCustomClassToggle != null)
-        {
-            if (isOn)
-            {
-                Debug.Log("runCustomClassToggle is on; replace this with your custom class logic.");
-            }
-            else
-            {
-                Debug.Log("runCustomClassToggle is off; custom class not run.");
-            }
-        }
-    }
 
     void RunIngameGuide(bool isOn)
     {

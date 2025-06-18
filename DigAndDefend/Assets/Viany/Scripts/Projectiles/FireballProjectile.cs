@@ -9,30 +9,29 @@ public class FireballProjectile : Projectile
     [SerializeField] public float dotDamagePerSecond = 5f;
     [SerializeField] public float dotDuration = 3f;
 
-    private bool rotationLocked = false;
+    private bool rotationLocked;
     private bool isTracking = true;
     private Vector2 lastDirection;
     private float initialAngle;
 
     new void Update()
     {
-        if (base.target == null)
+        Vector2 direction = Vector2.zero;
+        if (target == null)
         {
             isTracking = false;
         }
 
-        float distanceToTarget = base.target != null ? Vector2.Distance(transform.position, base.target.position) : float.MaxValue;
-
-        if (isTracking && distanceToTarget > trackingRange)
+        float distanceToTarget = target != null ? Vector2.Distance(transform.position, target.position) : float.MaxValue;
+        if (isTracking)
         {
-            isTracking = false;
-            lastDirection = (base.target.position - transform.position).normalized;
-        }
+            if (distanceToTarget > trackingRange)
+            {
+                isTracking = false;
+                lastDirection = (target.position - transform.position).normalized;
+            }
 
-        Vector2 direction;
-        if (isTracking && base.target != null)
-        {
-            direction = (base.target.position - transform.position).normalized;
+            direction = (target.position - transform.position).normalized;
 
             if (!rotationLocked)
             {
@@ -52,7 +51,7 @@ public class FireballProjectile : Projectile
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, desiredAngle), rotateSpeed * Time.deltaTime);
             }
         }
-        else
+        else if (!target)
         {
             if (lastDirection == Vector2.zero)
             {
@@ -67,9 +66,9 @@ public class FireballProjectile : Projectile
         float distanceThisFrame = moveSpeed * Time.deltaTime;
         transform.Translate(direction * distanceThisFrame, Space.World);
 
-        if (isTracking && base.target != null && distanceToTarget <= 1f)
+        if (isTracking && target != null && distanceToTarget <= 1f)
         {
-            OnHitEnemy(base.target.GetComponent<BaseEnemy>());
+            OnHitEnemy(target.GetComponent<BaseEnemy>());
             return;
         }
 
@@ -82,18 +81,16 @@ public class FireballProjectile : Projectile
 
     public void SetTarget(Transform _target)
     {
-        base.target = _target;
+        target = _target;
     }
 
     protected void HitTarget()
     {
-        BaseEnemy enemy = base.target.GetComponent<BaseEnemy>();
+        BaseEnemy enemy = target.GetComponent<BaseEnemy>();
         if (enemy != null)
         {
             enemy.TakeDamage(damage);
-            Debug.Log($"Attempting DoT: {dotDamagePerSecond} for {dotDuration}s on {enemy.name}, Health before: {enemy.health}");
             enemy.ApplyDoT(dotDamagePerSecond, dotDuration);
-            Debug.Log($"DoT Applied, Health after: {enemy.health}");
         }
         Destroy(gameObject);
     }

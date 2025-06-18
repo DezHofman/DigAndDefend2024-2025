@@ -8,9 +8,9 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip gameClip;
     [SerializeField] private AudioClip menuClip;
-    [SerializeField] private float fadeDuration = 1.0f; // Duration of fade in/out in seconds
+    [SerializeField] private float fadeDuration = 1.0f;
 
-    private float targetVolume = 1.0f; // Default volume (0-1)
+    private float targetVolume = 1.0f;
     private bool isFading;
 
     private void Awake()
@@ -18,14 +18,12 @@ public class AudioManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            // Ensure this is a root GameObject before applying DontDestroyOnLoad
             if (transform.parent == null)
             {
                 DontDestroyOnLoad(gameObject);
             }
             else
             {
-                // Detach and make it a root GameObject
                 transform.SetParent(null, true);
                 DontDestroyOnLoad(gameObject);
             }
@@ -36,18 +34,10 @@ public class AudioManager : MonoBehaviour
             return;
         }
 
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
         audioSource.playOnAwake = false;
         audioSource.loop = true;
-        LoadVolume(); // Load saved volume on startup
+        LoadVolume();
         UpdateVolume();
-    }
-
-    private void Start()
-    {
         UpdateMusicBasedOnCanvas();
     }
 
@@ -76,7 +66,6 @@ public class AudioManager : MonoBehaviour
         isFading = true;
         float startVolume = audioSource.volume;
 
-        // Fade out current clip
         if (audioSource.isPlaying)
         {
             float elapsedTime = 0f;
@@ -90,11 +79,9 @@ public class AudioManager : MonoBehaviour
             audioSource.volume = 0f;
         }
 
-        // Switch to new clip
         audioSource.clip = newClip;
         audioSource.Play();
 
-        // Fade in new clip
         float elapsedTimeIn = 0f;
         while (elapsedTimeIn < fadeDuration)
         {
@@ -108,11 +95,10 @@ public class AudioManager : MonoBehaviour
 
     public void SetVolume(float volume)
     {
-        targetVolume = Mathf.Clamp01(volume / 100f); // Convert 0-100 to 0-1
+        targetVolume = Mathf.Clamp01(volume / 100f);
         UpdateVolume();
-        PlayerPrefs.SetFloat("MasterVolume", volume); // Save as percentage
+        PlayerPrefs.SetFloat("MasterVolume", volume);
         PlayerPrefs.Save();
-        Debug.Log($"Set volume to {volume}% ({targetVolume})");
     }
 
     private void UpdateVolume()
@@ -129,7 +115,6 @@ public class AudioManager : MonoBehaviour
         {
             float savedVolume = PlayerPrefs.GetFloat("MasterVolume");
             targetVolume = Mathf.Clamp01(savedVolume / 100f);
-            Debug.Log($"Loaded volume from PlayerPrefs: {savedVolume}%");
         }
     }
 }

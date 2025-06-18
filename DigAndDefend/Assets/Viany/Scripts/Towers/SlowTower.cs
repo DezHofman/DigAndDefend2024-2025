@@ -25,7 +25,6 @@ public class SlowTower : Tower
                 if (iceCreamProj != null)
                 {
                     iceCreamProj.Initialize(this, closestEnemy.transform);
-                    Debug.Log($"SlowTower: Ice cream fired toward {closestEnemy.transform.position}");
                 }
             }
         }

@@ -8,26 +8,13 @@ public class BombTower : Tower
     protected override void Start()
     {
         base.Start();
-        GameObject pathObject = GameObject.Find("HOME PATH");
-        if (pathObject != null)
-        {
-            pathTilemap = pathObject.GetComponent<Tilemap>();
-            if (pathTilemap == null)
-            {
-                Debug.LogWarning("BombTower: Tilemap component not found on GameObject 'PATH'!");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("BombTower: Could not find GameObject named 'PATH' in the scene!");
-        }
+        pathTilemap = GameObject.Find("HOME PATH").GetComponent<Tilemap>();
     }
 
     protected override void HandleAttack(Collider2D[] enemies)
     {
-        if (pathTilemap != null && enemies.Length > 0)
+        if (enemies.Length > 0)
         {
-            // Find the nearest enemy
             Collider2D nearestEnemy = null;
             float minDistance = float.MaxValue;
             foreach (Collider2D enemy in enemies)
@@ -42,10 +29,9 @@ public class BombTower : Tower
 
             if (nearestEnemy != null)
             {
-                // Find the closest path tile to the nearest enemy
                 Vector3Int cellPosition = pathTilemap.WorldToCell(nearestEnemy.transform.position);
                 BoundsInt bounds = pathTilemap.cellBounds;
-                Vector3 closestTilePosition = nearestEnemy.transform.position; // Default to enemy position if no tile found
+                Vector3 closestTilePosition = nearestEnemy.transform.position;
                 float minTileDistance = float.MaxValue;
                 bool foundTile = false;
 
@@ -76,18 +62,9 @@ public class BombTower : Tower
                     {
                         bombProj.SetTargetPosition(closestTilePosition);
                         bombProj.SetExplosionRadius(2f);
-                        Debug.Log($"BombTower: Bomb instantiated at {bomb.transform.position}, targeting {closestTilePosition} near enemy at {nearestEnemy.transform.position}");
                     }
                 }
-                else
-                {
-                    Debug.LogWarning("BombTower: No path tiles found near the nearest enemy!");
-                }
             }
-        }
-        else
-        {
-            Debug.LogWarning("BombTower: No enemies or path Tilemap not found!");
         }
     }
 }

@@ -21,12 +21,7 @@ public class ArcherTower : Tower
             if (closestEnemy != null)
             {
                 GameObject arrow = Instantiate(projectilePrefab, transform.position + Vector3.up, Quaternion.identity);
-                ArrowProjectile arrowProj = arrow.GetComponent<ArrowProjectile>();
-                if (arrowProj != null)
-                {
-                    arrowProj.Initialize(this, closestEnemy.transform);
-                    Debug.Log($"ArcherTower: Arrow fired toward {closestEnemy.transform.position}");
-                }
+                arrow.GetComponent<ArrowProjectile>().Initialize(this, closestEnemy.transform);
             }
         }
     }

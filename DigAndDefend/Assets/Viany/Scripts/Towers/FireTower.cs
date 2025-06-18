@@ -5,11 +5,6 @@ public class FireTower : Tower
     public float dotDamagePerSecond = 5f;
     public float dotDuration = 3f;
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     protected override void HandleAttack(Collider2D[] enemies)
     {
         foreach (Collider2D enemyCollider in enemies)
@@ -24,7 +19,6 @@ public class FireTower : Tower
                     projectile.Initialize(this, enemy.transform);
                     projectile.dotDamagePerSecond = dotDamagePerSecond;
                     projectile.dotDuration = dotDuration;
-                    Debug.Log($"Initialized fireball with DoT: {dotDamagePerSecond} for {dotDuration}s");
                 }
             }
         }

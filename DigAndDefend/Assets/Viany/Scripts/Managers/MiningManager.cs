@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class MiningManager : MonoBehaviour
 {
@@ -6,14 +7,26 @@ public class MiningManager : MonoBehaviour
     [SerializeField] private float resourceGenerationInterval = 10f;
     [SerializeField] private int copperPerInterval = 5;
     [SerializeField] private int ironPerInterval = 3;
-    [SerializeField] private int maxHealth = 100; // Maximum health for the tower
+    [SerializeField] private int maxHealth = 100;
 
     public GameObject MiningMachinePrefab => miningMachinePrefab;
 
     private void Start()
     {
-        gameObject.SetActive(false);
+        StartCoroutine(ResourceGenerationLoop());
         InvokeRepeating("GenerateResources", resourceGenerationInterval, resourceGenerationInterval);
+    }
+
+    private IEnumerator ResourceGenerationLoop()
+    {
+        yield return new WaitForSeconds(resourceGenerationInterval);
+        yield return new WaitForSeconds(resourceGenerationInterval);
+
+        while (true)
+        {
+            GenerateResources();
+            yield return new WaitForSeconds(resourceGenerationInterval);
+        }
     }
 
     void GenerateResources()
@@ -25,10 +38,9 @@ public class MiningManager : MonoBehaviour
         ResourceManager.Instance.AddIron(totalIron);
     }
 
-    // Configure a new mining tower with health
     public void ConfigureMiningTower(GameObject tower)
     {
-        MiningTower miningTower = tower.AddComponent<MiningTower>();
+        MiningTower miningTower = tower.GetComponent<MiningTower>();
         miningTower.Initialize(maxHealth);
     }
 }

@@ -2,38 +2,13 @@ using UnityEngine;
 
 public class MiningTower : MonoBehaviour
 {
-    [SerializeField] private Healthbar healthbar; // Reference to the Healthbar component
-    private Animator animator; // Reference to the Animator component
-    private float lifespan = 15f; // Lifespan in seconds
+    [SerializeField] private Healthbar healthbar;
+    [SerializeField] private Animator animator;
+    private float lifespan = 15f;
     private float currentHealth;
     private float deathTimer;
-    private int maxHealth; // Store max health for revival
-    private bool isDead = false; // Track if the tower is "dead"
-
-    private void Awake()
-    {
-        // Ensure healthbar and animator are assigned
-        if (healthbar == null)
-        {
-            healthbar = GetComponentInChildren<Healthbar>();
-            if (healthbar == null)
-            {
-                Debug.LogError($"No Healthbar component found on {gameObject.name} or its children!");
-            }
-        }
-
-        animator = GetComponentInChildren<Animator>();
-        if (animator == null)
-        {
-            Debug.LogError($"No Animator component found on {gameObject.name} or its children!");
-        }
-
-        // Ensure a Collider2D exists for click detection
-        if (GetComponent<Collider2D>() == null)
-        {
-            gameObject.AddComponent<BoxCollider2D>().isTrigger = true; // Add a trigger collider for clicks
-        }
-    }
+    private int maxHealth;
+    private bool isDead;
 
     public void Initialize(int maxHealth)
     {
@@ -42,43 +17,27 @@ public class MiningTower : MonoBehaviour
         deathTimer = lifespan;
         isDead = false;
 
-        // Ensure animation is enabled
-        if (animator != null)
-        {
-            animator.enabled = true;
-            animator.Play("MiningAnimation", -1, 0f); // Reset to start of animation (replace "MiningAnimation" with your animation state name)
-        }
+        animator.enabled = true;
+        animator.Play("Mine Tower Animation", 0, 0f);
 
-        // Initialize healthbar
-        if (healthbar != null)
-        {
-            healthbar.SetInitialHealth(maxHealth);
-            healthbar.UpdateHealth(currentHealth);
-            Debug.Log($"MiningTower initialized with maxHealth: {maxHealth}, currentHealth: {currentHealth}");
-        }
+        healthbar.SetInitialHealth(maxHealth);
+        healthbar.UpdateHealth(currentHealth);
 
-        // Ensure the tag is set for resource generation
         gameObject.tag = "MiningMachine";
 
-        // Start gradual health decrease
-        InvokeRepeating("DecreaseHealth", 0f, 0.1f); // Check every 0.1 seconds
-        Debug.Log($"MiningTower lifespan timer started for {lifespan} seconds");
+        InvokeRepeating("DecreaseHealth", 0f, 0.1f);
     }
 
     private void DecreaseHealth()
     {
-        if (isDead) return; // Skip if already dead
+        if (isDead) return;
 
         if (deathTimer > 0)
         {
             deathTimer -= 0.1f;
-            currentHealth = (deathTimer / lifespan) * maxHealth; // Linear decrease
-            Debug.Log($"Decreasing health: {currentHealth}, timer: {deathTimer}");
+            currentHealth = (deathTimer / lifespan) * maxHealth;
 
-            if (healthbar != null)
-            {
-                healthbar.UpdateHealth(currentHealth);
-            }
+            healthbar.UpdateHealth(currentHealth);
 
             if (currentHealth <= 0 || deathTimer <= 0)
             {
@@ -90,22 +49,12 @@ public class MiningTower : MonoBehaviour
     private void Die()
     {
         isDead = true;
-        CancelInvoke("DecreaseHealth"); // Stop the timer
+        CancelInvoke("DecreaseHealth");
 
-        if (healthbar != null)
-        {
-            healthbar.UpdateHealth(0); // Show death on healthbar
-        }
+        healthbar.UpdateHealth(0);
+        animator.enabled = false;
 
-        if (animator != null)
-        {
-            animator.enabled = false; // Stop (freeze) the animation at the current frame
-            Debug.Log($"MiningTower {gameObject.name} animation stopped at {Time.time} seconds");
-        }
-
-        // Remove the tag to stop resource generation
         gameObject.tag = "Untagged";
-        Debug.Log($"MiningTower {gameObject.name} is now static (dead) at {Time.time} seconds");
     }
 
     private void OnMouseDown()
@@ -122,25 +71,13 @@ public class MiningTower : MonoBehaviour
         currentHealth = maxHealth;
         deathTimer = lifespan;
 
-        // Reset healthbar
-        if (healthbar != null)
-        {
-            healthbar.UpdateHealth(currentHealth);
-        }
+        healthbar.UpdateHealth(currentHealth);
 
-        // Resume animation
-        if (animator != null)
-        {
-            animator.enabled = true; // Resume the animation
-            animator.Play("MiningAnimation", -1, 0f); // Reset to start (replace "MiningAnimation" with your animation state name)
-            Debug.Log($"MiningTower {gameObject.name} animation resumed");
-        }
+        animator.enabled = true;
+        animator.Play("Mine Tower Animation", 0, 0f);
 
-        // Restore tag for resource generation
         gameObject.tag = "MiningMachine";
 
-        // Restart the lifespan timer
         InvokeRepeating("DecreaseHealth", 0f, 0.1f);
-        Debug.Log($"MiningTower {gameObject.name} revived with full health: {currentHealth}");
     }
 }

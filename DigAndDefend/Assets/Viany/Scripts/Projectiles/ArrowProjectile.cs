@@ -4,30 +4,27 @@ public class ArrowProjectile : Projectile
 {
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotateSpeed = 200f;
-    [SerializeField] private float trackingRange = 5f; // Range within which the arrow tracks the enemy
-    [SerializeField] private float damage = 10f; // Damage dealt to enemy
+    [SerializeField] private float trackingRange = 5f;
+    [SerializeField] private float damage = 10f;
 
-    private bool rotationLocked = false;
+    private bool rotationLocked;
     private bool isTracking = true;
     private Vector2 lastDirection;
     private float initialAngle;
 
     new void Update()
     {
-        // Destroy if no target
         if (base.target == null)
         {
-            isTracking = false; // Stop tracking if the target is destroyed
+            isTracking = false;
         }
 
-        // Calculate distance to target if it exists
         float distanceToTarget = base.target != null ? Vector2.Distance(transform.position, base.target.position) : float.MaxValue;
 
-        // Stop tracking if the target is out of range
         if (isTracking && base.target != null && distanceToTarget > trackingRange)
         {
             isTracking = false;
-            lastDirection = (base.target.position - transform.position).normalized; // Store the last direction
+            lastDirection = (base.target.position - transform.position).normalized;
         }
 
         Vector2 direction;
@@ -35,7 +32,6 @@ public class ArrowProjectile : Projectile
         {
             direction = (base.target.position - transform.position).normalized;
 
-            // Lock initial rotation toward target on the first frame
             if (!rotationLocked)
             {
                 initialAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
@@ -44,7 +40,6 @@ public class ArrowProjectile : Projectile
             }
             else
             {
-                // Calculate desired angle and limit rotation change to ±25 degrees
                 float desiredAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
                 float angleDifference = Mathf.DeltaAngle(initialAngle, desiredAngle);
                 float maxAngleChange = 25f;
@@ -57,11 +52,10 @@ public class ArrowProjectile : Projectile
         }
         else
         {
-            // If not tracking, use the last direction or destroy if no direction set
             if (lastDirection == Vector2.zero)
             {
-                direction = transform.up; // Default to current facing direction if no last direction
-                Destroy(gameObject); // Destroy if no valid direction after losing target
+                direction = transform.up;
+                Destroy(gameObject);
             }
             else
             {
@@ -72,18 +66,15 @@ public class ArrowProjectile : Projectile
         float distanceThisFrame = moveSpeed * Time.deltaTime;
         transform.Translate(direction * distanceThisFrame, Space.World);
 
-        // Check if the arrow hits the target while tracking
         if (isTracking && base.target != null && distanceToTarget <= 0.1f)
         {
             OnHitEnemy(base.target.GetComponent<BaseEnemy>());
-            return; // Exit early after hitting
+            return;
         }
 
-        // Check if the arrow is outside the scene boundaries
         Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
         if (viewportPos.x < -0.1f || viewportPos.x > 1.1f || viewportPos.y < -0.1f || viewportPos.y > 1.1f)
         {
-            Debug.Log("ArrowProjectile: Arrow left the scene boundaries and was destroyed.");
             Destroy(gameObject);
         }
     }
@@ -95,31 +86,23 @@ public class ArrowProjectile : Projectile
 
     protected void HitTarget()
     {
-        if (base.target != null)
-        {
-            Debug.Log("Arrow hit " + base.target.name); // Safe to access name with null check
-        }
-        else
-        {
-            Debug.Log("Arrow hit a destroyed target."); // Log for debugging
-        }
         BaseEnemy enemy = base.target != null ? base.target.GetComponent<BaseEnemy>() : null;
         if (enemy != null)
         {
-            enemy.TakeDamage(damage); // Apply damage to enemy
+            enemy.TakeDamage(damage);
         }
         Destroy(gameObject);
     }
 
     protected override void OnHitEnemy(BaseEnemy enemy)
     {
-        if (enemy != null) // Ensure enemy is valid before hitting
+        if (enemy != null)
         {
             HitTarget();
         }
         else
         {
-            Destroy(gameObject); // Destroy if enemy is already null
+            Destroy(gameObject);
         }
     }
 }

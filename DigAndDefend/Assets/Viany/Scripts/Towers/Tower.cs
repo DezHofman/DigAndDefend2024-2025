@@ -33,15 +33,6 @@ public abstract class Tower : MonoBehaviour
         rangeIndicator.transform.localScale = new Vector3(attackRange * 2, attackRange * 2, 1);
         rangeIndicator.SetActive(false);
         rangeIndicator.layer = LayerMask.NameToLayer("Ignore Raycast");
-
-        if (spriteRenderer != null)
-        {
-            // Removed sorting layer initialization
-        }
-        else
-        {
-            Debug.LogError("Tower missing SpriteRenderer!");
-        }
     }
 
     protected virtual void Update()

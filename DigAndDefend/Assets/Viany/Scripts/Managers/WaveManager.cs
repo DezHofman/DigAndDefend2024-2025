@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
-using System.Linq;
 
 public class WaveManager : MonoBehaviour
 {
@@ -16,8 +15,8 @@ public class WaveManager : MonoBehaviour
     public TMP_Text waveText;
 
     private int currentWaveIndex = -1;
-    private int currentEnemyCount = 0;
-    private List<EnemyType> currentSpawnOrder; // Reference to existing EnemyType enum
+    private int currentEnemyCount;
+    private List<EnemyType> currentSpawnOrder;
     private Dictionary<EnemyType, GameObject> enemyTypeToPrefab;
     public GameManager gameManager;
 
@@ -32,7 +31,6 @@ public class WaveManager : MonoBehaviour
                 { EnemyType.Bat, batPrefab },
                 { EnemyType.Rat, ratPrefab }
             };
-            Debug.Log("WaveManager initialized with prefabs: " + string.Join(", ", enemyTypeToPrefab.Keys));
         }
     }
 
@@ -43,11 +41,9 @@ public class WaveManager : MonoBehaviour
 
     public void StartWave()
     {
-        Debug.Log("Starting wave: " + (currentWaveIndex + 1));
         currentWaveIndex++;
         if (currentWaveIndex >= GameManager.Instance.totalWaves || GameManager.Instance.isGameOver)
         {
-            Debug.Log("Wave start aborted: index " + currentWaveIndex + " or game over.");
             return;
         }
 
@@ -88,10 +84,8 @@ public class WaveManager : MonoBehaviour
                 currentSpawnOrder.Add(EnemyType.Golem);
         }
 
-        // Adjust HP based on wave (example)
         if (wave >= 5)
         {
-            // Update prefabs' BaseEnemy HP in Awake or a separate method
             foreach (GameObject prefab in new[] { mushroomPrefab, batPrefab, ratPrefab, golemPrefab })
             {
                 BaseEnemy enemy = prefab.GetComponent<BaseEnemy>();
@@ -99,21 +93,16 @@ public class WaveManager : MonoBehaviour
                 {
                     if (enemy.GetType() == typeof(MushroomEnemy)) enemy.health = 120;
                     else if (enemy.GetType() == typeof(BatEnemy) || enemy.GetType() == typeof(RatEnemy)) enemy.health = 60;
-                    // Golem remains 700
                 }
             }
         }
-
-        Debug.Log($"Wave {wave}: Generated {totalEnemies} enemies - {string.Join(", ", currentSpawnOrder)}");
     }
 
     void SpawnEnemy()
     {
-        Debug.Log("Attempting to spawn enemy, count: " + currentEnemyCount + "/" + currentSpawnOrder.Count);
         if (currentEnemyCount < currentSpawnOrder.Count)
         {
             EnemyType type = currentSpawnOrder[currentEnemyCount];
-
             if (enemyTypeToPrefab.TryGetValue(type, out GameObject prefab) && prefab != null)
             {
                 GameObject enemyObj = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
@@ -124,21 +113,8 @@ public class WaveManager : MonoBehaviour
                     {
                         enemy.SetWaypoints(pathWaypoints);
                         enemyObj.tag = "Enemy";
-                        Debug.Log("Spawned " + type + " at " + spawnPoint.position);
-                    }
-                    else
-                    {
-                        Debug.LogError("No BaseEnemy component on " + prefab.name);
                     }
                 }
-                else
-                {
-                    Debug.LogError("Failed to instantiate " + type);
-                }
-            }
-            else
-            {
-                Debug.LogError("Prefab not found or null for " + type);
             }
 
             currentEnemyCount++;
@@ -146,15 +122,13 @@ public class WaveManager : MonoBehaviour
         else
         {
             CancelInvoke("SpawnEnemy");
-            Debug.Log("All enemies spawned, checking completion immediately.");
-            CheckWaveComplete(); // Check immediately
+            CheckWaveComplete();
         }
     }
 
     void CheckWaveComplete()
     {
         int enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
-        Debug.Log("Checking wave complete, enemies remaining: " + enemyCount);
         if (enemyCount == 0)
         {
             if (!GameManager.Instance.isGameOver && GameManager.Instance.currentWave < GameManager.Instance.totalWaves)
@@ -163,14 +137,12 @@ public class WaveManager : MonoBehaviour
             }
             else if (GameManager.Instance.currentWave >= GameManager.Instance.totalWaves)
             {
-                Debug.Log("Wave complete but no more waves, setting win.");
                 gameManager.SetWin();
             }
         }
         else
         {
-            Debug.Log("Wave not complete, checking again in 0.5s.");
-            Invoke("CheckWaveComplete", 0.5f); // Quick recheck
+            Invoke("CheckWaveComplete", 0.5f);
         }
     }
 

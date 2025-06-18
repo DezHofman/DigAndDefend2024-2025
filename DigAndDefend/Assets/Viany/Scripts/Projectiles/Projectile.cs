@@ -6,23 +6,13 @@ public abstract class Projectile : MonoBehaviour
     protected float speed = 10f;
     protected Tower parentTower;
     protected bool hasHit = false;
-    protected Vector3 velocity; // Ensure this is not [SerializeField]
+    protected Vector3 velocity;
 
     public void Initialize(Tower tower, Transform newTarget)
     {
         parentTower = tower;
         target = newTarget;
-        transform.SetParent(null); // Ensure projectile isn’t parented
-        Collider2D collider = GetComponent<Collider2D>();
-        if (collider != null)
-        {
-            collider.isTrigger = true;
-            Debug.Log($"Projectile: Collider set as trigger, type: {collider.GetType()}");
-        }
-        else
-        {
-            Debug.LogError("Projectile: No Collider2D found on projectile!");
-        }
+        transform.SetParent(null);
     }
 
     protected virtual void Update()
@@ -35,7 +25,6 @@ public abstract class Projectile : MonoBehaviour
         }
         else
         {
-            Debug.Log("Projectile: Target lost, destroying projectile");
             Destroy(gameObject);
         }
     }
@@ -43,7 +32,7 @@ public abstract class Projectile : MonoBehaviour
     protected virtual void Move()
     {
         Vector3 direction = (target.position - transform.position).normalized;
-        velocity = direction * speed; // Use velocity for consistency
+        velocity = direction * speed;
         transform.position += velocity * Time.deltaTime;
     }
 
@@ -58,8 +47,7 @@ public abstract class Projectile : MonoBehaviour
             {
                 hasHit = true;
                 OnHitEnemy(enemy);
-                Debug.Log($"Projectile: Hit enemy {enemy.name} at {transform.position}");
-                Destroy(gameObject, 0f); // Immediate destruction
+                Destroy(gameObject);
             }
         }
     }

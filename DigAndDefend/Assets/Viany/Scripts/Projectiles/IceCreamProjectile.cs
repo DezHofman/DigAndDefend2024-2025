@@ -4,54 +4,48 @@ public class IceCreamProjectile : Projectile
 {
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float slowDuration = 2f;
-    [SerializeField] private float slowFactor = 0.5f; // Reduces speed by 50%
-    [SerializeField] private float damage = 5f; // Damage dealt to enemy
-    private bool hasIceCreamHit = false; // Renamed to avoid conflict with base class
+    [SerializeField] private float slowFactor = 0.5f;
+    [SerializeField] private float damage = 5f;
+    [SerializeField] private float spinSpeed = 360f;
+    private bool hasIceCreamHit;
 
-    new void Update() // Added 'new' to hide base Update method
+    new void Update()
     {
-        if (base.target == null)
+        if (target == null)
         {
             Destroy(gameObject);
             return;
         }
 
-        Vector2 direction = (base.target.position - transform.position).normalized;
+        Vector2 direction = (target.position - transform.position).normalized;
         float distanceThisFrame = moveSpeed * Time.deltaTime;
         transform.Translate(direction * distanceThisFrame, Space.World);
 
-        // Destroy after traveling a certain distance or hitting
-        if (Vector2.Distance(transform.position, base.target.position) > 10f || hasIceCreamHit)
+        transform.Rotate(0, 0, spinSpeed * Time.deltaTime);
+
+        if (Vector2.Distance(transform.position, target.position) > 10f || hasIceCreamHit)
         {
-            Destroy(gameObject, 0.1f); // Slight delay to apply effect
+            Destroy(gameObject);
         }
     }
 
     protected void HitTarget()
     {
-        Debug.Log("Ice cream hit " + base.target.name);
-        BaseEnemy enemy = base.target.GetComponent<BaseEnemy>();
-        if (enemy != null)
-        {
-            enemy.TakeDamage(damage); // Apply damage to enemy
-        }
+        BaseEnemy enemy = target.GetComponent<BaseEnemy>();
+        enemy.TakeDamage(damage);
     }
 
     protected override void OnHitEnemy(BaseEnemy enemy)
     {
-        if (!hasIceCreamHit)
-        {
-            hasIceCreamHit = true;
-            HitTarget();
-            // Apply slow effect
-            enemy.ApplySlow(slowFactor, slowDuration);
-        }
+        hasIceCreamHit = true;
+        HitTarget();
+        enemy.ApplySlow(slowFactor, slowDuration);
     }
 
     protected override void OnTriggerEnter2D(Collider2D collision)
     {
         BaseEnemy enemy = collision.GetComponent<BaseEnemy>();
-        if (enemy != null && base.target != null && collision.gameObject == base.target.gameObject)
+        if (enemy != null && target != null && collision.gameObject == target.gameObject)
         {
             OnHitEnemy(enemy);
         }

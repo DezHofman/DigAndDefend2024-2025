@@ -125,6 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthbar: {fileID: 5967523537814915057}
+  animator: {fileID: 303259280575699946}
 --- !u!61 &7752266152593138786
 BoxCollider2D:
   m_ObjectHideFlags: 0

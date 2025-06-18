@@ -20,15 +20,7 @@ public class Healthbar : MonoBehaviour
     {
         mainCamera = Camera.main;
         boxCollider = GetComponent<BoxCollider2D>();
-        if (boxCollider == null)
-        {
-            Debug.LogError($"No BoxCollider2D found on {gameObject.name}. Healthbar may be misaligned.");
-        }
         health = initialHealth;
-    }
-
-    private void Update()
-    {
     }
 
     public void SetInitialHealth(float newMaxHealth)
@@ -39,7 +31,6 @@ public class Healthbar : MonoBehaviour
 
     public void UpdateHealth(float newHealth)
     {
-        Debug.Log("Updating health to: " + newHealth + ", Max: " + maxHealth);
         health = Mathf.Clamp(newHealth, 0, maxHealth);
         if (newHealth < initialHealth)
         {
@@ -63,17 +54,14 @@ public class Healthbar : MonoBehaviour
         outlineTexture.SetPixel(0, 0, outlineColor);
         outlineTexture.Apply();
 
-        // Use BoxCollider2D bounds to position the healthbar
         Vector3 worldPosition;
         if (boxCollider != null)
         {
-            // Position above the top of the collider
             Vector3 colliderTop = transform.position + (Vector3)boxCollider.offset + Vector3.up * (boxCollider.size.y / 2);
             worldPosition = colliderTop + Vector3.up * worldOffset;
         }
         else
         {
-            // Fallback to original behavior if no collider
             worldPosition = transform.position + Vector3.up * worldOffset;
         }
 

@@ -7,25 +7,16 @@ public class BombProjectile : MonoBehaviour
     private Vector3 targetPosition;
     private float speed = 5f;
     private float explosionDelay = .2f;
-    private bool hasReachedTarget = false;
+    private bool hasReachedTarget;
 
     public void SetTargetPosition(Vector3 position)
     {
         targetPosition = position;
-        Debug.Log($"BombProjectile: Target position set to {targetPosition}");
     }
 
     public void SetExplosionRadius(float radius)
     {
         explosionRadius = radius;
-    }
-
-    private void Start()
-    {
-        if (explosionPrefab == null)
-        {
-            Debug.LogWarning("BombProjectile: Explosion prefab not assigned!");
-        }
     }
 
     private void Update()
@@ -37,7 +28,6 @@ public class BombProjectile : MonoBehaviour
             {
                 hasReachedTarget = true;
                 Invoke("Explode", explosionDelay);
-                Debug.Log($"BombProjectile: Reached target at {targetPosition}, exploding in {explosionDelay} seconds");
             }
         }
     }
@@ -47,7 +37,6 @@ public class BombProjectile : MonoBehaviour
         if (explosionPrefab != null)
         {
             GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            Debug.Log("BombProjectile: Explosion prefab instantiated");
         }
 
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, explosionRadius, LayerMask.GetMask("Enemies"));
@@ -57,7 +46,6 @@ public class BombProjectile : MonoBehaviour
             if (baseEnemy != null)
             {
                 baseEnemy.TakeDamage(20f);
-                Debug.Log($"BombProjectile: Damaged enemy {enemy.name} for 20 damage");
             }
         }
 
