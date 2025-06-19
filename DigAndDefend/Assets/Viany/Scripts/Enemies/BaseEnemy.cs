@@ -30,7 +30,6 @@ public abstract class BaseEnemy : MonoBehaviour
         spriteController = GetComponent<EnemySpriteController>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         healthbar.SetInitialHealth(health);
-
         originalColor = spriteRenderer.color;
         string enemyType = GetEnemyType();
     }
@@ -91,10 +90,10 @@ public abstract class BaseEnemy : MonoBehaviour
 
         if (!canFly && !isAttackingBarricade)
         {
-            Collider2D[] barricadeColliders = Physics2D.OverlapCircleAll(transform.position, 0.5f, LayerMask.GetMask("Barricades"));
-            if (barricadeColliders.Length > 0)
+            Collider2D hit = Physics2D.OverlapCircle(transform.position, 0.5f, LayerMask.GetMask("Barricades"));
+            if (hit != null)
             {
-                Barricade barricade = barricadeColliders[0].GetComponent<Barricade>();
+                Barricade barricade = hit.GetComponent<Barricade>();
                 if (barricade != null)
                 {
                     isAttackingBarricade = true;

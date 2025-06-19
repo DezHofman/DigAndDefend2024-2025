@@ -87,10 +87,10 @@ public abstract class Tower : MonoBehaviour
 
     protected virtual void Attack()
     {
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, attackRange, LayerMask.GetMask("Enemies"));
-        if (enemies.Length > 0)
+        Collider2D hitEnemy = Physics2D.OverlapCircle(transform.position, attackRange, LayerMask.GetMask("Enemies"));
+        if (hitEnemy != null)
         {
-            HandleAttack(enemies);
+            HandleAttack(new Collider2D[] { hitEnemy });
         }
     }
 

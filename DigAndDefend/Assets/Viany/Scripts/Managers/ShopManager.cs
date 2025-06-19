@@ -32,7 +32,7 @@ public class ShopManager : MonoBehaviour
     [SerializeField] private Image lockOverlay;
     [SerializeField] private Image lockImage;
     [SerializeField] private TextMeshProUGUI unlockText;
-    [SerializeField] private int[] unlockWaves;
+    public int[] unlockWaves;
 
     private int currentIndex;
     private string[] grassItemNames = { "Archer Tower", "Bomb Tower", "Slow Tower", "Fire Tower", "Barricade" };
@@ -195,7 +195,7 @@ public class ShopManager : MonoBehaviour
         }
     }
 
-    private void UpdateShopContent()
+    public void UpdateShopContent()
     {
         if (lockOverlay != null) lockOverlay.gameObject.SetActive(false);
         if (lockImage != null) lockImage.gameObject.SetActive(false);

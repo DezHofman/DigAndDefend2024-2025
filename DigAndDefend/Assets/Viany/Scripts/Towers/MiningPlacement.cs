@@ -54,14 +54,10 @@ public class MiningPlacement : MonoBehaviour
         bool canPlace = minesTilemap.HasTile(cellPosition);
         if (canPlace)
         {
-            Collider2D[] hitColliders = Physics2D.OverlapCircleAll(placementPosition, 0.1f);
-            foreach (Collider2D collider in hitColliders)
+            Collider2D hit = Physics2D.OverlapCircle(placementPosition, 0.1f);
+            if (hit != null && hit.CompareTag("MiningMachine"))
             {
-                if (collider.CompareTag("MiningMachine"))
-                {
-                    canPlace = false;
-                    break;
-                }
+                canPlace = false;
             }
         }
 
