@@ -25,13 +25,13 @@ public class FireballProjectile : Projectile
         float distanceToTarget = target != null ? Vector2.Distance(transform.position, target.position) : float.MaxValue;
         if (isTracking)
         {
-            if (distanceToTarget > trackingRange)
+            if (distanceToTarget > trackingRange || target == null)
             {
                 isTracking = false;
-                lastDirection = (target.position - transform.position).normalized;
+                lastDirection = (target != null ? (Vector2)(target.position - transform.position) : lastDirection).normalized;
             }
 
-            direction = (target.position - transform.position).normalized;
+            direction = (target != null ? (Vector2)(target.position - transform.position) : lastDirection).normalized;
 
             if (!rotationLocked)
             {
@@ -86,11 +86,14 @@ public class FireballProjectile : Projectile
 
     protected void HitTarget()
     {
-        BaseEnemy enemy = target.GetComponent<BaseEnemy>();
-        if (enemy != null)
+        if (target != null)
         {
-            enemy.TakeDamage(damage);
-            enemy.ApplyDoT(dotDamagePerSecond, dotDuration);
+            BaseEnemy enemy = target.GetComponent<BaseEnemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+                enemy.ApplyDoT(dotDamagePerSecond, dotDuration);
+            }
         }
         Destroy(gameObject);
     }

@@ -145,7 +145,6 @@ public class UIManager : MonoBehaviour
 #if UNITY_EDITOR
         RestartToMainMenu();
 #else
-        // In built application, quit the game
         Application.Quit();
 #endif
     }
@@ -203,6 +202,9 @@ public class UIManager : MonoBehaviour
         {
             guidePanels[index].SetActive(true);
         }
+
+        previousButton.interactable = currentPage > 1;
+        nextButton.interactable = currentPage < guidePanels.Length;
     }
 
     private void PreviousPage()

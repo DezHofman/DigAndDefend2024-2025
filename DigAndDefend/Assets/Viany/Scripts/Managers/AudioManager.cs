@@ -38,7 +38,18 @@ public class AudioManager : MonoBehaviour
         audioSource.loop = true;
         LoadVolume();
         UpdateVolume();
-        UpdateMusicBasedOnCanvas();
+    }
+
+    private void Start()
+    {
+        GameManager gm = FindFirstObjectByType<GameManager>();
+        if (gm != null && gm.mainMenuCanvas != null)
+        {
+            AudioClip targetClip = gm.mainMenuCanvas.enabled ? menuClip : gameClip;
+            audioSource.clip = targetClip;
+            audioSource.volume = targetVolume;
+            audioSource.Play();
+        }
     }
 
     private void Update()

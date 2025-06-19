@@ -134,6 +134,9 @@ MonoBehaviour:
   deathEffectPrefab: {fileID: 7235168694598194115, guid: 79a0c98e3c1f8cf46b8bebaeba2cf6f1, type: 3}
   deathEffectDuration: 0.6
   deathEffectColor: {r: 0.36786252, g: 0.509434, b: 0.3244037, a: 1}
+  explosionPrefab: {fileID: 44470000275298722, guid: c9028149943556045a13e0bb8b88a59b, type: 3}
+  explosionRadius: 3
+  explosionDamage: 2000
 --- !u!61 &3841671394626096645
 BoxCollider2D:
   m_ObjectHideFlags: 0

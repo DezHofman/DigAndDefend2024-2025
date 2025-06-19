@@ -5,7 +5,7 @@ public abstract class Projectile : MonoBehaviour
     protected Transform target;
     protected float speed = 10f;
     protected Tower parentTower;
-    protected bool hasHit = false;
+    protected bool hasHit;
     protected Vector3 velocity;
 
     public void Initialize(Tower tower, Transform newTarget)
