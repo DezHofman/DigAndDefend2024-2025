@@ -64,6 +64,14 @@ public class GameManager : MonoBehaviour
         settingsMenuCanvas.enabled = false;
     }
 
+    private void Update()
+    {
+        if (Input.GetButtonDown("Jump") && isWaveActive == false)
+        {
+            StartWave();
+        }
+    }
+
     public void TakeDamage(int damage)
     {
         if (currentState != GameState.Playing) return;
